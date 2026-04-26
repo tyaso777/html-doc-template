@@ -52,6 +52,9 @@ REQUIRED_SHELL_TOKENS = {
     "{{SIDEBAR_SUBTITLE}}",
     "{{ASSET_PREFIX}}",
     "{{CONTENT}}",
+    "{{CONTENTS_TREE}}",
+    "{{MATERIALS_SECTION}}",
+    "{{EXTERNAL_LINKS_SECTION}}",
 }
 
 
@@ -374,7 +377,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "paths",
         nargs="*",
-        default=["index.html", "examples/content-example.html", "chapters-src", "chapters"],
+        default=["index.html", "chapters-src", "chapters"],
         help="HTML files or directories to check. Defaults to maintained project HTML files.",
     )
     parser.add_argument(

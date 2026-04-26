@@ -11,7 +11,6 @@ Main files:
 ```text
 chapters-src/                         # editable chapter fragments and manifest
 layouts/chapter-shell.html             # shared shell used by the build script
-examples/content-example.html          # content-only fragment for AI-assisted authoring
 ```
 
 ## Positioning
@@ -69,15 +68,11 @@ html-doc-template/
     02-examples.html
   layouts/
     chapter-shell.html
-  examples/
-    content-example.html
 ```
 
 ## Folder Roles
 
 Use `layouts/chapter-shell.html` as the shared wrapper for generated multi-page chapters. It contains the document shell: `<html>`, `<head>`, CDN assets, sidebar, shared CSS, and shared JavaScript.
-
-Use `examples/content-example.html` as a content-only reference. Generated content should be pasted inside `<article class="content">` in a shell document and should not include `<html>`, `<head>`, `<style>`, or `<script>`.
 
 ## Basic Usage
 
@@ -126,7 +121,7 @@ Each source chapter should include a chapter navigation placeholder near the end
 <nav class="chapter-nav" data-chapter-nav aria-label="Chapter navigation"></nav>
 ```
 
-`scripts/build_site.py` reads `chapters-src/site-manifest.json`, combines each source fragment with `layouts/chapter-shell.html`, and writes the generated Previous and Next links into each output file. This keeps chapter order and shell metadata in one place while keeping the generated HTML usable through GitHub Pages or direct `file://` previews.
+`scripts/build_site.py` reads `chapters-src/site-manifest.json`, combines each source fragment with `layouts/chapter-shell.html`, writes the left-side nested Contents tree from all chapter TOC entries, renders manifest-managed Materials and External Links sections, and writes the generated Previous and Next links into each output file. This keeps chapter order, shell metadata, and document-level link lists in one place while keeping the generated HTML usable through GitHub Pages or direct `file://` previews.
 
 ```json
 {
@@ -142,15 +137,42 @@ Each source chapter should include a chapter navigation placeholder near the end
       "href": "01-introduction.html"
     },
     {
-      "title": "Chapter 2: Examples",
-      "sidebarTitle": "Chapter 2\nExamples",
+      "title": "Chapter 2: Minimal Page",
+      "sidebarTitle": "Chapter 2\nMinimal Page",
       "subtitle": "Multi-page example",
       "source": "02-examples.html",
       "href": "02-examples.html"
     }
+  ],
+  "materials": [
+    {
+      "title": "Project",
+      "items": [
+        { "label": "Project index", "href": "../index.html" },
+        { "label": "Repository README", "href": "../README.md" }
+      ]
+    }
+  ],
+  "externalLinks": [
+    {
+      "title": "Rendering",
+      "items": [
+        { "label": "Prism.js", "href": "https://prismjs.com/" },
+        { "label": "MathJax", "href": "https://www.mathjax.org/" },
+        { "label": "Mermaid", "href": "https://mermaid.js.org/" }
+      ]
+    },
+    {
+      "title": "Python runtime",
+      "items": [
+        { "label": "Pyodide", "href": "https://pyodide.org/" }
+      ]
+    }
   ]
 }
 ```
+
+`materials` and `externalLinks` use the same recursive `items` structure. An item with `label` and `href` is rendered as a link. An item with `title` and `items` is rendered as a nested group.
 
 ## Common Components
 
@@ -232,7 +254,7 @@ For generated chapters, initial Python code is taken from `div[data-python-runne
 
 ## Notes
 
-This project is intended as a source template. Documents created from it should usually be copied into another project or an `examples/` directory rather than editing the base template directly for each document.
+This project is intended as a source template. Documents created from it should usually be copied into another project rather than editing the base template directly for each document.
 
 ## Third-party Libraries
 

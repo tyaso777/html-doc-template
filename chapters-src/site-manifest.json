@@ -11,11 +11,54 @@
       "href": "01-introduction.html"
     },
     {
-      "title": "Chapter 2: Examples",
-      "sidebarTitle": "Chapter 2\nExamples",
+      "title": "Chapter 2: Minimal Page",
+      "sidebarTitle": "Chapter 2\nMinimal Page",
       "subtitle": "Multi-page example",
       "source": "02-examples.html",
       "href": "02-examples.html"
+    }
+  ],
+  "materials": [
+    {
+      "title": "Project",
+      "items": [
+        {
+          "label": "Project index",
+          "href": "../index.html"
+        },
+        {
+          "label": "Repository README",
+          "href": "../README.md"
+        }
+      ]
+    }
+  ],
+  "externalLinks": [
+    {
+      "title": "Rendering",
+      "items": [
+        {
+          "label": "Prism.js",
+          "href": "https://prismjs.com/"
+        },
+        {
+          "label": "MathJax",
+          "href": "https://www.mathjax.org/"
+        },
+        {
+          "label": "Mermaid",
+          "href": "https://mermaid.js.org/"
+        }
+      ]
+    },
+    {
+      "title": "Python runtime",
+      "items": [
+        {
+          "label": "Pyodide",
+          "href": "https://pyodide.org/"
+        }
+      ]
     }
   ]
 }

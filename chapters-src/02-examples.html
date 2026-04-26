@@ -1,8 +1,7 @@
 <header class="hero">
-  <!-- Keep exactly one h1 in the document: the main document title. -->
-  <h1>Chapter 2: Examples</h1>
+  <h1>Chapter 2: Minimal Page</h1>
   <p>
-    A second example chapter showing previous and next navigation.
+    A compact second chapter used to verify multi-page navigation and shared layout behavior.
   </p>
 </header>
 
@@ -24,377 +23,33 @@
   </dl>
 </section>
 
-<!--
-  TOC convention:
-  Mark only structural TOC targets with data-toc.
-  For top-level sections, prefer <section id="..." data-toc data-toc-title="...">.
-  For optional lower-level entries, use headings such as <h3 id="..." data-toc data-toc-level="3">.
-  Headings without data-toc are intentionally excluded from the left-side TOC.
--->
-
-<section id="overview" data-toc data-toc-title="Overview">
-  <h2>1. Overview</h2>
+<section id="purpose" data-toc data-toc-title="Purpose">
+  <h2>1. Purpose</h2>
   <p>
-    This page can run Python in the browser with Pyodide.
-    A server-side Python environment is not required, but the first runtime load can take some time because Pyodide is downloaded on demand.
+    This intentionally small chapter keeps the repository from maintaining two copies of the same demonstration content.
+    Use Chapter 1 as the main component reference, and use this page as a second generated chapter for navigation checks.
   </p>
 
   <aside class="callout callout-success">
-    Use a supplemental note (<code>aside.callout-success</code>) for helpful context, prerequisites, successful states, and recommendations.
-    Example: This template is designed to remain readable on narrow screens.
-  </aside>
-
-  <aside class="callout callout-warning">
-    Use a warning note (<code>aside.callout-warning</code>) for constraints, environment-specific behavior, and exceptions readers should know in advance.
-    Example: TOC generation, Python execution, Mermaid, MathJax, and Prism depend on JavaScript.
+    This page is generated from a short fragment in <code>chapters-src/02-examples.html</code> and shares the same shell, CSS, and JavaScript as Chapter 1.
   </aside>
 </section>
 
-<section id="template-guide" data-toc data-toc-title="Template Usage">
-  <h2>2. Template Usage</h2>
-  <p>
-    This section is a minimal editing guide for creating a new HTML document from the template.
-    It shows the main writing patterns so both human editors and generation models can extend the document consistently.
-  </p>
-
-  <aside class="callout callout-success">
-    Use <code>&lt;section id="..." data-toc data-toc-title="..."&gt;</code> for top-level sections that should appear in the table of contents.
-    For optional subsection entries, add <code>id</code>, <code>data-toc</code>, and <code>data-toc-level="3"</code> to the heading.
-  </aside>
-
-  <div class="card">
-    <h3>Common Components</h3>
-    <ul>
-      <li>Supplemental notes and recommendations: <code>&lt;aside class="callout callout-success"&gt;</code></li>
-      <li>Warnings and constraints: <code>&lt;aside class="callout callout-warning"&gt;</code></li>
-      <li>Standard body card: <code>&lt;div class="card"&gt;</code></li>
-      <li>Muted card: <code>&lt;div class="card card-muted"&gt;</code></li>
-      <li>Compact card: <code>&lt;div class="card card-compact"&gt;</code></li>
-      <li>Code display: <code>&lt;pre class="code-block language-python"&gt;&lt;code class="language-python"&gt;</code></li>
-      <li>Math: use <code>\(...\)</code> for inline math and <code>\[...\]</code> for display math</li>
-      <li>Mermaid diagrams: write the diagram definition inside <code>&lt;div class="mermaid"&gt;</code>.</li>
-    </ul>
+<section id="minimal-components" data-toc data-toc-title="Minimal Components">
+  <h2>2. Minimal Components</h2>
+  <div class="card card-compact">
+    <h3>Generated Page Check</h3>
+    <p>
+      The table of contents, sidebar links, and Previous navigation are generated or enhanced without duplicating the full template content.
+    </p>
   </div>
-
-  <aside class="callout callout-warning">
-    The TOC, Python runner, Mermaid, MathJax, and Prism are JavaScript enhancements.
-    Keep important explanations in normal HTML body text so the document remains readable if JavaScript is unavailable.
-  </aside>
-</section>
-
-<section id="formula-examples" data-toc data-toc-title="Math Examples">
-  <h2>3. Math Examples</h2>
-  <p>
-    These examples show inline and display math rendered by MathJax.
-    When creating a new document, copy this section and replace the content while preserving the display patterns.
-  </p>
-
-  <h3 id="inline-formula-example" data-toc data-toc-level="3" data-toc-title="Inline Math">Inline Math</h3>
-  <p>
-    Use <code>\(...\)</code> for short formulas inside a paragraph.
-    For example, a normal distribution can be written as \(X \sim \mathcal{N}(\mu, \sigma^2)\) using mean \(\mu\) and variance \(\sigma^2\).
-    The standardized value is \(z = (x - \mu) / \sigma\).
-  </p>
-
-  <h3 id="display-formula-example" data-toc data-toc-level="3" data-toc-title="Display Math">Display Math</h3>
-  <p>
-    Use <code>\[...\]</code> for standalone formulas, optionally wrapped in <code>div.math-block</code>.
-  </p>
-
-  <div class="math-block">
-    \[
-      f(x) = \frac{1}{\sigma\sqrt{2\pi}}
-      \exp\left(-\frac{(x - \mu)^2}{2\sigma^2}\right)
-    \]
-  </div>
-
-  <div class="math-block">
-    \[
-      \mathbb{E}[X] = \mu, \qquad
-      \mathrm{Var}(X) = \sigma^2, \qquad
-      \int_{-\infty}^{\infty} f(x)\,dx = 1
-    \]
-  </div>
-</section>
-
-<section id="python-code-examples" data-toc data-toc-title="Python Code Display and Execution">
-  <h2>4. Python Code Display and Execution</h2>
-  <p>
-    Use static code blocks for code that readers only need to inspect, and use the browser runner for code readers should edit and execute.
-    This keeps explanatory snippets separate from interactive examples.
-  </p>
-
-  <h3 id="python-code-display-example" data-toc data-toc-level="3" data-toc-title="Python Code Block">Python Code Block</h3>
-  <p>
-    For code that does not need to run in the browser, combine <code>pre.code-block</code> with <code>code.language-python</code>.
-    Place <code>div.code-caption</code> above the block to show the language name or file name.
-  </p>
 
   <div class="code-caption">python</div>
-  <pre class="code-block language-python"><code class="language-python">def summarize_scores(scores: list[int]) -> dict[str, float]:
-    """Returns simple summary statistics for a score list."""
-    total = sum(scores)
-    count = len(scores)
-
-    return {
-"count": count,
-"average": total / count,
-"maximum": max(scores),
-    }
-
-
-scores = [82, 90, 76, 88]
-summary = summarize_scores(scores)
-print(summary)
-</code></pre>
-
-  <h3 id="python-runner-example" data-toc data-toc-level="3" data-toc-title="Executable Code Example">Executable Code Example</h3>
-  <p>
-    Use the runner source block for code that readers should edit and execute.
-    The build script expands <code>div[data-python-runner]</code> into the full browser runner UI.
-  </p>
-
-  <aside class="callout callout-warning">
-    The Python runner loads Pyodide from a CDN only after the reader presses <strong>Load Python Runtime</strong>.
-    Pyodide is loaded with <code>importScripts()</code> inside a Web Worker, so normal script-tag SRI with <code>integrity</code> cannot be used there.
-    For documents that require strict supply-chain control, host a reviewed Pyodide distribution locally.
-  </aside>
-
-<div class="python-runner-source" data-python-runner>
-  <p class="runner-caption">Try changing the input sizes and run the code.</p>
-  <pre><code class="language-python">from time import perf_counter
-
-
-def linear_search_with_count(values: list[int], target: int) -> tuple[int, int]:
-    """Finds the target by scanning values and counts comparisons.
-
-    Args:
-        values: Sorted integer values.
-        target: Value to find.
-
-    Returns:
-        A pair of the target index and the number of comparisons.
-    """
-    comparisons = 0
-
-    for index, value in enumerate(values):
-        comparisons += 1
-        if value == target:
-            return index, comparisons
-
-    return -1, comparisons
-
-
-def binary_search_with_count(values: list[int], target: int) -> tuple[int, int]:
-    """Finds the target using binary search and counts comparisons.
-
-    Args:
-        values: Sorted integer values.
-        target: Value to find.
-
-    Returns:
-        A pair of the target index and the number of comparisons.
-    """
-    left = 0
-    right = len(values) - 1
-    comparisons = 0
-
-    while left <= right:
-        middle = (left + right) // 2
-        comparisons += 1
-
-        if values[middle] == target:
-            return middle, comparisons
-
-        if values[middle] < target:
-            left = middle + 1
-        else:
-            right = middle - 1
-
-    return -1, comparisons
-
-
-def measure_once(n: int, repeats: int) -> tuple[int, int, float, float]:
-    """Measures comparison counts and average execution times.
-
-    Args:
-        n: Number of elements.
-        repeats: Number of repeated searches.
-
-    Returns:
-        Linear-search comparisons, binary-search comparisons, average linear-search
-        time, and average binary-search time.
-    """
-    values = list(range(n))
-    target = n - 1
-
-    _, linear_comparisons = linear_search_with_count(values, target)
-    _, binary_comparisons = binary_search_with_count(values, target)
-
-    start = perf_counter()
-    for _ in range(repeats):
-        linear_search_with_count(values, target)
-    linear_ms = (perf_counter() - start) * 1000 / repeats
-
-    start = perf_counter()
-    for _ in range(repeats):
-        binary_search_with_count(values, target)
-    binary_ms = (perf_counter() - start) * 1000 / repeats
-
-    return linear_comparisons, binary_comparisons, linear_ms, binary_ms
-
-
-def main() -> None:
-    """Runs a simple growth-rate experiment."""
-    sizes = [1_000, 10_000, 100_000, 500_000, 1_000_000]
-    repeats_by_size = {
-        1_000: 200,
-        10_000: 100,
-        100_000: 20,
-        500_000: 5,
-        1_000_000: 3,
-    }
-
-    print("n          linear_cmp   binary_cmp   cmp_ratio   linear_ms   binary_ms")
-    print("-" * 78)
-
-    for n in sizes:
-        linear_cmp, binary_cmp, linear_ms, binary_ms = measure_once(n, repeats_by_size[n])
-        ratio = linear_cmp / binary_cmp if binary_cmp > 0 else float("inf")
-        print(
-            f"{n:>9}  "
-            f"{linear_cmp:>10}  "
-            f"{binary_cmp:>10}  "
-            f"{ratio:>9.1f}x  "
-            f"{linear_ms:>9.4f}  "
-            f"{binary_ms:>9.4f}"
-        )
-
-    print()
-    print("Interpretation:")
-    print("- Comparison counts are the cleanest signal here.")
-    print("- Linear search comparisons grow almost directly with n.")
-    print("- Binary search comparisons grow slowly because the search range is halved.")
-    print("- Timing numbers are useful but noisier than comparison counts.")
-
-
-main()</code></pre>
-</div>
-</section>
-
-<section id="other-language-examples" data-toc data-toc-title="Other Languages">
-  <h2>5. Other Languages</h2>
-  <p>
-    Code in other languages can use the same visual style by switching the Prism language class.
-    This template loads the PowerShell and SQL Prism components by default.
-  </p>
-
-  <h3 id="powershell-code-example" data-toc data-toc-level="3" data-toc-title="PowerShell Code Block">PowerShell Code Block</h3>
-  <div class="code-caption">powershell</div>
-  <pre class="code-block language-powershell"><code class="language-powershell">Get-ChildItem -Path . -Filter "*.html" |
-    Select-Object Name, Length, LastWriteTime |
-    Sort-Object LastWriteTime -Descending
-</code></pre>
-
-  <h3 id="sql-code-example" data-toc data-toc-level="3" data-toc-title="SQL Code Block">SQL Code Block</h3>
-  <div class="code-caption">sql</div>
-  <pre class="code-block language-sql"><code class="language-sql">SELECT
-    document_id,
-    title,
-    updated_at
-FROM documents
-WHERE status = "published"
-ORDER BY updated_at DESC;
-</code></pre>
-
-  <aside class="callout callout-warning">
-    To add another language such as cmd, bash, or JSON, load the corresponding Prism language component and change the <code>language-...</code> class to match.
-    If you add files from a CDN, also add SRI metadata for those files.
-  </aside>
-</section>
-
-<section id="mermaid" data-toc data-toc-title="Mermaid Diagrams">
-  <h2>6. Mermaid Diagrams</h2>
-  <p>
-    Mermaid renders flowcharts and structural diagrams from text definitions.
-    You can update a diagram by editing text in the HTML instead of recreating an image.
-    Mermaid also supports sequence diagrams, class diagrams, state diagrams, and more.
-  </p>
-
-  <div class="code-caption">mermaid</div>
-  <pre class="code-block language-mermaid"><code class="language-mermaid">flowchart LR
-    A[Define the document goal] --> B[Plan the section structure]
-    B --> C[Write the body text]
-    B --> D[Create exercises or code examples]
-    C --> E[Add diagrams and math]
-    D --> F[Check executable examples]
-    E --> G[Review the rendered document]
-    F --> G
-</code></pre>
-
-  <figure class="mermaid-figure">
-    <figcaption>Diagram rendered from the Mermaid definition above</figcaption>
-    <div class="mermaid-wrap">
-      <!-- Use div.mermaid as the Mermaid rendering hook; figure/figcaption provide the semantic structure. -->
-      <div class="mermaid">
-flowchart LR
-    A[Define the document goal] --> B[Plan the section structure]
-    B --> C[Write the body text]
-    B --> D[Create exercises or code examples]
-    C --> E[Add diagrams and math]
-    D --> F[Check executable examples]
-    E --> G[Review the rendered document]
-    F --> G
-      </div>
-    </div>
-  </figure>
-</section>
-
-<section id="notes" data-toc data-toc-title="Operational Notes">
-  <h2>7. Operational Notes</h2>
-  <div class="card card-muted">
-    <h3>Interpreting Runtime Results</h3>
-    <p>
-      Browser execution time is affected by device performance, battery state, browser optimization, and other running processes.
-      Treat timing output as a rough signal for behavior and trends, not as a strict benchmark.
-    </p>
-  </div>
-
-  <div class="card card-muted">
-    <h3>Progressive Reading Design</h3>
-    <p>
-      Body text, links, and code content remain readable as normal HTML.
-      TOC generation, Python execution, Mermaid, MathJax, and Prism are convenience enhancements added by JavaScript.
-    </p>
-  </div>
-</section>
-
-<section id="changelog" data-toc data-toc-title="Changelog">
-  <h2>8. Changelog</h2>
-  <div class="table-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th>Version</th>
-          <th>Date</th>
-          <th>Changes</th>
-          <th>Author</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>0.1.0</td>
-          <td>2026-04-25</td>
-          <td>Initial technical HTML document template draft.</td>
-          <td>Atsushi Suzuki</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <pre class="code-block language-python"><code class="language-python">print("Chapter 2 is intentionally small.")</code></pre>
 </section>
 
 <nav class="chapter-nav" data-chapter-nav aria-label="Chapter navigation"></nav>
 
 <footer class="footer">
-  Prototype template with robust navigation and Pyodide runner.
+  Minimal generated chapter for multi-page workflow checks.
 </footer>
