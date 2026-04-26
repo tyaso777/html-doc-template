@@ -1,5 +1,6 @@
 {
   "title": "html-doc-template chapter examples",
+  "lang": "en",
   "shell": "../layouts/chapter-shell.html",
   "outputDir": "../chapters",
   "chapters": [
@@ -16,6 +17,13 @@
       "subtitle": "Multi-page example",
       "source": "02-examples.html",
       "href": "02-examples.html"
+    },
+    {
+      "title": "Chapter 3: Reference Page",
+      "sidebarTitle": "Chapter 3\nReference Page",
+      "subtitle": "Multi-page example",
+      "source": "03-reference.html",
+      "href": "03-reference.html"
     }
   ],
   "materials": [

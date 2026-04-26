@@ -32,6 +32,7 @@ PYTHON_RUNNER_SOURCE_PATTERN = re.compile(
 ATTR_PATTERN = re.compile(r'([:\w-]+)(?:\s*=\s*"([^"]*)")?')
 TOC_TARGET_PATTERN = re.compile(r'<(?P<tag>section|h[2-6])\b(?P<attrs>[^>]*)>', re.I)
 REQUIRED_SHELL_TOKENS = {
+    "{{DOCUMENT_LANG}}",
     "{{DOCUMENT_TITLE}}",
     "{{SIDEBAR_TITLE}}",
     "{{SIDEBAR_SUBTITLE}}",
@@ -362,6 +363,7 @@ def render_shell(
     output_path: Path,
     root: Path,
     manifest_dir: Path,
+    document_lang: str,
     chapters: list[dict[str, str]],
     current_index: int,
     output_dir: Path,
@@ -370,6 +372,7 @@ def render_shell(
     external_links: list[Any],
 ) -> str:
     replacements = {
+        "{{DOCUMENT_LANG}}": html.escape(document_lang, quote=True),
         "{{DOCUMENT_TITLE}}": html.escape(chapter["title"]),
         "{{SIDEBAR_TITLE}}": sidebar_title_html(chapter.get("sidebarTitle", chapter["title"])),
         "{{SIDEBAR_SUBTITLE}}": html.escape(chapter.get("subtitle", "")),
@@ -394,6 +397,7 @@ def build_chapter(
     chapters: list[dict[str, str]],
     index: int,
     toc_entries_by_chapter: list[list[dict[str, str | int]]],
+    document_lang: str,
     materials: list[Any],
     external_links: list[Any],
 ) -> Path:
@@ -412,6 +416,7 @@ def build_chapter(
         output_path,
         root,
         manifest_dir,
+        document_lang,
         chapters,
         index,
         output_dir,
@@ -431,9 +436,10 @@ def validate_shell(shell: str, shell_path: Path) -> None:
         raise ValueError(f"{shell_path} is missing required token(s): {', '.join(missing)}")
 
 
-def validate_manifest(manifest: dict[str, Any]) -> tuple[str, str, list[dict[str, str]], list[Any], list[Any]]:
+def validate_manifest(manifest: dict[str, Any]) -> tuple[str, str, str, list[dict[str, str]], list[Any], list[Any]]:
     shell = manifest.get("shell", "../layouts/chapter-shell.html")
     output_dir = manifest.get("outputDir", "../chapters")
+    document_lang = manifest.get("lang", "en")
     materials = manifest.get("materials", [])
     external_links = manifest.get("externalLinks", [])
 
@@ -441,6 +447,8 @@ def validate_manifest(manifest: dict[str, Any]) -> tuple[str, str, list[dict[str
         raise ValueError("site manifest must have a non-empty shell path")
     if not isinstance(output_dir, str) or not output_dir.strip():
         raise ValueError("site manifest must have a non-empty outputDir")
+    if not isinstance(document_lang, str) or not document_lang.strip():
+        raise ValueError("site manifest lang must be a non-empty string")
 
     if not isinstance(materials, list):
         raise ValueError("site manifest materials must be an array when provided")
@@ -475,7 +483,7 @@ def validate_manifest(manifest: dict[str, Any]) -> tuple[str, str, list[dict[str
 
         normalized.append({"title": title, "href": href, "source": source, "sidebarTitle": sidebar_title, "subtitle": subtitle})
 
-    return shell, output_dir, normalized, materials, external_links
+    return shell, output_dir, document_lang, normalized, materials, external_links
 
 
 def parse_args() -> argparse.Namespace:
@@ -491,7 +499,7 @@ def main() -> int:
     manifest_path = (root / args.manifest).resolve()
     manifest_dir = manifest_path.parent
     manifest = load_manifest(manifest_path)
-    shell_path_raw, output_dir_raw, chapters, materials, external_links = validate_manifest(manifest)
+    shell_path_raw, output_dir_raw, document_lang, chapters, materials, external_links = validate_manifest(manifest)
     shell_path = (manifest_dir / shell_path_raw).resolve()
     output_dir = (manifest_dir / output_dir_raw).resolve()
     shell = shell_path.read_text(encoding="utf-8")
@@ -511,6 +519,7 @@ def main() -> int:
             chapters,
             index,
             toc_entries_by_chapter,
+            document_lang,
             materials,
             external_links,
         )

@@ -47,6 +47,7 @@ SOURCE_FRAGMENT_FORBIDDEN_PATTERNS = (
     re.compile(r"<link(?:\s|>)", re.I),
 )
 REQUIRED_SHELL_TOKENS = {
+    "{{DOCUMENT_LANG}}",
     "{{DOCUMENT_TITLE}}",
     "{{SIDEBAR_TITLE}}",
     "{{SIDEBAR_SUBTITLE}}",

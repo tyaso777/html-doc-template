@@ -9,7 +9,7 @@
 -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Chapter 2: Minimal Page</title>
+  <title>Chapter 3: Reference Page</title>
 
   <!-- Prism.js -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerpolicy="no-referrer">
@@ -52,7 +52,7 @@
   <div class="layout">
     <aside class="sidebar" aria-label="Document navigation">
       <header class="sidebar-header" aria-labelledby="sidebar-title">
-        <h2 id="sidebar-title" class="sidebar-title">Chapter 2<br>Minimal Page</h2>
+        <h2 id="sidebar-title" class="sidebar-title">Chapter 3<br>Reference Page</h2>
         <p class="sidebar-subtitle">Multi-page example</p>
       </header>
 
@@ -96,8 +96,8 @@
               </details>
             </li>
             <li class="site-contents-chapter">
-              <details open>
-                <summary><a href="02-examples.html" aria-current="page">Chapter 2: Minimal Page</a></summary>
+              <details>
+                <summary><a href="02-examples.html">Chapter 2: Minimal Page</a></summary>
                 <ol class="toc-tree">
                   <li><a href="02-examples.html#purpose">Purpose</a>
                   </li>
@@ -107,8 +107,8 @@
               </details>
             </li>
             <li class="site-contents-chapter">
-              <details>
-                <summary><a href="03-reference.html">Chapter 3: Reference Page</a></summary>
+              <details open>
+                <summary><a href="03-reference.html" aria-current="page">Chapter 3: Reference Page</a></summary>
                 <ol class="toc-tree">
                   <li><a href="03-reference.html#purpose">Purpose</a>
                   </li>
@@ -161,9 +161,9 @@
     <main>
       <article class="content">
         <header class="hero">
-          <h1>Chapter 2: Minimal Page</h1>
+          <h1>Chapter 3: Reference Page</h1>
           <p>
-            A compact second chapter used to verify multi-page navigation and shared layout behavior.
+            A compact third chapter used to verify longer chapter sequences and generated navigation.
           </p>
         </header>
 
@@ -188,41 +188,34 @@
         <section id="purpose" data-toc data-toc-title="Purpose">
           <h2>1. Purpose</h2>
           <p>
-            This intentionally small chapter keeps the repository from maintaining two copies of the same demonstration content.
-            Use Chapter 1 as the main component reference, and use this page as a second generated chapter for navigation checks.
+            This page confirms that the build script can generate a three-chapter sequence from the manifest.
+            It is intentionally small so Chapter 1 remains the primary component reference.
           </p>
 
           <aside class="callout callout-success">
-            This page is generated from a short fragment in <code>chapters-src/02-examples.html</code> and shares the same shell, CSS, and JavaScript as Chapter 1.
+            Add more chapters by creating a new fragment under <code>chapters-src/</code> and adding it to <code>chapters-src/site-manifest.json</code>.
           </aside>
         </section>
 
-        <section id="minimal-components" data-toc data-toc-title="Minimal Components">
-          <h2>2. Minimal Components</h2>
+        <section id="reference-note" data-toc data-toc-title="Reference Note">
+          <h2>2. Reference Note</h2>
           <div class="card card-compact">
-            <h3>Generated Page Check</h3>
+            <h3>Manifest-driven Navigation</h3>
             <p>
-              The table of contents, sidebar links, and Previous navigation are generated or enhanced without duplicating the full template content.
+              The left-side Contents tree and previous/next links are generated from the chapter order in the manifest.
             </p>
           </div>
-
-          <div class="code-caption">python</div>
-          <pre class="code-block language-python"><code class="language-python">print("Chapter 2 is intentionally small.")</code></pre>
         </section>
 
         <nav class="chapter-nav" data-chapter-nav aria-label="Chapter navigation">
-          <a class="chapter-nav-link previous" href="01-introduction.html">
+          <a class="chapter-nav-link previous" href="02-examples.html">
             <span>Previous</span>
-            <strong>Chapter 1: Introduction</strong>
-          </a>
-          <a class="chapter-nav-link next" href="03-reference.html">
-            <span>Next</span>
-            <strong>Chapter 3: Reference Page</strong>
+            <strong>Chapter 2: Minimal Page</strong>
           </a>
         </nav>
 
         <footer class="footer">
-          Minimal generated chapter for multi-page workflow checks.
+          Minimal generated chapter for three-page workflow checks.
         </footer>
       </article>
     </main>
