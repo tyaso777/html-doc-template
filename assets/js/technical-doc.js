@@ -605,8 +605,13 @@ except BaseException:
       }
     }
 
+    function decodeBase64Utf8(value) {
+      const bytes = Uint8Array.from(atob(value), (character) => character.charCodeAt(0));
+      return new TextDecoder().decode(bytes);
+    }
+
     function resetCode() {
-      setPythonCode(DEFAULT_CODE);
+      setPythonCode(initialPythonCode);
       syncPrintRunnerSnapshot();
       setOutputBusy(false);
       setOutput("Code text reset. Python runtime state was not changed.");
@@ -643,6 +648,7 @@ except BaseException:
     }
 
     let pythonEditor = null;
+    let initialPythonCode = DEFAULT_CODE;
 
     function getPythonCode() {
       const codeArea = document.getElementById("python-code");
@@ -823,16 +829,31 @@ except BaseException:
       }
     }
 
+
     document.addEventListener("DOMContentLoaded", () => {
       buildToc();
-      setPythonCode(DEFAULT_CODE);
+      const codeArea = document.getElementById("python-code");
+      initialPythonCode = codeArea && codeArea.dataset.initialCodeBase64
+        ? decodeBase64Utf8(codeArea.dataset.initialCodeBase64)
+        : codeArea && codeArea.dataset.initialCode
+          ? codeArea.dataset.initialCode
+          : codeArea && codeArea.value.trim()
+            ? codeArea.value
+            : DEFAULT_CODE;
+      setPythonCode(initialPythonCode);
       initializePythonEditor();
-      setPythonCode(DEFAULT_CODE);
+      setPythonCode(initialPythonCode);
       initializePrintSnapshotSync();
-      document.getElementById("load-button").addEventListener("click", loadPythonRuntime);
-      document.getElementById("run-button").addEventListener("click", runPythonCode);
-      document.getElementById("reset-button").addEventListener("click", resetCode);
-      document.getElementById("restart-runtime-button").addEventListener("click", restartPythonRuntime);
+
+      const loadButton = document.getElementById("load-button");
+      const runButton = document.getElementById("run-button");
+      const resetButton = document.getElementById("reset-button");
+      const restartRuntimeButton = document.getElementById("restart-runtime-button");
+
+      if (loadButton) loadButton.addEventListener("click", loadPythonRuntime);
+      if (runButton) runButton.addEventListener("click", runPythonCode);
+      if (resetButton) resetButton.addEventListener("click", resetCode);
+      if (restartRuntimeButton) restartRuntimeButton.addEventListener("click", restartPythonRuntime);
 
       if (window.Prism) {
         window.Prism.highlightAll();

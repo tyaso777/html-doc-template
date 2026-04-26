@@ -566,6 +566,51 @@ textarea {
   outline-offset: 3px;
 }
 
+.chapter-nav {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 40px 0 0;
+}
+
+.chapter-nav-link {
+  display: block;
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  background: #fff;
+  color: var(--text);
+  box-shadow: var(--shadow);
+}
+
+.chapter-nav-link:hover {
+  border-color: var(--accent);
+  text-decoration: none;
+}
+
+.chapter-nav-link span {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.chapter-nav-link strong {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.chapter-nav-link.next {
+  text-align: right;
+}
+
+.chapter-nav-link.next:first-child {
+  grid-column: 2;
+}
+
 .footer {
   margin-top: 48px;
   padding-top: 20px;
@@ -631,6 +676,19 @@ textarea {
   textarea,
   .output {
     font-size: 0.82rem;
+  }
+
+
+  .chapter-nav {
+    grid-template-columns: 1fr;
+  }
+
+  .chapter-nav-link.next {
+    text-align: left;
+  }
+
+  .chapter-nav-link.next:first-child {
+    grid-column: auto;
   }
 
   textarea {

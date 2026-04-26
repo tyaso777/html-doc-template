@@ -131,7 +131,7 @@
         A technical HTML document template with code blocks, math, Mermaid diagrams, and optional in-browser Python examples.
       </p>
       <div class="actions">
-        <a class="button" href="./templates/technical-doc-template.html">Open Template</a>
+        <a class="button" href="./chapters/01-introduction.html">Open Chapter Example</a>
         <a class="button secondary" href="./README.md">View README</a>
       </div>
     </header>
@@ -139,9 +139,10 @@
     <section>
       <h2>Files</h2>
       <div class="card">
-        <p><strong>Document template:</strong> <a href="./templates/technical-doc-template.html"><code>templates/technical-doc-template.html</code></a></p>
-        <p><strong>Content-only example:</strong> <a href="./templates/content-example.html"><code>templates/content-example.html</code></a></p>
+        <p><strong>Legacy single-file template:</strong> <a href="./legacy/technical-doc-template.html"><code>legacy/technical-doc-template.html</code></a></p>
+        <p><strong>Content fragment example:</strong> <a href="./examples/content-example.html"><code>examples/content-example.html</code></a></p>
         <p><strong>Repository guide:</strong> <a href="./README.md"><code>README.md</code></a></p>
+        <p><strong>Chapter example:</strong> <a href="./chapters/01-introduction.html"><code>chapters/01-introduction.html</code></a></p>
       </div>
     </section>
 
@@ -149,7 +150,7 @@
       <h2>Use This Template</h2>
       <div class="card">
         <p>
-          Copy <code>templates/technical-doc-template.html</code> and use <code>templates/content-example.html</code> as a reference for authoring body content. CSS and JavaScript are shared under <code>assets/</code>.
+          Edit fragments under <code>chapters-src/</code>, keep shared shells under <code>layouts/</code>, and run <code>python3 scripts/build_site.py</code> to generate <code>chapters/</code>. Use <code>examples/content-example.html</code> as a reference for body content.
         </p>
         <p>
           Replace the title, document information, body content, Materials, External Links, and Changelog. The Python runner loads Pyodide from a CDN only after the reader presses <strong>Load Python Runtime</strong>.

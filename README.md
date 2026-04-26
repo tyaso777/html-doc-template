@@ -6,23 +6,25 @@ Live demo: https://tyaso777.github.io/html-doc-template/
 
 The browser entry page is `index.html`.
 
-Main templates:
+Main files:
 
 ```text
-templates/technical-doc-template.html      # document template using assets/
-templates/content-example.html          # content-only fragment for AI-assisted authoring
+chapters-src/                         # editable chapter fragments and manifest
+layouts/chapter-shell.html             # shared shell used by the build script
+examples/content-example.html          # content-only fragment for AI-assisted authoring
+legacy/technical-doc-template.html      # old single-file document template
 ```
 
 ## Positioning
 
-This project is not a static site generator, Markdown converter, or web application framework.
+This project is not a full static site generator, Markdown converter, or web application framework.
 
-It can be used for single-page or multi-page HTML documents, but it does not generate pages, routes, navigation, search indexes, or site-wide metadata automatically.
+It can be used for single-page or multi-page HTML documents. For multi-page chapter sets, `scripts/build_site.py` copies source chapters from `chapters-src/` to `chapters/` and injects Previous/Next navigation from `chapters-src/site-manifest.json`. It does not provide routes, search indexes, theme systems, or content pipelines.
 
 Use this template when you want:
 
 - Direct control over document HTML, CSS, and browser behavior.
-- Shared CSS and JavaScript without a build step.
+- Shared CSS and JavaScript for single-page documents without a build step.
 - Built-in examples for code highlighting, MathJax, Mermaid, and optional Pyodide execution.
 - A structure that works well with AI-assisted authoring by generating only the `<article class="content">` fragment.
 - Easy publishing through GitHub Pages.
@@ -57,21 +59,34 @@ html-doc-template/
     js/
       technical-doc.js
   scripts/
+    build_site.py
     check_html.py
-  templates/
-    technical-doc-template.html
+  chapters-src/
+    site-manifest.json
+    01-introduction.html
+    02-examples.html
+  chapters/
+    01-introduction.html
+    02-examples.html
+  layouts/
+    chapter-shell.html
+  examples/
     content-example.html
+  legacy/
+    technical-doc-template.html
 ```
 
-## Template Files
+## Folder Roles
 
-Use `templates/technical-doc-template.html` as the maintained document template. It keeps layout, CSS, and JavaScript separate from the document content, which is better for iterative authoring and AI-assisted content generation.
+Use `legacy/technical-doc-template.html` only as the old single-file reference. The maintained multi-page workflow uses `chapters-src/`, `layouts/`, and `scripts/build_site.py`.
 
-Use `templates/content-example.html` as a content-only reference. Generated content should be pasted inside `<article class="content">` in a shell document and should not include `<html>`, `<head>`, `<style>`, or `<script>`.
+Use `layouts/chapter-shell.html` as the shared wrapper for generated multi-page chapters. It contains the document shell: `<html>`, `<head>`, CDN assets, sidebar, shared CSS, and shared JavaScript.
+
+Use `examples/content-example.html` as a content-only reference. Generated content should be pasted inside `<article class="content">` in a shell document and should not include `<html>`, `<head>`, `<style>`, or `<script>`.
 
 ## Basic Usage
 
-Copy `templates/technical-doc-template.html` and edit the copy.
+For the multi-page workflow, edit `chapters-src/*.html` and `chapters-src/site-manifest.json`, then run `python3 scripts/build_site.py`.
 
 Typical edits:
 
@@ -98,6 +113,50 @@ Optional lower-level TOC entries can use:
 </h3>
 ```
 
+## Multi-page Documents
+
+This template can be used for multi-page documents by sharing one shell template and the same `assets/` directory across generated HTML files. In this workflow, edit `chapters-src/` and treat `chapters/` as generated output. See `chapters/01-introduction.html` and `chapters/02-examples.html` for a minimal two-page example.
+
+Each file under `chapters-src/` is an article fragment, not a complete HTML document. It should contain only the content that belongs inside `<article class="content">`. Keep CDN assets, `<head>`, sidebar markup, shared CSS, and shared JavaScript in `layouts/chapter-shell.html`.
+
+Edit chapter source files under `chapters-src/`, define chapter order and shell metadata in `chapters-src/site-manifest.json`, then build the public chapter files under `chapters/`:
+
+```bash
+python3 scripts/build_site.py
+```
+
+Each source chapter should include a chapter navigation placeholder near the end of the fragment:
+
+```html
+<nav class="chapter-nav" data-chapter-nav aria-label="Chapter navigation"></nav>
+```
+
+`scripts/build_site.py` reads `chapters-src/site-manifest.json`, combines each source fragment with `layouts/chapter-shell.html`, and writes the generated Previous and Next links into each output file. This keeps chapter order and shell metadata in one place while keeping the generated HTML usable through GitHub Pages or direct `file://` previews.
+
+```json
+{
+  "title": "html-doc-template chapter examples",
+  "shell": "../layouts/chapter-shell.html",
+  "outputDir": "../chapters",
+  "chapters": [
+    {
+      "title": "Chapter 1: Introduction",
+      "sidebarTitle": "Chapter 1\nIntroduction",
+      "subtitle": "Multi-page example",
+      "source": "01-introduction.html",
+      "href": "01-introduction.html"
+    },
+    {
+      "title": "Chapter 2: Examples",
+      "sidebarTitle": "Chapter 2\nExamples",
+      "subtitle": "Multi-page example",
+      "source": "02-examples.html",
+      "href": "02-examples.html"
+    }
+  ]
+}
+```
+
 ## Common Components
 
 Use these patterns inside the document body:
@@ -117,16 +176,30 @@ Python code block:
 <pre class="code-block language-python"><code class="language-python">print("Hello")</code></pre>
 ```
 
+Executable Python runner source block for `chapters-src/`:
+
+```html
+<div class="python-runner-source" data-python-runner>
+  <p class="runner-caption">Try changing the values and run the code.</p>
+  <pre><code class="language-python">scores = [72, 88, 91]
+print(sum(scores) / len(scores))</code></pre>
+</div>
+```
+
+`build_site.py` expands `div[data-python-runner]` into the full Pyodide runner UI in the generated `chapters/` files. Do not write Load, Run, Restart buttons, textareas, or output panels by hand in `chapters-src/`.
+
 Mermaid code block and rendered diagram examples are included in the template.
 
 ## AI-Assisted Authoring
 
-When asking a generation model to create content for the split template, constrain the task to the article content only. A useful instruction is:
+When asking a generation model to create content for the split template, constrain the task to the article fragment only. A useful instruction is:
 
 ```text
-Create only the HTML fragment for <article class="content">.
-Do not include html, head, style, script, or external library tags.
+Create only the HTML fragment that will be inserted inside <article class="content">.
+Do not include doctype, html, head, body, style, script, link, CDN, or external library tags.
 Use existing classes such as callout, card, code-block, math-block, and mermaid.
+For executable Python examples, use div.python-runner-source with data-python-runner and a pre/code.language-python block.
+Do not write Pyodide buttons, textareas, output panels, or runtime wiring by hand.
 Use section elements with id, data-toc, and data-toc-title for TOC entries.
 ```
 
@@ -138,9 +211,9 @@ Run the lightweight checker after editing generated or AI-assisted HTML:
 python3 scripts/check_html.py
 ```
 
-The checker uses only the Python standard library. It validates duplicate IDs, missing `data-toc` IDs, local file links, same-page fragment links, `aria-describedby` references, and `pre.code-block` / `code.language-*` consistency.
+The checker uses only the Python standard library. It validates duplicate IDs, missing `data-toc` IDs, local file links, same-page fragment links, `aria-describedby` references, `pre.code-block` / `code.language-*` consistency, chapter manifest integrity, shell template tokens, and generated Previous/Next navigation.
 
-When using this template in another document project, copy `scripts/check_html.py` with the template and run it against the generated HTML file.
+When using this template in another document project, copy `scripts/check_html.py` with the template and run it against the generated HTML file. For multi-page chapter sets, keep `chapters-src/site-manifest.json`, `chapters-src/`, and `chapters/` together so the manifest checks can verify generated navigation.
 
 ## External Libraries
 
@@ -160,7 +233,7 @@ Pyodide is different: it is loaded inside a Web Worker with `importScripts()` wh
 
 The Python runner is optional. The document remains readable without loading Pyodide.
 
-The initial Python code is stored in the `DEFAULT_CODE` JavaScript constant in `assets/js/technical-doc.js`.
+For generated chapters, initial Python code is taken from `div[data-python-runner]` blocks in `chapters-src/`. The `DEFAULT_CODE` JavaScript constant in `assets/js/technical-doc.js` remains a fallback for standalone pages.
 
 ## Notes
 

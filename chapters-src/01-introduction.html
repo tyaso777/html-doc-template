@@ -1,14 +1,8 @@
-<!--
-  Content-only example for AI-assisted authoring.
-  Paste this fragment inside <article class="content"> in a shell document.
-  Do not include <html>, <head>, <style>, or <script> in generated content.
--->
-
 <header class="hero">
   <!-- Keep exactly one h1 in the document: the main document title. -->
-  <h1>HTML Document Template</h1>
+  <h1>Chapter 1: Introduction</h1>
   <p>
-    A template for technical documents that include code, math, diagrams, and executable examples.
+    An example chapter page using the technical document template.
   </p>
 </header>
 
@@ -156,8 +150,8 @@ print(summary)
 
   <h3 id="python-runner-example" data-toc data-toc-level="3" data-toc-title="Executable Code Example">Executable Code Example</h3>
   <p>
-    Use the runner panel for code that readers should edit and execute.
-    Replace the initial code by editing <code>DEFAULT_CODE</code> in <code>assets/js/technical-doc.js</code>.
+    Use the runner source block for code that readers should edit and execute.
+    The build script expands <code>div[data-python-runner]</code> into the full browser runner UI.
   </p>
 
   <aside class="callout callout-warning">
@@ -166,49 +160,126 @@ print(summary)
     For documents that require strict supply-chain control, host a reviewed Pyodide distribution locally.
   </aside>
 
-  <div class="runner-panel">
-    <p id="python-code-help">
-      Edit the code in the highlighted Python editor, then press <strong>Run Python</strong>.
-      On slow connections or constrained devices, the first Python runtime load can take some time.
-    </p>
+<div class="python-runner-source" data-python-runner>
+  <p class="runner-caption">Try changing the input sizes and run the code.</p>
+  <pre><code class="language-python">from time import perf_counter
 
-    <div class="runner-toolbar">
-      <button id="load-button" class="button secondary" type="button">Load Python Runtime</button>
-      <button id="run-button" class="button" type="button" disabled>Run Python</button>
-      <button id="reset-button" class="button secondary" type="button">Reset Code Text</button>
-      <button id="restart-runtime-button" class="button secondary" type="button" disabled>Restart Python Runtime</button>
-    </div>
 
-    <label for="python-code" class="visually-hidden">Python code editor</label>
-    <div class="python-editor-wrap">
-      <textarea
-        id="python-code"
-        spellcheck="false"
-        aria-describedby="python-code-help output"
-        autocomplete="off"
-        autocorrect="off"
-        autocapitalize="off"
-      ></textarea>
-      <button id="copy-python-code-button" class="copy-code-button python-editor-copy-button" type="button" aria-label="Copy Python code">Copy</button>
-    </div>
+def linear_search_with_count(values: list[int], target: int) -> tuple[int, int]:
+    """Finds the target by scanning values and counts comparisons.
 
-    <h3>Output</h3>
-    <div
-      id="output"
-      class="output"
-      role="log"
-      aria-live="polite"
-      aria-atomic="true"
-    >Press "Load Python Runtime" first. Python will run in a Web Worker.</div>
+    Args:
+        values: Sorted integer values.
+        target: Value to find.
 
-    <section class="print-only print-runner-snapshot" aria-label="Printed Python runner snapshot">
-      <h3>Printed Python Code</h3>
-      <pre id="print-python-code" class="print-code-block"></pre>
+    Returns:
+        A pair of the target index and the number of comparisons.
+    """
+    comparisons = 0
 
-      <h3>Printed Python Output</h3>
-      <pre id="print-python-output" class="print-output-block"></pre>
-    </section>
-  </div>
+    for index, value in enumerate(values):
+        comparisons += 1
+        if value == target:
+            return index, comparisons
+
+    return -1, comparisons
+
+
+def binary_search_with_count(values: list[int], target: int) -> tuple[int, int]:
+    """Finds the target using binary search and counts comparisons.
+
+    Args:
+        values: Sorted integer values.
+        target: Value to find.
+
+    Returns:
+        A pair of the target index and the number of comparisons.
+    """
+    left = 0
+    right = len(values) - 1
+    comparisons = 0
+
+    while left <= right:
+        middle = (left + right) // 2
+        comparisons += 1
+
+        if values[middle] == target:
+            return middle, comparisons
+
+        if values[middle] < target:
+            left = middle + 1
+        else:
+            right = middle - 1
+
+    return -1, comparisons
+
+
+def measure_once(n: int, repeats: int) -> tuple[int, int, float, float]:
+    """Measures comparison counts and average execution times.
+
+    Args:
+        n: Number of elements.
+        repeats: Number of repeated searches.
+
+    Returns:
+        Linear-search comparisons, binary-search comparisons, average linear-search
+        time, and average binary-search time.
+    """
+    values = list(range(n))
+    target = n - 1
+
+    _, linear_comparisons = linear_search_with_count(values, target)
+    _, binary_comparisons = binary_search_with_count(values, target)
+
+    start = perf_counter()
+    for _ in range(repeats):
+        linear_search_with_count(values, target)
+    linear_ms = (perf_counter() - start) * 1000 / repeats
+
+    start = perf_counter()
+    for _ in range(repeats):
+        binary_search_with_count(values, target)
+    binary_ms = (perf_counter() - start) * 1000 / repeats
+
+    return linear_comparisons, binary_comparisons, linear_ms, binary_ms
+
+
+def main() -> None:
+    """Runs a simple growth-rate experiment."""
+    sizes = [1_000, 10_000, 100_000, 500_000, 1_000_000]
+    repeats_by_size = {
+        1_000: 200,
+        10_000: 100,
+        100_000: 20,
+        500_000: 5,
+        1_000_000: 3,
+    }
+
+    print("n          linear_cmp   binary_cmp   cmp_ratio   linear_ms   binary_ms")
+    print("-" * 78)
+
+    for n in sizes:
+        linear_cmp, binary_cmp, linear_ms, binary_ms = measure_once(n, repeats_by_size[n])
+        ratio = linear_cmp / binary_cmp if binary_cmp > 0 else float("inf")
+        print(
+            f"{n:>9}  "
+            f"{linear_cmp:>10}  "
+            f"{binary_cmp:>10}  "
+            f"{ratio:>9.1f}x  "
+            f"{linear_ms:>9.4f}  "
+            f"{binary_ms:>9.4f}"
+        )
+
+    print()
+    print("Interpretation:")
+    print("- Comparison counts are the cleanest signal here.")
+    print("- Linear search comparisons grow almost directly with n.")
+    print("- Binary search comparisons grow slowly because the search range is halved.")
+    print("- Timing numbers are useful but noisier than comparison counts.")
+
+
+main()</code></pre>
+</div>
 </section>
 
 <section id="other-language-examples" data-toc data-toc-title="Other Languages">
@@ -321,6 +392,8 @@ flowchart LR
     </table>
   </div>
 </section>
+
+<nav class="chapter-nav" data-chapter-nav aria-label="Chapter navigation"></nav>
 
 <footer class="footer">
   Prototype template with robust navigation and Pyodide runner.

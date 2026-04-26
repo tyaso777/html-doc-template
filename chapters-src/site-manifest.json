@@ -1,0 +1,21 @@
+{
+  "title": "html-doc-template chapter examples",
+  "shell": "../layouts/chapter-shell.html",
+  "outputDir": "../chapters",
+  "chapters": [
+    {
+      "title": "Chapter 1: Introduction",
+      "sidebarTitle": "Chapter 1\nIntroduction",
+      "subtitle": "Multi-page example",
+      "source": "01-introduction.html",
+      "href": "01-introduction.html"
+    },
+    {
+      "title": "Chapter 2: Examples",
+      "sidebarTitle": "Chapter 2\nExamples",
+      "subtitle": "Multi-page example",
+      "source": "02-examples.html",
+      "href": "02-examples.html"
+    }
+  ]
+}

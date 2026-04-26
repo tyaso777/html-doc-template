@@ -9,7 +9,7 @@
 -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>HTML Document Template</title>
+  <title>Chapter 2: Examples</title>
 
   <!-- Prism.js -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerpolicy="no-referrer">
@@ -52,9 +52,8 @@
   <div class="layout">
     <aside class="sidebar" aria-label="Document navigation">
       <header class="sidebar-header" aria-labelledby="sidebar-title">
-        <h2 id="sidebar-title" class="sidebar-title">HTML Document<br>Template</h2>
-        <!-- Replace this with a short document subtitle or project label. -->
-        <p class="sidebar-subtitle">Document subtitle</p>
+        <h2 id="sidebar-title" class="sidebar-title">Chapter 2<br>Examples</h2>
+        <p class="sidebar-subtitle">Multi-page example</p>
       </header>
 
       <details class="nav-section" open>
@@ -73,8 +72,8 @@
             <li>
               <span class="nav-list-category">Templates</span>
               <ol>
-                <li><a href="../templates/technical-doc-template.html">Technical document template</a></li>
-                <li><a href="../templates/content-example.html">Content-only example</a></li>
+                <li><a href="../legacy/technical-doc-template.html">Legacy single-file template</a></li>
+                <li><a href="../examples/content-example.html">Content fragment example</a></li>
               </ol>
             </li>
             <li>
@@ -115,9 +114,9 @@
       <article class="content">
         <header class="hero">
           <!-- Keep exactly one h1 in the document: the main document title. -->
-          <h1>HTML Document Template</h1>
+          <h1>Chapter 2: Examples</h1>
           <p>
-            A template for technical documents that include code, math, diagrams, and executable examples.
+            A second example chapter showing previous and next navigation.
           </p>
         </header>
 
@@ -247,26 +246,26 @@
 
           <div class="code-caption">python</div>
           <pre class="code-block language-python"><code class="language-python">def summarize_scores(scores: list[int]) -> dict[str, float]:
-    """Returns simple summary statistics for a score list."""
-    total = sum(scores)
-    count = len(scores)
+            """Returns simple summary statistics for a score list."""
+            total = sum(scores)
+            count = len(scores)
 
-    return {
+            return {
         "count": count,
         "average": total / count,
         "maximum": max(scores),
-    }
+            }
 
 
-scores = [82, 90, 76, 88]
-summary = summarize_scores(scores)
-print(summary)
-</code></pre>
+        scores = [82, 90, 76, 88]
+        summary = summarize_scores(scores)
+        print(summary)
+        </code></pre>
 
           <h3 id="python-runner-example" data-toc data-toc-level="3" data-toc-title="Executable Code Example">Executable Code Example</h3>
           <p>
-            Use the runner panel for code that readers should edit and execute.
-            Replace the initial code by editing <code>DEFAULT_CODE</code> in <code>assets/js/technical-doc.js</code>.
+            Use the runner source block for code that readers should edit and execute.
+            The build script expands <code>div[data-python-runner]</code> into the full browser runner UI.
           </p>
 
           <aside class="callout callout-warning">
@@ -275,49 +274,50 @@ print(summary)
             For documents that require strict supply-chain control, host a reviewed Pyodide distribution locally.
           </aside>
 
-          <div class="runner-panel">
-            <p id="python-code-help">
-              Edit the code in the highlighted Python editor, then press <strong>Run Python</strong>.
-              On slow connections or constrained devices, the first Python runtime load can take some time.
-            </p>
+        <div class="runner-panel">
+          <p id="python-code-help">
+            Try changing the input sizes and run the code.
+            On slow connections or constrained devices, the first Python runtime load can take some time.
+          </p>
 
-            <div class="runner-toolbar">
-              <button id="load-button" class="button secondary" type="button">Load Python Runtime</button>
-              <button id="run-button" class="button" type="button" disabled>Run Python</button>
-              <button id="reset-button" class="button secondary" type="button">Reset Code Text</button>
-              <button id="restart-runtime-button" class="button secondary" type="button" disabled>Restart Python Runtime</button>
-            </div>
-
-            <label for="python-code" class="visually-hidden">Python code editor</label>
-            <div class="python-editor-wrap">
-              <textarea
-                id="python-code"
-                spellcheck="false"
-                aria-describedby="python-code-help output"
-                autocomplete="off"
-                autocorrect="off"
-                autocapitalize="off"
-              ></textarea>
-              <button id="copy-python-code-button" class="copy-code-button python-editor-copy-button" type="button" aria-label="Copy Python code">Copy</button>
-            </div>
-
-            <h3>Output</h3>
-            <div
-              id="output"
-              class="output"
-              role="log"
-              aria-live="polite"
-              aria-atomic="true"
-            >Press "Load Python Runtime" first. Python will run in a Web Worker.</div>
-
-            <section class="print-only print-runner-snapshot" aria-label="Printed Python runner snapshot">
-              <h3>Printed Python Code</h3>
-              <pre id="print-python-code" class="print-code-block"></pre>
-
-              <h3>Printed Python Output</h3>
-              <pre id="print-python-output" class="print-output-block"></pre>
-            </section>
+          <div class="runner-toolbar">
+            <button id="load-button" class="button secondary" type="button">Load Python Runtime</button>
+            <button id="run-button" class="button" type="button" disabled>Run Python</button>
+            <button id="reset-button" class="button secondary" type="button">Reset Code Text</button>
+            <button id="restart-runtime-button" class="button secondary" type="button" disabled>Restart Python Runtime</button>
           </div>
+
+          <label for="python-code" class="visually-hidden">Python code editor</label>
+          <div class="python-editor-wrap">
+            <textarea
+              id="python-code"
+              spellcheck="false"
+              aria-describedby="python-code-help output"
+              autocomplete="off"
+              autocorrect="off"
+              autocapitalize="off"
+              data-initial-code-base64="ZnJvbSB0aW1lIGltcG9ydCBwZXJmX2NvdW50ZXIKCgpkZWYgbGluZWFyX3NlYXJjaF93aXRoX2NvdW50KHZhbHVlczogbGlzdFtpbnRdLCB0YXJnZXQ6IGludCkgLT4gdHVwbGVbaW50LCBpbnRdOgogICAgIiIiRmluZHMgdGhlIHRhcmdldCBieSBzY2FubmluZyB2YWx1ZXMgYW5kIGNvdW50cyBjb21wYXJpc29ucy4KCiAgICBBcmdzOgogICAgICAgIHZhbHVlczogU29ydGVkIGludGVnZXIgdmFsdWVzLgogICAgICAgIHRhcmdldDogVmFsdWUgdG8gZmluZC4KCiAgICBSZXR1cm5zOgogICAgICAgIEEgcGFpciBvZiB0aGUgdGFyZ2V0IGluZGV4IGFuZCB0aGUgbnVtYmVyIG9mIGNvbXBhcmlzb25zLgogICAgIiIiCiAgICBjb21wYXJpc29ucyA9IDAKCiAgICBmb3IgaW5kZXgsIHZhbHVlIGluIGVudW1lcmF0ZSh2YWx1ZXMpOgogICAgICAgIGNvbXBhcmlzb25zICs9IDEKICAgICAgICBpZiB2YWx1ZSA9PSB0YXJnZXQ6CiAgICAgICAgICAgIHJldHVybiBpbmRleCwgY29tcGFyaXNvbnMKCiAgICByZXR1cm4gLTEsIGNvbXBhcmlzb25zCgoKZGVmIGJpbmFyeV9zZWFyY2hfd2l0aF9jb3VudCh2YWx1ZXM6IGxpc3RbaW50XSwgdGFyZ2V0OiBpbnQpIC0+IHR1cGxlW2ludCwgaW50XToKICAgICIiIkZpbmRzIHRoZSB0YXJnZXQgdXNpbmcgYmluYXJ5IHNlYXJjaCBhbmQgY291bnRzIGNvbXBhcmlzb25zLgoKICAgIEFyZ3M6CiAgICAgICAgdmFsdWVzOiBTb3J0ZWQgaW50ZWdlciB2YWx1ZXMuCiAgICAgICAgdGFyZ2V0OiBWYWx1ZSB0byBmaW5kLgoKICAgIFJldHVybnM6CiAgICAgICAgQSBwYWlyIG9mIHRoZSB0YXJnZXQgaW5kZXggYW5kIHRoZSBudW1iZXIgb2YgY29tcGFyaXNvbnMuCiAgICAiIiIKICAgIGxlZnQgPSAwCiAgICByaWdodCA9IGxlbih2YWx1ZXMpIC0gMQogICAgY29tcGFyaXNvbnMgPSAwCgogICAgd2hpbGUgbGVmdCA8PSByaWdodDoKICAgICAgICBtaWRkbGUgPSAobGVmdCArIHJpZ2h0KSAvLyAyCiAgICAgICAgY29tcGFyaXNvbnMgKz0gMQoKICAgICAgICBpZiB2YWx1ZXNbbWlkZGxlXSA9PSB0YXJnZXQ6CiAgICAgICAgICAgIHJldHVybiBtaWRkbGUsIGNvbXBhcmlzb25zCgogICAgICAgIGlmIHZhbHVlc1ttaWRkbGVdIDwgdGFyZ2V0OgogICAgICAgICAgICBsZWZ0ID0gbWlkZGxlICsgMQogICAgICAgIGVsc2U6CiAgICAgICAgICAgIHJpZ2h0ID0gbWlkZGxlIC0gMQoKICAgIHJldHVybiAtMSwgY29tcGFyaXNvbnMKCgpkZWYgbWVhc3VyZV9vbmNlKG46IGludCwgcmVwZWF0czogaW50KSAtPiB0dXBsZVtpbnQsIGludCwgZmxvYXQsIGZsb2F0XToKICAgICIiIk1lYXN1cmVzIGNvbXBhcmlzb24gY291bnRzIGFuZCBhdmVyYWdlIGV4ZWN1dGlvbiB0aW1lcy4KCiAgICBBcmdzOgogICAgICAgIG46IE51bWJlciBvZiBlbGVtZW50cy4KICAgICAgICByZXBlYXRzOiBOdW1iZXIgb2YgcmVwZWF0ZWQgc2VhcmNoZXMuCgogICAgUmV0dXJuczoKICAgICAgICBMaW5lYXItc2VhcmNoIGNvbXBhcmlzb25zLCBiaW5hcnktc2VhcmNoIGNvbXBhcmlzb25zLCBhdmVyYWdlIGxpbmVhci1zZWFyY2gKICAgICAgICB0aW1lLCBhbmQgYXZlcmFnZSBiaW5hcnktc2VhcmNoIHRpbWUuCiAgICAiIiIKICAgIHZhbHVlcyA9IGxpc3QocmFuZ2UobikpCiAgICB0YXJnZXQgPSBuIC0gMQoKICAgIF8sIGxpbmVhcl9jb21wYXJpc29ucyA9IGxpbmVhcl9zZWFyY2hfd2l0aF9jb3VudCh2YWx1ZXMsIHRhcmdldCkKICAgIF8sIGJpbmFyeV9jb21wYXJpc29ucyA9IGJpbmFyeV9zZWFyY2hfd2l0aF9jb3VudCh2YWx1ZXMsIHRhcmdldCkKCiAgICBzdGFydCA9IHBlcmZfY291bnRlcigpCiAgICBmb3IgXyBpbiByYW5nZShyZXBlYXRzKToKICAgICAgICBsaW5lYXJfc2VhcmNoX3dpdGhfY291bnQodmFsdWVzLCB0YXJnZXQpCiAgICBsaW5lYXJfbXMgPSAocGVyZl9jb3VudGVyKCkgLSBzdGFydCkgKiAxMDAwIC8gcmVwZWF0cwoKICAgIHN0YXJ0ID0gcGVyZl9jb3VudGVyKCkKICAgIGZvciBfIGluIHJhbmdlKHJlcGVhdHMpOgogICAgICAgIGJpbmFyeV9zZWFyY2hfd2l0aF9jb3VudCh2YWx1ZXMsIHRhcmdldCkKICAgIGJpbmFyeV9tcyA9IChwZXJmX2NvdW50ZXIoKSAtIHN0YXJ0KSAqIDEwMDAgLyByZXBlYXRzCgogICAgcmV0dXJuIGxpbmVhcl9jb21wYXJpc29ucywgYmluYXJ5X2NvbXBhcmlzb25zLCBsaW5lYXJfbXMsIGJpbmFyeV9tcwoKCmRlZiBtYWluKCkgLT4gTm9uZToKICAgICIiIlJ1bnMgYSBzaW1wbGUgZ3Jvd3RoLXJhdGUgZXhwZXJpbWVudC4iIiIKICAgIHNpemVzID0gWzFfMDAwLCAxMF8wMDAsIDEwMF8wMDAsIDUwMF8wMDAsIDFfMDAwXzAwMF0KICAgIHJlcGVhdHNfYnlfc2l6ZSA9IHsKICAgICAgICAxXzAwMDogMjAwLAogICAgICAgIDEwXzAwMDogMTAwLAogICAgICAgIDEwMF8wMDA6IDIwLAogICAgICAgIDUwMF8wMDA6IDUsCiAgICAgICAgMV8wMDBfMDAwOiAzLAogICAgfQoKICAgIHByaW50KCJuICAgICAgICAgIGxpbmVhcl9jbXAgICBiaW5hcnlfY21wICAgY21wX3JhdGlvICAgbGluZWFyX21zICAgYmluYXJ5X21zIikKICAgIHByaW50KCItIiAqIDc4KQoKICAgIGZvciBuIGluIHNpemVzOgogICAgICAgIGxpbmVhcl9jbXAsIGJpbmFyeV9jbXAsIGxpbmVhcl9tcywgYmluYXJ5X21zID0gbWVhc3VyZV9vbmNlKG4sIHJlcGVhdHNfYnlfc2l6ZVtuXSkKICAgICAgICByYXRpbyA9IGxpbmVhcl9jbXAgLyBiaW5hcnlfY21wIGlmIGJpbmFyeV9jbXAgPiAwIGVsc2UgZmxvYXQoImluZiIpCiAgICAgICAgcHJpbnQoCiAgICAgICAgICAgIGYie246Pjl9ICAiCiAgICAgICAgICAgIGYie2xpbmVhcl9jbXA6PjEwfSAgIgogICAgICAgICAgICBmIntiaW5hcnlfY21wOj4xMH0gICIKICAgICAgICAgICAgZiJ7cmF0aW86PjkuMWZ9eCAgIgogICAgICAgICAgICBmIntsaW5lYXJfbXM6PjkuNGZ9ICAiCiAgICAgICAgICAgIGYie2JpbmFyeV9tczo+OS40Zn0iCiAgICAgICAgKQoKICAgIHByaW50KCkKICAgIHByaW50KCJJbnRlcnByZXRhdGlvbjoiKQogICAgcHJpbnQoIi0gQ29tcGFyaXNvbiBjb3VudHMgYXJlIHRoZSBjbGVhbmVzdCBzaWduYWwgaGVyZS4iKQogICAgcHJpbnQoIi0gTGluZWFyIHNlYXJjaCBjb21wYXJpc29ucyBncm93IGFsbW9zdCBkaXJlY3RseSB3aXRoIG4uIikKICAgIHByaW50KCItIEJpbmFyeSBzZWFyY2ggY29tcGFyaXNvbnMgZ3JvdyBzbG93bHkgYmVjYXVzZSB0aGUgc2VhcmNoIHJhbmdlIGlzIGhhbHZlZC4iKQogICAgcHJpbnQoIi0gVGltaW5nIG51bWJlcnMgYXJlIHVzZWZ1bCBidXQgbm9pc2llciB0aGFuIGNvbXBhcmlzb24gY291bnRzLiIpCgoKbWFpbigp"
+            ></textarea>
+            <button id="copy-python-code-button" class="copy-code-button python-editor-copy-button" type="button" aria-label="Copy Python code">Copy</button>
+          </div>
+
+          <h3>Output</h3>
+          <div
+            id="output"
+            class="output"
+            role="log"
+            aria-live="polite"
+            aria-atomic="true"
+          >Press "Load Python Runtime" first. Python will run in a Web Worker.</div>
+
+          <section class="print-only print-runner-snapshot" aria-label="Printed Python runner snapshot">
+            <h3>Printed Python Code</h3>
+            <pre id="print-python-code" class="print-code-block"></pre>
+
+            <h3>Printed Python Output</h3>
+            <pre id="print-python-output" class="print-output-block"></pre>
+          </section>
+        </div>
         </section>
 
         <section id="other-language-examples" data-toc data-toc-title="Other Languages">
@@ -330,20 +330,20 @@ print(summary)
           <h3 id="powershell-code-example" data-toc data-toc-level="3" data-toc-title="PowerShell Code Block">PowerShell Code Block</h3>
           <div class="code-caption">powershell</div>
           <pre class="code-block language-powershell"><code class="language-powershell">Get-ChildItem -Path . -Filter "*.html" |
-    Select-Object Name, Length, LastWriteTime |
-    Sort-Object LastWriteTime -Descending
-</code></pre>
+            Select-Object Name, Length, LastWriteTime |
+            Sort-Object LastWriteTime -Descending
+        </code></pre>
 
           <h3 id="sql-code-example" data-toc data-toc-level="3" data-toc-title="SQL Code Block">SQL Code Block</h3>
           <div class="code-caption">sql</div>
           <pre class="code-block language-sql"><code class="language-sql">SELECT
-    document_id,
-    title,
-    updated_at
-FROM documents
-WHERE status = "published"
-ORDER BY updated_at DESC;
-</code></pre>
+            document_id,
+            title,
+            updated_at
+        FROM documents
+        WHERE status = "published"
+        ORDER BY updated_at DESC;
+        </code></pre>
 
           <aside class="callout callout-warning">
             To add another language such as cmd, bash, or JSON, load the corresponding Prism language component and change the <code>language-...</code> class to match.
@@ -361,28 +361,28 @@ ORDER BY updated_at DESC;
 
           <div class="code-caption">mermaid</div>
           <pre class="code-block language-mermaid"><code class="language-mermaid">flowchart LR
-    A[Define the document goal] --> B[Plan the section structure]
-    B --> C[Write the body text]
-    B --> D[Create exercises or code examples]
-    C --> E[Add diagrams and math]
-    D --> F[Check executable examples]
-    E --> G[Review the rendered document]
-    F --> G
-</code></pre>
+            A[Define the document goal] --> B[Plan the section structure]
+            B --> C[Write the body text]
+            B --> D[Create exercises or code examples]
+            C --> E[Add diagrams and math]
+            D --> F[Check executable examples]
+            E --> G[Review the rendered document]
+            F --> G
+        </code></pre>
 
           <figure class="mermaid-figure">
             <figcaption>Diagram rendered from the Mermaid definition above</figcaption>
             <div class="mermaid-wrap">
               <!-- Use div.mermaid as the Mermaid rendering hook; figure/figcaption provide the semantic structure. -->
               <div class="mermaid">
-flowchart LR
-    A[Define the document goal] --> B[Plan the section structure]
-    B --> C[Write the body text]
-    B --> D[Create exercises or code examples]
-    C --> E[Add diagrams and math]
-    D --> F[Check executable examples]
-    E --> G[Review the rendered document]
-    F --> G
+        flowchart LR
+            A[Define the document goal] --> B[Plan the section structure]
+            B --> C[Write the body text]
+            B --> D[Create exercises or code examples]
+            C --> E[Add diagrams and math]
+            D --> F[Check executable examples]
+            E --> G[Review the rendered document]
+            F --> G
               </div>
             </div>
           </figure>
@@ -430,6 +430,13 @@ flowchart LR
             </table>
           </div>
         </section>
+
+        <nav class="chapter-nav" data-chapter-nav aria-label="Chapter navigation">
+          <a class="chapter-nav-link previous" href="01-introduction.html">
+            <span>Previous</span>
+            <strong>Chapter 1: Introduction</strong>
+          </a>
+        </nav>
 
         <footer class="footer">
           Prototype template with robust navigation and Pyodide runner.
