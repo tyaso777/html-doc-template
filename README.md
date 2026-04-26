@@ -13,6 +13,22 @@ templates/technical-doc-template.html      # document template using assets/
 templates/content-example.html          # content-only fragment for AI-assisted authoring
 ```
 
+## Positioning
+
+This project is not a static site generator, Markdown converter, or web application framework.
+
+It can be used for single-page or multi-page HTML documents, but it does not generate pages, routes, navigation, search indexes, or site-wide metadata automatically.
+
+Use this template when you want:
+
+- Direct control over document HTML, CSS, and browser behavior.
+- Shared CSS and JavaScript without a build step.
+- Built-in examples for code highlighting, MathJax, Mermaid, and optional Pyodide execution.
+- A structure that works well with AI-assisted authoring by generating only the `<article class="content">` fragment.
+- Easy publishing through GitHub Pages.
+
+If you primarily want Markdown-first authoring, automatic page generation, site-wide navigation, search indexes, theme systems, or content pipelines, a static site generator may be a better fit.
+
 ## Features
 
 - Responsive two-column layout with a collapsible sidebar.
