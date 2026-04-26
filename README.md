@@ -2,6 +2,8 @@
 
 HTML templates for technical documents that include code blocks, math, diagrams, and optional in-browser Python execution.
 
+Live demo: https://tyaso777.github.io/html-doc-template/
+
 The browser entry page is `index.html`.
 
 Main templates:
@@ -147,6 +149,10 @@ The initial Python code is stored in the `DEFAULT_CODE` JavaScript constant in `
 ## Notes
 
 This project is intended as a source template. Documents created from it should usually be copied into another project or an `examples/` directory rather than editing the base template directly for each document.
+
+## Third-party Libraries
+
+This template loads third-party libraries from public CDNs. Those libraries are distributed under their own licenses, including MIT, Apache-2.0, and MPL-2.0. The MIT License in this repository applies to the template files maintained here, not to third-party libraries loaded from CDNs.
 
 ## License
 
