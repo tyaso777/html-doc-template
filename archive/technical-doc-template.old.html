@@ -1,0 +1,1972 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<!--
+  Security note:
+  CDN assets should use integrity and crossorigin="anonymous" whenever possible.
+  Some CDN assets below intentionally keep TODO comments instead of unverified SRI values,
+  because an incorrect integrity value blocks the asset from loading.
+-->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HTMLテンプレート</title>
+
+  <!-- Prism.js -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/plugins/line-numbers/prism-line-numbers.min.css" integrity="sha512-cbQXwDFK7lj2Fqfkuxbo5iD1dSbLlJGXGpfTDqbggqjHJeyzx88I3rfwjS38WJag/ihH7lzuGlGHpDBymLirZQ==" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" integrity="sha512-uf06llspW44/LZpHzHT6qBOIVODjWtv4MxCricRxkzvopAlSWnTf6hpZTFxuuZcuNE9CBQhqE0Seu1CoRk84nQ==" crossorigin="anonymous" referrerpolicy="no-referrer">
+
+  <!-- Library config -->
+  <script>
+    window.Prism = window.Prism || {};
+    window.Prism.manual = true;
+
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        processEscapes: true
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+
+  <!-- External libraries -->
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/prism.min.js" integrity="sha512-HiD3V4nv8fcjtouznjT9TqDNDm1EXngV331YGbfVGeKUoH+OLkRTCMzA34ecjlgSQZpdHZupdSrqHY+Hz3l6uQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/components/prism-python.min.js" integrity="sha512-AKaNmg8COK0zEbjTdMHJAPJ0z6VeNqvRvH4/d5M4sHJbQQUToMBtodq4HaV4fa+WV2UTfoperElm66c9/8cKmQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/components/prism-powershell.min.js" integrity="sha512-mNRS5mGSidY0juPNlXC17z6atUusuE8Fdbu5+zK6drBDbroYeaEfudGKSRoFvRpzseJq2v3bNOwpEFHi6L82Aw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/components/prism-sql.min.js" integrity="sha512-sijCOJblSCXYYmXdwvqV0tak8QJW5iy2yLB1wAbbLc3OOIueqymizRFWUS/mwKctnzPKpNdPJV3aK1zlDMJmXQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/components/prism-mermaid.min.js" integrity="sha512-TWvtkke2tZtIQOA5/sjGM0S2RCMLTxhLKh0zYvhHdhVQizOaPcF9uYa+szt+kun01TCUVALUcVxlta8fjwt1jQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha512-BttltKXFyWnGZQcRWj6osIg7lbizJchuAMotOkdLxHxwt/Hyo+cl47bZU0QADg+Qt5DJwni3SbYGXeGMB5cBcw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mermaid@11.14.0/dist/mermaid.min.js" integrity="sha512-1CZj4aGbVA13DvizpBtnnUCPqBMDokst010DHdNrd7E79k2BoZqRaU0xybAKlsWERxKlLoAqvHpuKE1mBuveUQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js" integrity="sha256-1CldwzdEg2k1wTmf7s5RWVd7NMXI/7nxxjJM2C4DqII=" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js" integrity="sha512-OeZ4Yrb/W7d2W4rAMOO0HQ9Ro/aWLtpW9BUSR2UOWnSV2hprXLkkYnnCGc9NeLUxxE4ZG7zN16UuT1Elqq8Opg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js" integrity="sha512-Vs2GKxnxnTQBRW7o2xXZ9A28njjmu5RToS42efiKNEWmikov0inZY522EtGVK5CcVo0M/FQwmXsTfl9skgRnvw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <style>
+    :root {
+      --bg: #f7f7f9;
+      --panel-bg: #ffffff;
+      --text: #202124;
+      --muted: #5f6368;
+      --border: #dadce0;
+      --accent: #1a73e8;
+      --accent-bg: #e8f0fe;
+      --warn-bg: #fff7e6;
+      --warn-border: #f5b642;
+      --ok-bg: #e6f4ea;
+      --ok-border: #34a853;
+      --code-bg: #f5f5f5;
+      --sidebar-width: 320px;
+      --radius: 12px;
+      --shadow: 0 1px 3px rgba(60, 64, 67, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.75;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    a:focus-visible,
+    button:focus-visible,
+    summary:focus-visible,
+    textarea:focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+      gap: 24px;
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 24px;
+      align-self: start;
+      max-height: calc(100vh - 48px);
+      overflow: auto;
+      background: var(--panel-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .sidebar-header {
+      padding: 16px 16px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-title {
+      margin: 0;
+      font-size: 1.05rem;
+      line-height: 1.4;
+      font-weight: 700;
+    }
+
+    .sidebar-subtitle {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .nav-section {
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-section:last-child {
+      border-bottom: 0;
+    }
+
+    .nav-section summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 48px;
+      padding: 10px 16px;
+      color: var(--accent);
+      background: #fafafa;
+      cursor: pointer;
+      font-weight: 700;
+      list-style: none;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: rgba(26, 115, 232, 0.16);
+    }
+
+    .nav-section summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .nav-section summary::after {
+      content: "▾";
+      color: var(--muted);
+      font-size: 0.9rem;
+      transition: transform 0.15s ease;
+    }
+
+    .nav-section:not([open]) summary::after {
+      transform: rotate(-90deg);
+    }
+
+    .nav-section summary:hover {
+      background: var(--accent-bg);
+    }
+
+    .nav-body {
+      padding: 12px 16px 16px;
+    }
+
+    .nav-list {
+      margin: 0;
+      padding-left: 1.2rem;
+    }
+
+    .nav-list li {
+      margin: 0.35rem 0;
+    }
+
+    .nav-list ol {
+      margin: 0.25rem 0 0.55rem;
+      padding-left: 1.1rem;
+    }
+
+    .nav-list-category {
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .toc-tree,
+    .toc-tree ol {
+      list-style-position: outside;
+    }
+
+    .toc-tree ol {
+      margin: 0.25rem 0 0.35rem;
+      padding-left: 1.1rem;
+    }
+
+    .toc-tree > li {
+      margin: 0.45rem 0;
+    }
+
+    .toc-tree li li {
+      margin: 0.25rem 0;
+      font-size: 0.92em;
+    }
+
+    .toc-level-3 {
+      margin-left: 0;
+      font-size: 0.92em;
+    }
+
+    main,
+    article,
+    section,
+    .content,
+    .card,
+    .callout,
+    .math-block,
+    .mermaid-wrap,
+    .runner-panel {
+      min-width: 0;
+    }
+
+    .content {
+      background: var(--panel-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 40px min(6vw, 72px);
+    }
+
+    .hero {
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 36px;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(1.7rem, 3vw, 2.5rem);
+      line-height: 1.25;
+    }
+
+    .hero p {
+      color: var(--muted);
+      margin-bottom: 0;
+    }
+
+    h2 {
+      margin-top: 3rem;
+      padding-bottom: 0.3rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 1.55rem;
+      line-height: 1.4;
+    }
+
+    h3 {
+      margin-top: 2rem;
+      font-size: 1.25rem;
+    }
+
+    .callout {
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin: 16px 0;
+    }
+
+    .callout-info {
+      border-left: 4px solid var(--accent);
+      background: var(--accent-bg);
+    }
+
+    .callout-success {
+      border-left: 4px solid var(--ok-border);
+      background: var(--ok-bg);
+    }
+
+    .callout-warning {
+      border-left: 4px solid var(--warn-border);
+      background: var(--warn-bg);
+    }
+
+    .card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      margin: 18px 0;
+      background: #fff;
+    }
+
+    .card-muted {
+      background: #fafafa;
+    }
+
+    .card-compact {
+      padding: 14px 16px;
+    }
+
+    .card > :first-child {
+      margin-top: 0;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin: 18px 0;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #fafafa;
+      font-weight: 700;
+    }
+
+    .metadata {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 10px;
+      margin: 18px 0;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fafafa;
+    }
+
+    .document-info {
+      margin: 0 0 36px;
+    }
+
+    .document-info h2 {
+      margin-top: 0;
+    }
+
+    .metadata div {
+      min-width: 0;
+    }
+
+    .metadata dt {
+      margin: 0 0 2px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .metadata dd {
+      margin: 0;
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+
+    .math-block {
+      overflow-x: auto;
+      padding: 8px 0;
+    }
+
+    .code-block,
+    .mermaid {
+      max-width: 100%;
+    }
+
+    .code-block {
+      display: block;
+      width: 100%;
+      min-width: 0;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin: 1.25rem 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+      white-space: pre;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .code-block > code {
+      display: inline-block;
+      min-width: max-content;
+      max-width: none;
+    }
+
+    .code-block-wrap {
+      position: relative;
+      margin: 1.25rem 0;
+    }
+
+    .code-block-wrap .code-block {
+      margin: 0;
+    }
+
+    .copy-code-button {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      z-index: 2;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: #fff;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.76rem;
+      font-weight: 700;
+      line-height: 1;
+      padding: 7px 10px;
+      box-shadow: var(--shadow);
+    }
+
+    .copy-code-button:hover {
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .copy-code-button:disabled {
+      cursor: default;
+      opacity: 0.72;
+    }
+code,
+    textarea,
+    .output {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    }
+
+    code[class*="language-"] {
+      font-size: 0.92rem;
+      line-height: 1.65;
+      tab-size: 4;
+    }
+
+    .code-caption {
+      margin: 1.25rem 0 -0.75rem;
+      padding: 7px 12px;
+      width: fit-content;
+      max-width: 100%;
+      background: #eeeeee;
+      border: 1px solid var(--border);
+      border-bottom: 0;
+      border-radius: 8px 8px 0 0;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .mermaid-figure {
+      margin: 1.25rem 0;
+    }
+
+    .mermaid-figure figcaption {
+      margin-bottom: 0.5rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .mermaid-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: #fff;
+      padding: 16px;
+    }
+
+    .mermaid {
+      min-width: max-content;
+    }
+
+    .runner-panel {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    .runner-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin: 12px 0;
+    }
+
+    .button {
+      border: 1px solid var(--accent);
+      border-radius: 999px;
+      background: var(--accent);
+      color: #fff;
+      cursor: pointer;
+      font-weight: 700;
+      padding: 10px 15px;
+      min-height: 44px;
+      touch-action: manipulation;
+    }
+
+    .button.secondary {
+      background: #fff;
+      color: var(--accent);
+    }
+
+    .button:disabled {
+      border-color: var(--border);
+      background: #e0e0e0;
+      color: var(--muted);
+      cursor: not-allowed;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 430px;
+      resize: vertical;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+      font-size: 0.9rem;
+      line-height: 1.55;
+      white-space: pre;
+      overflow: auto;
+      tab-size: 4;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .output {
+      min-height: 180px;
+      max-height: 420px;
+      overflow: auto;
+      white-space: pre;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: #111;
+      color: #f7f7f7;
+      padding: 12px;
+      font-size: 0.88rem;
+      line-height: 1.55;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .CodeMirror {
+      height: auto;
+      min-height: 420px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-family:
+        ui-monospace,
+        SFMono-Regular,
+        Menlo,
+        Consolas,
+        "Liberation Mono",
+        monospace;
+      font-size: 0.9rem;
+      line-height: 1.55;
+    }
+
+    .CodeMirror-scroll {
+      min-height: 420px;
+      max-height: 560px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .CodeMirror-focused {
+      outline: 3px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    .footer {
+      margin-top: 48px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .print-only {
+      display: none;
+    }
+
+    .print-runner-snapshot {
+      margin-top: 1rem;
+    }
+
+    .print-runner-snapshot h3 {
+      margin-top: 1.5rem;
+    }
+
+    .print-code-block,
+    .print-output-block {
+      display: block;
+      width: 100%;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+      background: var(--code-bg);
+      font-family:
+        ui-monospace,
+        SFMono-Regular,
+        Menlo,
+        Consolas,
+        "Liberation Mono",
+        monospace;
+      font-size: 0.85rem;
+      line-height: 1.55;
+    }
+
+    .print-output-block {
+      background: #ffffff;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        display: block;
+        padding: 12px;
+      }
+
+      .sidebar {
+        position: static;
+        max-height: none;
+        margin-bottom: 16px;
+      }
+
+      .content {
+        padding: 24px 18px;
+      }
+
+      code[class*="language-"],
+      textarea,
+      .output {
+        font-size: 0.82rem;
+      }
+
+      textarea {
+        min-height: 380px;
+      }
+
+      .code-block {
+        margin-left: 0;
+        margin-right: 0;
+      }
+    }
+
+    @media print {
+      body {
+        background: #fff;
+      }
+
+      .layout {
+        display: block;
+        max-width: none;
+        padding: 0;
+      }
+
+      .sidebar {
+        display: none;
+      }
+
+      .content {
+        border: 0;
+        box-shadow: none;
+        padding: 0;
+      }
+
+      .screen-only {
+        display: none !important;
+      }
+
+      .print-only {
+        display: block !important;
+      }
+
+      .runner-toolbar,
+      #python-code,
+      .CodeMirror,
+      #output {
+        display: none !important;
+      }
+
+      .runner-panel {
+        border: 0;
+        box-shadow: none;
+        padding: 0;
+      }
+
+      .print-code-block,
+      .print-output-block {
+        max-height: none;
+        overflow: visible;
+        page-break-inside: auto;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+    }
+  </style>
+</head>
+
+<body class="line-numbers document-page">
+  <div class="layout">
+    <aside class="sidebar" aria-label="Document navigation">
+      <header class="sidebar-header" aria-labelledby="sidebar-title">
+        <h2 id="sidebar-title" class="sidebar-title">HTML Document<br>Template</h2>
+        <!-- Replace this with a short document subtitle or project label. -->
+        <p class="sidebar-subtitle">Document subtitle</p>
+      </header>
+
+      <details class="nav-section" open>
+        <summary>Contents</summary>
+        <div class="nav-body">
+          <ol id="auto-toc" class="nav-list toc-tree">
+            <li>Loading TOC from elements marked with data-toc...</li>
+          </ol>
+        </div>
+      </details>
+
+      <details class="nav-section">
+        <summary>Materials</summary>
+        <div class="nav-body">
+          <ol class="nav-list">
+            <li>
+              <span class="nav-list-category">Templates</span>
+              <ol>
+                <li><a href="../templates/technical-doc-template.html">Technical document template</a></li>
+              </ol>
+            </li>
+            <li>
+              <span class="nav-list-category">Examples</span>
+              <ol>
+                <li><a href="../index.html">Project index</a></li>
+                <li><a href="../README.md">Repository README</a></li>
+              </ol>
+            </li>
+          </ol>
+        </div>
+      </details>
+
+      <details class="nav-section">
+        <summary>External Links</summary>
+        <div class="nav-body">
+          <ol class="nav-list">
+            <li>
+              <span class="nav-list-category">Rendering</span>
+              <ol>
+                <li><a href="https://prismjs.com/" target="_blank" rel="noopener">Prism.js</a></li>
+                <li><a href="https://www.mathjax.org/" target="_blank" rel="noopener">MathJax</a></li>
+                <li><a href="https://mermaid.js.org/" target="_blank" rel="noopener">Mermaid</a></li>
+              </ol>
+            </li>
+            <li>
+              <span class="nav-list-category">Python runtime</span>
+              <ol>
+                <li><a href="https://pyodide.org/" target="_blank" rel="noopener">Pyodide</a></li>
+              </ol>
+            </li>
+          </ol>
+        </div>
+      </details>
+    </aside>
+
+    <main>
+      <article class="content">
+        <header class="hero">
+          <!-- Keep exactly one h1 in the document: the main document title. -->
+          <h1>HTMLテンプレート</h1>
+          <p>
+            コード、数式、図、実行例を含む技術ドキュメントを、1つのHTMLファイルとして作成するためのテンプレートです。
+          </p>
+        </header>
+
+        <section class="document-info" aria-labelledby="document-info-title">
+          <h2 id="document-info-title">文書情報</h2>
+          <dl class="metadata" aria-label="Document metadata">
+            <div>
+              <dt>Version</dt>
+              <dd>0.1.0</dd>
+            </div>
+            <div>
+              <dt>Last updated</dt>
+              <dd>2026-04-25</dd>
+            </div>
+            <div>
+              <dt>Author</dt>
+              <dd>Atsushi Suzuki</dd>
+            </div>
+          </dl>
+        </section>
+
+        <!--
+          TOC convention:
+          Mark only structural TOC targets with data-toc.
+          For top-level sections, prefer <section id="..." data-toc data-toc-title="...">.
+          For optional lower-level entries, use headings such as <h3 id="..." data-toc data-toc-level="3">.
+          Headings without data-toc are intentionally excluded from the left-side TOC.
+        -->
+
+        <section id="overview" data-toc data-toc-title="概要">
+          <h2>1. 概要</h2>
+          <p>
+            このページでは、PyodideによりPythonをブラウザ上で実行します。
+            サーバー側のPython環境は不要です。ただし、初回読み込み時にPyodide本体を読み込むため、少し時間がかかります。
+          </p>
+
+          <aside class="callout callout-success">
+            補足Note（<code>aside.callout-success</code>）は、読者に安心して読んでもらうための補足、前提条件、成功状態、推奨事項に使います。
+            例: このテンプレートはスマートフォンでも読みやすいレイアウトを想定しています。
+          </aside>
+
+          <aside class="callout callout-warning">
+            注意Note（<code>aside.callout-warning</code>）は、注意点、制約、環境依存、事前に知っておくべき例外に使います。
+            例: 目次項目の自動生成、Python実行、Mermaid、MathJax、PrismはJavaScriptに依存します。
+          </aside>
+        </section>
+
+        <section id="template-guide" data-toc data-toc-title="テンプレートの使い方">
+          <h2>2. テンプレートの使い方</h2>
+          <p>
+            この章は、テンプレートを複製して新しいHTMLドキュメントを作るときの最小限の編集ガイドです。
+            人間が読んでも、生成AIがHTMLを追記しても、既存の構造に沿いやすいように主要な書き方を示します。
+          </p>
+
+          <aside class="callout callout-success">
+            章として目次に出したい範囲は <code>&lt;section id="..." data-toc data-toc-title="..."&gt;</code> で作ります。
+            小見出しも目次に出したい場合は、見出しに <code>id</code>、<code>data-toc</code>、<code>data-toc-level="3"</code> を付けます。
+          </aside>
+
+          <div class="card">
+            <h3>よく使う部品</h3>
+            <ul>
+              <li>補足や推奨事項: <code>&lt;aside class="callout callout-success"&gt;</code></li>
+              <li>注意点や制約: <code>&lt;aside class="callout callout-warning"&gt;</code></li>
+              <li>本文中の標準カード: <code>&lt;div class="card"&gt;</code></li>
+              <li>控えめなカード: <code>&lt;div class="card card-muted"&gt;</code></li>
+              <li>余白を抑えたカード: <code>&lt;div class="card card-compact"&gt;</code></li>
+              <li>コード表示: <code>&lt;pre class="code-block language-python"&gt;&lt;code class="language-python"&gt;</code></li>
+              <li>数式: インラインは <code>\(...\)</code>、別行表示は <code>\[...\]</code></li>
+              <li>Mermaid図: <code>&lt;div class="mermaid"&gt;</code> に図の定義を書きます。</li>
+            </ul>
+          </div>
+
+          <aside class="callout callout-warning">
+            目次、Python実行、Mermaid、MathJax、PrismはJavaScriptで拡張されます。
+            JavaScriptが止まっても本文を読めるように、重要な説明は通常のHTML本文として書いてください。
+          </aside>
+        </section>
+
+        <section id="formula-examples" data-toc data-toc-title="数式の表示例">
+          <h2>3. 数式の表示例</h2>
+          <p>
+            MathJaxによるインライン数式と別行数式の表示サンプルです。
+            新しいドキュメントを作るときは、この章を複製して内容を差し替えると、表示形式を保ったまま編集できます。
+          </p>
+
+          <h3 id="inline-formula-example" data-toc data-toc-level="3" data-toc-title="インライン数式">インライン数式</h3>
+          <p>
+            本文中に短い数式を入れる場合は <code>\(...\)</code> を使います。
+            たとえば、正規分布は平均 \(\mu\) と分散 \(\sigma^2\) を使って \(X \sim \mathcal{N}(\mu, \sigma^2)\) と書けます。
+            標準化した値は \(z = (x - \mu) / \sigma\) です。
+          </p>
+
+          <h3 id="display-formula-example" data-toc data-toc-level="3" data-toc-title="別行数式">別行数式</h3>
+          <p>
+            独立した数式として見せたい場合は <code>\[...\]</code> で囲み、必要に応じて <code>div.math-block</code> に入れます。
+          </p>
+
+          <div class="math-block">
+            \[
+              f(x) = \frac{1}{\sigma\sqrt{2\pi}}
+              \exp\left(-\frac{(x - \mu)^2}{2\sigma^2}\right)
+            \]
+          </div>
+
+          <div class="math-block">
+            \[
+              \mathbb{E}[X] = \mu, \qquad
+              \mathrm{Var}(X) = \sigma^2, \qquad
+              \int_{-\infty}^{\infty} f(x)\,dx = 1
+            \]
+          </div>
+        </section>
+
+        <section id="python-code-examples" data-toc data-toc-title="Pythonコードの表示と実行例">
+          <h2>4. Pythonコードの表示と実行例</h2>
+          <p>
+            Pythonコードは、読むための静的なコードブロックと、ブラウザ上で実行できるコードエディタを使い分けます。
+            説明だけでよい場合はコード表示、学習者に試してほしい場合は実行パネルを使います。
+          </p>
+
+          <h3 id="python-code-display-example" data-toc data-toc-level="3" data-toc-title="Pythonコードの表示例">Pythonコードの表示例</h3>
+          <p>
+            実行させる必要がないコードは、<code>pre.code-block</code> と <code>code.language-python</code> を組み合わせて表示します。
+            コードの上には <code>div.code-caption</code> を置くと、言語名やファイル名を示せます。
+          </p>
+
+          <div class="code-caption">python</div>
+          <pre class="code-block language-python"><code class="language-python">def summarize_scores(scores: list[int]) -> dict[str, float]:
+    """Returns simple summary statistics for a score list."""
+    total = sum(scores)
+    count = len(scores)
+
+    return {
+        "count": count,
+        "average": total / count,
+        "maximum": max(scores),
+    }
+
+
+scores = [82, 90, 76, 88]
+summary = summarize_scores(scores)
+print(summary)
+</code></pre>
+
+          <h3 id="python-runner-example" data-toc data-toc-level="3" data-toc-title="実行コードの表示例">実行コードの表示例</h3>
+          <p>
+            学習者が編集・実行するコードは、次の実行パネルに表示されます。
+            初期コードはHTML下部の <code>DEFAULT_CODE</code> を編集して差し替えます。
+          </p>
+
+          <aside class="callout callout-warning">
+            Python実行機能は、<strong>Load Python Runtime</strong> を押したときにPyodideをCDNから読み込みます。
+            PyodideはWeb Worker内の <code>importScripts()</code> で読み込むため、通常の <code>integrity</code> によるSRI検証は使えません。
+            厳密な供給網管理が必要な資料では、レビュー済みのPyodide一式をローカル配布する構成に変更してください。
+          </aside>
+
+          <div class="runner-panel">
+            <p id="python-code-help">
+              ハイライト付きのPythonエディタでコードを編集してから <strong>Run Python</strong> を押してください。
+              モバイル環境や低速な回線では、初回のPython runtime読み込みに時間がかかることがあります。
+            </p>
+
+            <div class="runner-toolbar">
+              <button id="load-button" class="button secondary" type="button">Load Python Runtime</button>
+              <button id="run-button" class="button" type="button" disabled>Run Python</button>
+              <button id="reset-button" class="button secondary" type="button">Reset Code Text</button>
+              <button id="copy-python-code-button" class="button secondary" type="button">Copy Code Text</button>
+              <button id="restart-runtime-button" class="button secondary" type="button" disabled>Restart Python Runtime</button>
+            </div>
+
+            <label for="python-code" class="visually-hidden">Python code editor</label>
+            <textarea
+              id="python-code"
+              spellcheck="false"
+              aria-describedby="python-code-help output"
+              autocomplete="off"
+              autocorrect="off"
+              autocapitalize="off"
+            ></textarea>
+
+            <h3>Output</h3>
+            <div
+              id="output"
+              class="output"
+              role="log"
+              aria-live="polite"
+              aria-atomic="true"
+            >Press "Load Python Runtime" first. Python will run in a Web Worker.</div>
+
+            <section class="print-only print-runner-snapshot" aria-label="Printed Python runner snapshot">
+              <h3>Printed Python Code</h3>
+              <pre id="print-python-code" class="print-code-block"></pre>
+
+              <h3>Printed Python Output</h3>
+              <pre id="print-python-output" class="print-output-block"></pre>
+            </section>
+          </div>
+        </section>
+
+        <section id="other-language-examples" data-toc data-toc-title="他の言語の表示">
+          <h2>5. 他の言語の表示</h2>
+          <p>
+            Python以外のコードも、Prismの言語クラスを切り替えることで同じデザインで表示できます。
+            このテンプレートでは、PowerShellとSQLのPrismコンポーネントも初期状態で読み込んでいます。
+          </p>
+
+          <h3 id="powershell-code-example" data-toc data-toc-level="3" data-toc-title="PowerShellコードの表示例">PowerShellコードの表示例</h3>
+          <div class="code-caption">powershell</div>
+          <pre class="code-block language-powershell"><code class="language-powershell">Get-ChildItem -Path . -Filter "*.html" |
+    Select-Object Name, Length, LastWriteTime |
+    Sort-Object LastWriteTime -Descending
+</code></pre>
+
+          <h3 id="sql-code-example" data-toc data-toc-level="3" data-toc-title="SQLコードの表示例">SQLコードの表示例</h3>
+          <div class="code-caption">sql</div>
+          <pre class="code-block language-sql"><code class="language-sql">SELECT
+    document_id,
+    title,
+    updated_at
+FROM documents
+WHERE status = "published"
+ORDER BY updated_at DESC;
+</code></pre>
+
+          <aside class="callout callout-warning">
+            cmd、bash、JSONなど別の言語を追加したい場合は、対応するPrism言語コンポーネントを読み込み、
+            <code>language-...</code> のクラス名をその言語に合わせて変更してください。
+            CDNから追加する場合は、追加したファイルにもSRIを設定してください。
+          </aside>
+        </section>
+
+        <section id="mermaid" data-toc data-toc-title="Mermaidでの図の表示">
+          <h2>6. Mermaidでの図の表示</h2>
+          <p>
+            Mermaidは、テキストで書いた定義からフローチャートや構造図を描画するためのライブラリです。
+            図を画像として作り直さずに、HTML内のテキストを編集するだけで更新できます。
+            フローチャートのほか、シーケンス図、クラス図、状態遷移図なども記述できます。
+          </p>
+
+          <div class="code-caption">mermaid</div>
+          <pre class="code-block language-mermaid"><code class="language-mermaid">flowchart LR
+    A[資料の目的を決める] --> B[章立てを決める]
+    B --> C[本文を書く]
+    B --> D[演習やコード例を作る]
+    C --> E[図や数式を追加する]
+    D --> F[実行例を確認する]
+    E --> G[表示を確認する]
+    F --> G
+</code></pre>
+
+          <figure class="mermaid-figure">
+            <figcaption>上のMermaid定義から描画される図</figcaption>
+            <div class="mermaid-wrap">
+              <!-- Use div.mermaid as the Mermaid rendering hook; figure/figcaption provide the semantic structure. -->
+              <div class="mermaid">
+flowchart LR
+    A[資料の目的を決める] --> B[章立てを決める]
+    B --> C[本文を書く]
+    B --> D[演習やコード例を作る]
+    C --> E[図や数式を追加する]
+    D --> F[実行例を確認する]
+    E --> G[表示を確認する]
+    F --> G
+              </div>
+            </div>
+          </figure>
+        </section>
+
+        <section id="notes" data-toc data-toc-title="運用メモ">
+          <h2>7. 運用メモ</h2>
+          <div class="card card-muted">
+            <h3>実行結果の扱い</h3>
+            <p>
+              ブラウザ上の実行時間は、端末性能、バッテリー状態、ブラウザの最適化、同時に動いている処理に左右されます。
+              厳密なベンチマークではなく、動作確認や傾向を見るための参考値として扱ってください。
+            </p>
+          </div>
+
+          <div class="card card-muted">
+            <h3>段階的に読める設計</h3>
+            <p>
+              本文、リンク、コード本文は通常のHTMLとして読める構成にしています。
+              目次生成、Python実行、Mermaid、MathJax、Prismは、JavaScriptで追加される便利な拡張機能として扱います。
+            </p>
+          </div>
+        </section>
+
+        <section id="changelog" data-toc data-toc-title="Changelog">
+          <h2>8. Changelog</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Version</th>
+                  <th>Date</th>
+                  <th>Changes</th>
+                  <th>Author</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>0.1.0</td>
+                  <td>2026-04-25</td>
+                  <td>Initial technical HTML document template draft.</td>
+                  <td>Atsushi Suzuki</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <footer class="footer">
+          Prototype template with robust navigation and Pyodide runner.
+        </footer>
+      </article>
+    </main>
+  </div>
+
+
+  <script>
+    const DEFAULT_CODE = `from time import perf_counter
+
+
+def linear_search_with_count(values: list[int], target: int) -> tuple[int, int]:
+    """Finds the target by scanning values and counts comparisons.
+
+    Args:
+        values: Sorted integer values.
+        target: Value to find.
+
+    Returns:
+        A pair of the target index and the number of comparisons.
+    """
+    comparisons = 0
+
+    for index, value in enumerate(values):
+        comparisons += 1
+        if value == target:
+            return index, comparisons
+
+    return -1, comparisons
+
+
+def binary_search_with_count(values: list[int], target: int) -> tuple[int, int]:
+    """Finds the target using binary search and counts comparisons.
+
+    Args:
+        values: Sorted integer values.
+        target: Value to find.
+
+    Returns:
+        A pair of the target index and the number of comparisons.
+    """
+    left = 0
+    right = len(values) - 1
+    comparisons = 0
+
+    while left <= right:
+        middle = (left + right) // 2
+        comparisons += 1
+
+        if values[middle] == target:
+            return middle, comparisons
+
+        if values[middle] < target:
+            left = middle + 1
+        else:
+            right = middle - 1
+
+    return -1, comparisons
+
+
+def measure_once(n: int, repeats: int) -> tuple[int, int, float, float]:
+    """Measures comparison counts and average execution times.
+
+    Args:
+        n: Number of elements.
+        repeats: Number of repeated searches.
+
+    Returns:
+        Linear-search comparisons, binary-search comparisons, average linear-search
+        time, and average binary-search time.
+    """
+    values = list(range(n))
+    target = n - 1
+
+    _, linear_comparisons = linear_search_with_count(values, target)
+    _, binary_comparisons = binary_search_with_count(values, target)
+
+    start = perf_counter()
+    for _ in range(repeats):
+        linear_search_with_count(values, target)
+    linear_ms = (perf_counter() - start) * 1000 / repeats
+
+    start = perf_counter()
+    for _ in range(repeats):
+        binary_search_with_count(values, target)
+    binary_ms = (perf_counter() - start) * 1000 / repeats
+
+    return linear_comparisons, binary_comparisons, linear_ms, binary_ms
+
+
+def main() -> None:
+    """Runs a simple growth-rate experiment."""
+    sizes = [1_000, 10_000, 100_000, 500_000, 1_000_000]
+    repeats_by_size = {
+        1_000: 200,
+        10_000: 100,
+        100_000: 20,
+        500_000: 5,
+        1_000_000: 3,
+    }
+
+    print("n          linear_cmp   binary_cmp   cmp_ratio   linear_ms   binary_ms")
+    print("-" * 78)
+
+    for n in sizes:
+        linear_cmp, binary_cmp, linear_ms, binary_ms = measure_once(n, repeats_by_size[n])
+        ratio = linear_cmp / binary_cmp if binary_cmp > 0 else float("inf")
+        print(
+            f"{n:>9}  "
+            f"{linear_cmp:>10}  "
+            f"{binary_cmp:>10}  "
+            f"{ratio:>9.1f}x  "
+            f"{linear_ms:>9.4f}  "
+            f"{binary_ms:>9.4f}"
+        )
+
+    print()
+    print("Interpretation:")
+    print("- Comparison counts are the cleanest signal here.")
+    print("- Linear search comparisons grow almost directly with n.")
+    print("- Binary search comparisons grow slowly because the search range is halved.")
+    print("- Timing numbers are useful but noisier than comparison counts.")
+
+
+main()
+`;
+
+    /*
+      Pyodide CDN security note:
+      Pyodide is loaded inside a classic Web Worker only when the user presses
+      Load Python Runtime. This keeps the page responsive and prevents Python
+      code from directly manipulating the DOM. However, the Worker loads
+      pyodide.js with importScripts(), and importScripts() does not support
+      normal script-tag SRI. If the pinned CDN asset or its dependent Pyodide
+      files were compromised upstream, the browser would not reject them via
+      integrity="...". For documents that require strict supply-chain
+      control, host a reviewed Pyodide build locally and change this config
+      to point to those local assets.
+    */
+    const PYODIDE_WORKER_CONFIG = {
+      scriptUrl: "https://cdn.jsdelivr.net/pyodide/v0.29.3/full/pyodide.js",
+      indexUrl: "https://cdn.jsdelivr.net/pyodide/v0.29.3/full/"
+    };
+
+    let pyodideWorker = null;
+    let pyodideWorkerUrl = null;
+    let pyodideReady = false;
+    let pyodideRequestId = 0;
+    const pyodidePendingRequests = new Map();
+
+    function initializeMermaid() {
+      if (window.mermaid) {
+        window.mermaid.initialize({
+          startOnLoad: false,
+          securityLevel: "strict",
+          theme: "default",
+          flowchart: {
+            htmlLabels: false,
+            curve: "basis"
+          }
+        });
+        window.mermaid.run({ querySelector: ".mermaid" });
+      }
+    }
+
+    function getTocTitle(element) {
+      if (element.dataset.tocTitle) {
+        return element.dataset.tocTitle;
+      }
+
+      const heading = element.matches("section")
+        ? element.querySelector("h2, h3")
+        : element;
+
+      return heading ? heading.textContent.trim() : element.id;
+    }
+
+    function getTocHref(element) {
+      return `#${element.id}`;
+    }
+
+    function getTocLevel(element) {
+      if (element.dataset.tocLevel) {
+        return Number.parseInt(element.dataset.tocLevel, 10);
+      }
+
+      if (element.matches("h3")) {
+        return 3;
+      }
+
+      return 2;
+    }
+
+    function createTocItem(element) {
+      const item = document.createElement("li");
+      const link = document.createElement("a");
+      const level = getTocLevel(element);
+
+      link.href = getTocHref(element);
+      link.textContent = getTocTitle(element);
+
+      if (level >= 3) {
+        item.classList.add(`toc-level-${level}`);
+      }
+
+      item.appendChild(link);
+      return item;
+    }
+
+    function getOrCreateChildList(item) {
+      let childList = item.querySelector(":scope > ol");
+
+      if (!childList) {
+        childList = document.createElement("ol");
+        item.appendChild(childList);
+      }
+
+      return childList;
+    }
+
+    function buildNestedToc(toc, tocTargets) {
+      const stack = [
+        {
+          level: 1,
+          list: toc,
+          item: null
+        }
+      ];
+
+      for (const target of tocTargets) {
+        const level = getTocLevel(target);
+        const item = createTocItem(target);
+
+        while (stack.length > 1 && stack[stack.length - 1].level >= level) {
+          stack.pop();
+        }
+
+        let parent = stack[stack.length - 1];
+
+        if (level > parent.level + 1 && parent.item) {
+          const childList = getOrCreateChildList(parent.item);
+          parent = {
+            level: level - 1,
+            list: childList,
+            item: parent.item
+          };
+          stack.push(parent);
+        }
+
+        parent.list.appendChild(item);
+
+        stack.push({
+          level,
+          list: getOrCreateChildList(item),
+          item
+        });
+      }
+
+      for (const emptyList of toc.querySelectorAll("ol:empty")) {
+        emptyList.remove();
+      }
+    }
+
+    function buildToc() {
+      const toc = document.getElementById("auto-toc");
+
+      if (!toc) {
+        return;
+      }
+
+      const tocTargets = Array.from(document.querySelectorAll("main [data-toc][id]"));
+      toc.innerHTML = "";
+
+      if (tocTargets.length === 0) {
+        const item = document.createElement("li");
+        item.textContent = "No TOC targets found. Add data-toc to structural sections or headings.";
+        toc.appendChild(item);
+        return;
+      }
+
+      buildNestedToc(toc, tocTargets);
+    }
+
+    function setOutput(text) {
+      const output = document.getElementById("output");
+
+      if (!output) {
+        return;
+      }
+
+      output.textContent = text;
+      output.dataset.hasStreamOutput = text ? "true" : "false";
+      syncPrintRunnerSnapshot();
+    }
+
+    function clearOutput() {
+      const output = document.getElementById("output");
+
+      if (!output) {
+        return;
+      }
+
+      output.textContent = "";
+      output.dataset.hasStreamOutput = "false";
+      syncPrintRunnerSnapshot();
+    }
+
+    function appendOutput(text) {
+      const output = document.getElementById("output");
+
+      if (!output) {
+        return;
+      }
+
+      output.textContent += text;
+      output.dataset.hasStreamOutput = "true";
+      output.scrollTop = output.scrollHeight;
+      syncPrintRunnerSnapshot();
+    }
+
+    function hasOutputContent() {
+      const output = document.getElementById("output");
+
+      if (!output) {
+        return false;
+      }
+
+      return output.dataset.hasStreamOutput === "true" && output.textContent.length > 0;
+    }
+
+    function setOutputBusy(isBusy) {
+      const output = document.getElementById("output");
+
+      if (!output) {
+        return;
+      }
+
+      output.setAttribute("aria-busy", String(isBusy));
+    }
+
+    function setStatus(text) {
+      const status = document.getElementById("pyodide-status");
+
+      if (!status) {
+        return;
+      }
+
+      status.textContent = text;
+    }
+
+    function createPyodideWorker() {
+      if (pyodideWorker) {
+        return pyodideWorker;
+      }
+
+      const workerSource = `
+        const pyodideScriptUrl = "${PYODIDE_WORKER_CONFIG.scriptUrl}";
+        const pyodideIndexUrl = "${PYODIDE_WORKER_CONFIG.indexUrl}";
+
+        importScripts(pyodideScriptUrl);
+        let pyodideReadyPromise = null;
+        let streamsConfigured = false;
+        let currentRunId = null;
+
+        async function getPyodideRuntime() {
+          if (!pyodideReadyPromise) {
+            pyodideReadyPromise = loadPyodide({
+              indexURL: pyodideIndexUrl
+            });
+          }
+
+          const pyodide = await pyodideReadyPromise;
+
+          if (!streamsConfigured) {
+            // Pyodide's batched stdout/stderr callback may provide line text without a trailing newline.
+            pyodide.setStdout({
+              batched: (text) => {
+                if (currentRunId !== null) {
+                  self.postMessage({
+                    id: currentRunId,
+                    type: "stdout",
+                    text: text.endsWith("\\n") ? text : text + "\\n"
+                  });
+                }
+              }
+            });
+
+            pyodide.setStderr({
+              batched: (text) => {
+                if (currentRunId !== null) {
+                  self.postMessage({
+                    id: currentRunId,
+                    type: "stderr",
+                    text: text.endsWith("\\n") ? text : text + "\\n"
+                  });
+                }
+              }
+            });
+
+            streamsConfigured = true;
+          }
+
+          return pyodide;
+        }
+
+        function wrapUserCode(code) {
+          // Catch BaseException in the Python wrapper so SystemExit-like errors are printed.
+          // stdout/stderr are streamed by Pyodide setStdout/setStderr, not captured in StringIO.
+          const indentedCode = code
+            .split("\\n")
+            .map((line) => "    " + line)
+            .join("\\n");
+
+          return \`
+import traceback
+
+try:
+\${indentedCode}
+except BaseException:
+    traceback.print_exc()
+\`;
+        }
+
+        self.addEventListener("message", async (event) => {
+          const { id, type, code } = event.data;
+
+          try {
+            const pyodide = await getPyodideRuntime();
+
+            if (type === "load") {
+              self.postMessage({
+                id,
+                type: "loaded",
+                result: "Python runtime loaded in worker."
+              });
+              return;
+            }
+
+            if (type === "run") {
+              const wrappedCode = wrapUserCode(code || "");
+              currentRunId = id;
+
+              try {
+                const result = await pyodide.runPythonAsync(wrappedCode);
+                const resultText = result === undefined || result === null ? "" : String(result);
+
+                self.postMessage({
+                  id,
+                  type: "result",
+                  result: resultText
+                });
+              } finally {
+                currentRunId = null;
+              }
+
+              return;
+            }
+
+            self.postMessage({
+              id,
+              type: "error",
+              error: "Unknown worker message type: " + type
+            });
+          } catch (error) {
+            self.postMessage({
+              id,
+              type: "error",
+              error: String(error && error.stack ? error.stack : error)
+            });
+          }
+        });
+      `;
+
+      const blob = new Blob([workerSource], { type: "text/javascript" });
+      pyodideWorkerUrl = URL.createObjectURL(blob);
+      pyodideWorker = new Worker(pyodideWorkerUrl);
+
+      pyodideWorker.addEventListener("message", (event) => {
+        const { id, type, result, error, text } = event.data;
+        const request = pyodidePendingRequests.get(id);
+
+        if (!request) {
+          return;
+        }
+
+        if (type === "stdout" || type === "stderr") {
+          if (request.onStream) {
+            request.onStream(text || "");
+          }
+          return;
+        }
+
+        pyodidePendingRequests.delete(id);
+
+        if (type === "error") {
+          request.reject(new Error(error || "Unknown worker error."));
+          return;
+        }
+
+        request.resolve(result);
+      });
+
+      pyodideWorker.addEventListener("error", (event) => {
+        const details = [
+          event.message || "Worker error.",
+          event.filename ? `file: ${event.filename}` : "",
+          event.lineno ? `line: ${event.lineno}` : "",
+          event.colno ? `column: ${event.colno}` : ""
+        ]
+          .filter(Boolean)
+          .join(" ");
+
+        for (const request of pyodidePendingRequests.values()) {
+          request.reject(new Error(details));
+        }
+        pyodidePendingRequests.clear();
+      });
+
+      return pyodideWorker;
+    }
+
+    function sendPyodideWorkerMessage(type, payload = {}, handlers = {}) {
+      const worker = createPyodideWorker();
+      const id = ++pyodideRequestId;
+
+      return new Promise((resolve, reject) => {
+        pyodidePendingRequests.set(id, {
+          resolve,
+          reject,
+          onStream: handlers.onStream || null
+        });
+
+        worker.postMessage({
+          id,
+          type,
+          ...payload
+        });
+      });
+    }
+
+    async function loadPythonRuntime() {
+      const loadButton = document.getElementById("load-button");
+      const runButton = document.getElementById("run-button");
+
+      if (pyodideReady) {
+        setStatus("Python runtime: already loaded in worker.");
+        runButton.disabled = false;
+        document.getElementById("restart-runtime-button").disabled = false;
+        return;
+      }
+
+      loadButton.disabled = true;
+      setOutputBusy(true);
+      setStatus("Python runtime: loading in worker...");
+      setOutput("Loading Pyodide in a classic Web Worker. The page should remain responsive.");
+
+      try {
+        await sendPyodideWorkerMessage("load");
+        pyodideReady = true;
+        setStatus("Python runtime: loaded in worker.");
+        setOutput("Python runtime loaded in worker. Press Run Python.");
+        setOutputBusy(false);
+        runButton.disabled = false;
+        document.getElementById("restart-runtime-button").disabled = false;
+      } catch (error) {
+        loadButton.disabled = false;
+        setStatus("Python runtime: failed to load in worker.");
+        setOutput(String(error));
+        setOutputBusy(false);
+      }
+    }
+
+    async function runPythonCode() {
+      const runButton = document.getElementById("run-button");
+      const code = getPythonCode();
+
+      if (!pyodideReady) {
+        setOutput("Python runtime is not loaded.");
+        return;
+      }
+
+      runButton.disabled = true;
+      setOutputBusy(true);
+      clearOutput();
+      setStatus("Python runtime: running code in worker.");
+
+      try {
+        const result = await sendPyodideWorkerMessage(
+          "run",
+          { code },
+          {
+            onStream: (text) => {
+              appendOutput(text);
+            }
+          }
+        );
+
+        if (result) {
+          appendOutput(result);
+        }
+
+        if (!hasOutputContent()) {
+          setOutput("(no output)");
+        }
+
+        setStatus("Python runtime: run completed.");
+      } catch (error) {
+        appendOutput(String(error));
+        setStatus("Python runtime: run failed.");
+      } finally {
+        runButton.disabled = false;
+        setOutputBusy(false);
+      }
+    }
+
+    function resetCode() {
+      setPythonCode(DEFAULT_CODE);
+      syncPrintRunnerSnapshot();
+      setOutputBusy(false);
+      setOutput("Code text reset. Python runtime state was not changed.");
+    }
+
+    function restartPythonRuntime() {
+      const loadButton = document.getElementById("load-button");
+      const runButton = document.getElementById("run-button");
+      const restartRuntimeButton = document.getElementById("restart-runtime-button");
+
+      for (const request of pyodidePendingRequests.values()) {
+        request.reject(new Error("Python runtime was restarted."));
+      }
+      pyodidePendingRequests.clear();
+
+      if (pyodideWorker) {
+        pyodideWorker.terminate();
+        pyodideWorker = null;
+      }
+
+      if (pyodideWorkerUrl) {
+        URL.revokeObjectURL(pyodideWorkerUrl);
+        pyodideWorkerUrl = null;
+      }
+
+      pyodideReady = false;
+      loadButton.disabled = false;
+      runButton.disabled = true;
+      restartRuntimeButton.disabled = true;
+
+      setOutputBusy(false);
+      setStatus("Python runtime: restarted. Load it again before running code.");
+      setOutput("Python runtime was restarted. Press Load Python Runtime.");
+    }
+
+    let pythonEditor = null;
+
+    function getPythonCode() {
+      const codeArea = document.getElementById("python-code");
+
+      if (pythonEditor) {
+        return pythonEditor.getValue();
+      }
+
+      return codeArea ? codeArea.value : "";
+    }
+
+    function setPythonCode(value) {
+      const codeArea = document.getElementById("python-code");
+
+      if (pythonEditor) {
+        pythonEditor.setValue(value);
+      }
+
+      if (codeArea) {
+        codeArea.value = value;
+      }
+    }
+
+    function initializePythonEditor() {
+      const codeArea = document.getElementById("python-code");
+
+      if (!codeArea || !window.CodeMirror) {
+        return;
+      }
+
+      pythonEditor = window.CodeMirror.fromTextArea(codeArea, {
+        mode: "python",
+        lineNumbers: true,
+        indentUnit: 4,
+        tabSize: 4,
+        indentWithTabs: false,
+        lineWrapping: false,
+        viewportMargin: Infinity,
+        extraKeys: {
+          Tab: (editor) => {
+            if (editor.somethingSelected()) {
+              editor.indentSelection("add");
+              return;
+            }
+
+            editor.replaceSelection("    ", "end");
+          }
+        }
+      });
+
+      pythonEditor.on("change", () => {
+        pythonEditor.save();
+        syncPrintRunnerSnapshot();
+      });
+    }
+
+    function syncPrintRunnerSnapshot() {
+      const codeArea = document.getElementById("python-code");
+      const output = document.getElementById("output");
+      const printCode = document.getElementById("print-python-code");
+      const printOutput = document.getElementById("print-python-output");
+
+      if (printCode) {
+        printCode.textContent = getPythonCode() || "(empty code)";
+      }
+
+      if (output && printOutput) {
+        printOutput.textContent = output.textContent || "(no output)";
+      }
+    }
+
+    function initializePrintSnapshotSync() {
+      const codeArea = document.getElementById("python-code");
+
+      syncPrintRunnerSnapshot();
+
+      if (codeArea) {
+        codeArea.addEventListener("input", syncPrintRunnerSnapshot);
+      }
+
+      window.addEventListener("beforeprint", syncPrintRunnerSnapshot);
+
+      if (window.matchMedia) {
+        const printMediaQuery = window.matchMedia("print");
+        printMediaQuery.addEventListener("change", (event) => {
+          if (event.matches) {
+            syncPrintRunnerSnapshot();
+          }
+        });
+      }
+    }
+
+    async function copyTextToClipboard(text) {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        return;
+      }
+
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.setAttribute("readonly", "");
+      textarea.style.position = "fixed";
+      textarea.style.top = "-9999px";
+      document.body.appendChild(textarea);
+      textarea.select();
+
+      try {
+        document.execCommand("copy");
+      } finally {
+        textarea.remove();
+      }
+    }
+
+    function initializePythonCodeCopyButton() {
+      const button = document.getElementById("copy-python-code-button");
+
+      if (!button) {
+        return;
+      }
+
+      button.addEventListener("click", async () => {
+        const originalText = button.textContent;
+        button.disabled = true;
+
+        try {
+          await copyTextToClipboard(getPythonCode());
+          button.textContent = "Copied";
+        } catch (error) {
+          button.textContent = "Error";
+        } finally {
+          window.setTimeout(() => {
+            button.textContent = originalText;
+            button.disabled = false;
+          }, 1400);
+        }
+      });
+    }
+
+    function initializeCodeCopyButtons() {
+      const codeBlocks = Array.from(document.querySelectorAll("pre.code-block"));
+
+      for (const block of codeBlocks) {
+        if (block.closest(".code-block-wrap")) {
+          continue;
+        }
+
+        const wrapper = document.createElement("div");
+        wrapper.className = "code-block-wrap";
+        block.parentNode.insertBefore(wrapper, block);
+        wrapper.appendChild(block);
+
+        const button = document.createElement("button");
+        button.className = "copy-code-button";
+        button.type = "button";
+        button.textContent = "Copy";
+        button.setAttribute("aria-label", "Copy code block");
+
+        button.addEventListener("click", async () => {
+          const code = block.querySelector("code");
+          const text = code ? code.textContent : block.textContent;
+          const originalText = button.textContent;
+          button.disabled = true;
+
+          try {
+            await copyTextToClipboard(text.endsWith("\n") ? text.slice(0, -1) : text);
+            button.textContent = "Copied";
+          } catch (error) {
+            button.textContent = "Error";
+          } finally {
+            window.setTimeout(() => {
+              button.textContent = originalText;
+              button.disabled = false;
+            }, 1400);
+          }
+        });
+
+        wrapper.appendChild(button);
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      buildToc();
+      setPythonCode(DEFAULT_CODE);
+      initializePythonEditor();
+      setPythonCode(DEFAULT_CODE);
+      initializePrintSnapshotSync();
+      document.getElementById("load-button").addEventListener("click", loadPythonRuntime);
+      document.getElementById("run-button").addEventListener("click", runPythonCode);
+      document.getElementById("reset-button").addEventListener("click", resetCode);
+      document.getElementById("restart-runtime-button").addEventListener("click", restartPythonRuntime);
+
+      if (window.Prism) {
+        window.Prism.highlightAll();
+      }
+      initializePythonCodeCopyButton();
+      initializeCodeCopyButtons();
+      initializeMermaid();
+    });
+  </script>
+</body>
+</html>

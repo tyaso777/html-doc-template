@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>html-doc-template</title>
+  <style>
+    :root {
+      --bg: #f7f7f9;
+      --panel: #ffffff;
+      --text: #202124;
+      --muted: #5f6368;
+      --border: #dadce0;
+      --accent: #1a73e8;
+      --accent-bg: #e8f0fe;
+      --radius: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.75;
+    }
+
+    main {
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 40px 20px 56px;
+    }
+
+    header {
+      margin-bottom: 28px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      line-height: 1.25;
+    }
+
+    h2 {
+      margin-top: 2.4rem;
+      padding-bottom: 0.25rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 1.35rem;
+    }
+
+    p {
+      margin: 0.75rem 0;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .lead {
+      color: var(--muted);
+      font-size: 1.05rem;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 22px 0 0;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      min-height: 42px;
+      padding: 9px 14px;
+      border: 1px solid var(--accent);
+      border-radius: 999px;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .button.secondary {
+      background: #fff;
+      color: var(--accent);
+    }
+
+    .card {
+      margin: 18px 0;
+      padding: 16px 18px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--panel);
+    }
+
+    .card > :first-child {
+      margin-top: 0;
+    }
+
+    .card > :last-child {
+      margin-bottom: 0;
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      background: #f1f3f4;
+      border-radius: 4px;
+      padding: 0.1em 0.35em;
+    }
+
+    ul {
+      padding-left: 1.35rem;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>html-doc-template</h1>
+      <p class="lead">
+        A technical HTML document template with code blocks, math, Mermaid diagrams, and optional in-browser Python examples.
+      </p>
+      <div class="actions">
+        <a class="button" href="./templates/technical-doc-shell.html">Open Template</a>
+        <a class="button secondary" href="./README.md">View README</a>
+      </div>
+    </header>
+
+    <section>
+      <h2>Files</h2>
+      <div class="card">
+        <p><strong>Document shell:</strong> <a href="./templates/technical-doc-shell.html"><code>templates/technical-doc-shell.html</code></a></p>
+        <p><strong>Content-only example:</strong> <a href="./templates/content-example.html"><code>templates/content-example.html</code></a></p>
+        <p><strong>Repository guide:</strong> <a href="./README.md"><code>README.md</code></a></p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Use This Template</h2>
+      <div class="card">
+        <p>
+          Copy <code>templates/technical-doc-shell.html</code> and use <code>templates/content-example.html</code> as a reference for authoring body content. CSS and JavaScript are shared under <code>assets/</code>.
+        </p>
+        <p>
+          Replace the title, document information, body content, Materials, External Links, and Changelog. The Python runner loads Pyodide from a CDN only after the reader presses <strong>Load Python Runtime</strong>.
+        </p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Included Capabilities</h2>
+      <ul>
+        <li>Auto-generated table of contents from <code>data-toc</code> elements</li>
+        <li>Prism code highlighting for Python, PowerShell, SQL, and Mermaid</li>
+        <li>Copy buttons for static code blocks and the Python runner editor</li>
+        <li>MathJax inline and display math</li>
+        <li>Mermaid diagram rendering</li>
+        <li>Optional Pyodide Python runner in a Web Worker</li>
+        <li>Document metadata and Changelog sections for maintenance</li>
+        <li>Split-template authoring workflow with shared assets</li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>

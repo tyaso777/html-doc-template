@@ -1,0 +1,10 @@
+# Local agent/session files
+.codex
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# OS/editor noise
+.DS_Store
+Thumbs.db

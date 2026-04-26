@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!--
+  Security note:
+  CDN assets should use integrity and crossorigin="anonymous" whenever possible.
+  Some CDN assets below intentionally keep TODO comments instead of unverified SRI values,
+  because an incorrect integrity value blocks the asset from loading.
+-->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HTML Document Template</title>
+
+  <!-- Prism.js -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/plugins/line-numbers/prism-line-numbers.min.css" integrity="sha512-cbQXwDFK7lj2Fqfkuxbo5iD1dSbLlJGXGpfTDqbggqjHJeyzx88I3rfwjS38WJag/ihH7lzuGlGHpDBymLirZQ==" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" integrity="sha512-uf06llspW44/LZpHzHT6qBOIVODjWtv4MxCricRxkzvopAlSWnTf6hpZTFxuuZcuNE9CBQhqE0Seu1CoRk84nQ==" crossorigin="anonymous" referrerpolicy="no-referrer">
+
+  <!-- Library config -->
+  <script>
+    window.Prism = window.Prism || {};
+    window.Prism.manual = true;
+
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        processEscapes: true
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+
+  <!-- External libraries -->
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/prism.min.js" integrity="sha512-HiD3V4nv8fcjtouznjT9TqDNDm1EXngV331YGbfVGeKUoH+OLkRTCMzA34ecjlgSQZpdHZupdSrqHY+Hz3l6uQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/components/prism-python.min.js" integrity="sha512-AKaNmg8COK0zEbjTdMHJAPJ0z6VeNqvRvH4/d5M4sHJbQQUToMBtodq4HaV4fa+WV2UTfoperElm66c9/8cKmQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/components/prism-powershell.min.js" integrity="sha512-mNRS5mGSidY0juPNlXC17z6atUusuE8Fdbu5+zK6drBDbroYeaEfudGKSRoFvRpzseJq2v3bNOwpEFHi6L82Aw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/components/prism-sql.min.js" integrity="sha512-sijCOJblSCXYYmXdwvqV0tak8QJW5iy2yLB1wAbbLc3OOIueqymizRFWUS/mwKctnzPKpNdPJV3aK1zlDMJmXQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/components/prism-mermaid.min.js" integrity="sha512-TWvtkke2tZtIQOA5/sjGM0S2RCMLTxhLKh0zYvhHdhVQizOaPcF9uYa+szt+kun01TCUVALUcVxlta8fjwt1jQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha512-BttltKXFyWnGZQcRWj6osIg7lbizJchuAMotOkdLxHxwt/Hyo+cl47bZU0QADg+Qt5DJwni3SbYGXeGMB5cBcw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mermaid@11.14.0/dist/mermaid.min.js" integrity="sha512-1CZj4aGbVA13DvizpBtnnUCPqBMDokst010DHdNrd7E79k2BoZqRaU0xybAKlsWERxKlLoAqvHpuKE1mBuveUQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js" integrity="sha256-1CldwzdEg2k1wTmf7s5RWVd7NMXI/7nxxjJM2C4DqII=" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js" integrity="sha512-OeZ4Yrb/W7d2W4rAMOO0HQ9Ro/aWLtpW9BUSR2UOWnSV2hprXLkkYnnCGc9NeLUxxE4ZG7zN16UuT1Elqq8Opg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js" integrity="sha512-Vs2GKxnxnTQBRW7o2xXZ9A28njjmu5RToS42efiKNEWmikov0inZY522EtGVK5CcVo0M/FQwmXsTfl9skgRnvw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <link rel="stylesheet" href="../assets/css/technical-doc.css">
+</head>
+
+<body class="line-numbers document-page">
+  <div class="layout">
+    <aside class="sidebar" aria-label="Document navigation">
+      <header class="sidebar-header" aria-labelledby="sidebar-title">
+        <h2 id="sidebar-title" class="sidebar-title">HTML Document<br>Template</h2>
+        <!-- Replace this with a short document subtitle or project label. -->
+        <p class="sidebar-subtitle">Document subtitle</p>
+      </header>
+
+      <details class="nav-section" open>
+        <summary>Contents</summary>
+        <div class="nav-body">
+          <ol id="auto-toc" class="nav-list toc-tree">
+            <li>Loading TOC from elements marked with data-toc...</li>
+          </ol>
+        </div>
+      </details>
+
+      <details class="nav-section">
+        <summary>Materials</summary>
+        <div class="nav-body">
+          <ol class="nav-list">
+            <li>
+              <span class="nav-list-category">Templates</span>
+              <ol>
+                <li><a href="../templates/technical-doc-shell.html">Technical document shell</a></li>
+                <li><a href="../templates/content-example.html">Content-only example</a></li>
+              </ol>
+            </li>
+            <li>
+              <span class="nav-list-category">Examples</span>
+              <ol>
+                <li><a href="../index.html">Project index</a></li>
+                <li><a href="../README.md">Repository README</a></li>
+              </ol>
+            </li>
+          </ol>
+        </div>
+      </details>
+
+      <details class="nav-section">
+        <summary>External Links</summary>
+        <div class="nav-body">
+          <ol class="nav-list">
+            <li>
+              <span class="nav-list-category">Rendering</span>
+              <ol>
+                <li><a href="https://prismjs.com/" target="_blank" rel="noopener">Prism.js</a></li>
+                <li><a href="https://www.mathjax.org/" target="_blank" rel="noopener">MathJax</a></li>
+                <li><a href="https://mermaid.js.org/" target="_blank" rel="noopener">Mermaid</a></li>
+              </ol>
+            </li>
+            <li>
+              <span class="nav-list-category">Python runtime</span>
+              <ol>
+                <li><a href="https://pyodide.org/" target="_blank" rel="noopener">Pyodide</a></li>
+              </ol>
+            </li>
+          </ol>
+        </div>
+      </details>
+    </aside>
+
+    <main>
+      <article class="content">
+        <header class="hero">
+          <!-- Keep exactly one h1 in the document: the main document title. -->
+          <h1>HTML Document Template</h1>
+          <p>
+            A template for technical documents that include code, math, diagrams, and executable examples.
+          </p>
+        </header>
+
+        <section class="document-info" aria-labelledby="document-info-title">
+          <h2 id="document-info-title">Document Information</h2>
+          <dl class="metadata" aria-label="Document metadata">
+            <div>
+              <dt>Version</dt>
+              <dd>0.1.0</dd>
+            </div>
+            <div>
+              <dt>Last updated</dt>
+              <dd>2026-04-25</dd>
+            </div>
+            <div>
+              <dt>Author</dt>
+              <dd>Atsushi Suzuki</dd>
+            </div>
+          </dl>
+        </section>
+
+        <!--
+          TOC convention:
+          Mark only structural TOC targets with data-toc.
+          For top-level sections, prefer <section id="..." data-toc data-toc-title="...">.
+          For optional lower-level entries, use headings such as <h3 id="..." data-toc data-toc-level="3">.
+          Headings without data-toc are intentionally excluded from the left-side TOC.
+        -->
+
+        <section id="overview" data-toc data-toc-title="Overview">
+          <h2>1. Overview</h2>
+          <p>
+            This page can run Python in the browser with Pyodide.
+            A server-side Python environment is not required, but the first runtime load can take some time because Pyodide is downloaded on demand.
+          </p>
+
+          <aside class="callout callout-success">
+            Use a supplemental note (<code>aside.callout-success</code>) for helpful context, prerequisites, successful states, and recommendations.
+            Example: This template is designed to remain readable on narrow screens.
+          </aside>
+
+          <aside class="callout callout-warning">
+            Use a warning note (<code>aside.callout-warning</code>) for constraints, environment-specific behavior, and exceptions readers should know in advance.
+            Example: TOC generation, Python execution, Mermaid, MathJax, and Prism depend on JavaScript.
+          </aside>
+        </section>
+
+        <section id="template-guide" data-toc data-toc-title="Template Usage">
+          <h2>2. Template Usage</h2>
+          <p>
+            This section is a minimal editing guide for creating a new HTML document from the template.
+            It shows the main writing patterns so both human editors and generation models can extend the document consistently.
+          </p>
+
+          <aside class="callout callout-success">
+            Use <code>&lt;section id="..." data-toc data-toc-title="..."&gt;</code> for top-level sections that should appear in the table of contents.
+            For optional subsection entries, add <code>id</code>, <code>data-toc</code>, and <code>data-toc-level="3"</code> to the heading.
+          </aside>
+
+          <div class="card">
+            <h3>Common Components</h3>
+            <ul>
+              <li>Supplemental notes and recommendations: <code>&lt;aside class="callout callout-success"&gt;</code></li>
+              <li>Warnings and constraints: <code>&lt;aside class="callout callout-warning"&gt;</code></li>
+              <li>Standard body card: <code>&lt;div class="card"&gt;</code></li>
+              <li>Muted card: <code>&lt;div class="card card-muted"&gt;</code></li>
+              <li>Compact card: <code>&lt;div class="card card-compact"&gt;</code></li>
+              <li>Code display: <code>&lt;pre class="code-block language-python"&gt;&lt;code class="language-python"&gt;</code></li>
+              <li>Math: use <code>\(...\)</code> for inline math and <code>\[...\]</code> for display math</li>
+              <li>Mermaid diagrams: write the diagram definition inside <code>&lt;div class="mermaid"&gt;</code>.</li>
+            </ul>
+          </div>
+
+          <aside class="callout callout-warning">
+            The TOC, Python runner, Mermaid, MathJax, and Prism are JavaScript enhancements.
+            Keep important explanations in normal HTML body text so the document remains readable if JavaScript is unavailable.
+          </aside>
+        </section>
+
+        <section id="formula-examples" data-toc data-toc-title="Math Examples">
+          <h2>3. Math Examples</h2>
+          <p>
+            These examples show inline and display math rendered by MathJax.
+            When creating a new document, copy this section and replace the content while preserving the display patterns.
+          </p>
+
+          <h3 id="inline-formula-example" data-toc data-toc-level="3" data-toc-title="Inline Math">Inline Math</h3>
+          <p>
+            Use <code>\(...\)</code> for short formulas inside a paragraph.
+            For example, a normal distribution can be written as \(X \sim \mathcal{N}(\mu, \sigma^2)\) using mean \(\mu\) and variance \(\sigma^2\).
+            The standardized value is \(z = (x - \mu) / \sigma\).
+          </p>
+
+          <h3 id="display-formula-example" data-toc data-toc-level="3" data-toc-title="Display Math">Display Math</h3>
+          <p>
+            Use <code>\[...\]</code> for standalone formulas, optionally wrapped in <code>div.math-block</code>.
+          </p>
+
+          <div class="math-block">
+            \[
+              f(x) = \frac{1}{\sigma\sqrt{2\pi}}
+              \exp\left(-\frac{(x - \mu)^2}{2\sigma^2}\right)
+            \]
+          </div>
+
+          <div class="math-block">
+            \[
+              \mathbb{E}[X] = \mu, \qquad
+              \mathrm{Var}(X) = \sigma^2, \qquad
+              \int_{-\infty}^{\infty} f(x)\,dx = 1
+            \]
+          </div>
+        </section>
+
+        <section id="python-code-examples" data-toc data-toc-title="Python Code Display and Execution">
+          <h2>4. Python Code Display and Execution</h2>
+          <p>
+            Use static code blocks for code that readers only need to inspect, and use the browser runner for code readers should edit and execute.
+            This keeps explanatory snippets separate from interactive examples.
+          </p>
+
+          <h3 id="python-code-display-example" data-toc data-toc-level="3" data-toc-title="Python Code Block">Python Code Block</h3>
+          <p>
+            For code that does not need to run in the browser, combine <code>pre.code-block</code> with <code>code.language-python</code>.
+            Place <code>div.code-caption</code> above the block to show the language name or file name.
+          </p>
+
+          <div class="code-caption">python</div>
+          <pre class="code-block language-python"><code class="language-python">def summarize_scores(scores: list[int]) -> dict[str, float]:
+    """Returns simple summary statistics for a score list."""
+    total = sum(scores)
+    count = len(scores)
+
+    return {
+        "count": count,
+        "average": total / count,
+        "maximum": max(scores),
+    }
+
+
+scores = [82, 90, 76, 88]
+summary = summarize_scores(scores)
+print(summary)
+</code></pre>
+
+          <h3 id="python-runner-example" data-toc data-toc-level="3" data-toc-title="Executable Code Example">Executable Code Example</h3>
+          <p>
+            Use the runner panel for code that readers should edit and execute.
+            Replace the initial code by editing <code>DEFAULT_CODE</code> in <code>assets/js/technical-doc.js</code>.
+          </p>
+
+          <aside class="callout callout-warning">
+            The Python runner loads Pyodide from a CDN only after the reader presses <strong>Load Python Runtime</strong>.
+            Pyodide is loaded with <code>importScripts()</code> inside a Web Worker, so normal script-tag SRI with <code>integrity</code> cannot be used there.
+            For documents that require strict supply-chain control, host a reviewed Pyodide distribution locally.
+          </aside>
+
+          <div class="runner-panel">
+            <p id="python-code-help">
+              Edit the code in the highlighted Python editor, then press <strong>Run Python</strong>.
+              On slow connections or constrained devices, the first Python runtime load can take some time.
+            </p>
+
+            <div class="runner-toolbar">
+              <button id="load-button" class="button secondary" type="button">Load Python Runtime</button>
+              <button id="run-button" class="button" type="button" disabled>Run Python</button>
+              <button id="reset-button" class="button secondary" type="button">Reset Code Text</button>
+              <button id="restart-runtime-button" class="button secondary" type="button" disabled>Restart Python Runtime</button>
+            </div>
+
+            <label for="python-code" class="visually-hidden">Python code editor</label>
+            <div class="python-editor-wrap">
+              <textarea
+                id="python-code"
+                spellcheck="false"
+                aria-describedby="python-code-help output"
+                autocomplete="off"
+                autocorrect="off"
+                autocapitalize="off"
+              ></textarea>
+              <button id="copy-python-code-button" class="copy-code-button python-editor-copy-button" type="button" aria-label="Copy Python code">Copy</button>
+            </div>
+
+            <h3>Output</h3>
+            <div
+              id="output"
+              class="output"
+              role="log"
+              aria-live="polite"
+              aria-atomic="true"
+            >Press "Load Python Runtime" first. Python will run in a Web Worker.</div>
+
+            <section class="print-only print-runner-snapshot" aria-label="Printed Python runner snapshot">
+              <h3>Printed Python Code</h3>
+              <pre id="print-python-code" class="print-code-block"></pre>
+
+              <h3>Printed Python Output</h3>
+              <pre id="print-python-output" class="print-output-block"></pre>
+            </section>
+          </div>
+        </section>
+
+        <section id="other-language-examples" data-toc data-toc-title="Other Languages">
+          <h2>5. Other Languages</h2>
+          <p>
+            Code in other languages can use the same visual style by switching the Prism language class.
+            This template loads the PowerShell and SQL Prism components by default.
+          </p>
+
+          <h3 id="powershell-code-example" data-toc data-toc-level="3" data-toc-title="PowerShell Code Block">PowerShell Code Block</h3>
+          <div class="code-caption">powershell</div>
+          <pre class="code-block language-powershell"><code class="language-powershell">Get-ChildItem -Path . -Filter "*.html" |
+    Select-Object Name, Length, LastWriteTime |
+    Sort-Object LastWriteTime -Descending
+</code></pre>
+
+          <h3 id="sql-code-example" data-toc data-toc-level="3" data-toc-title="SQL Code Block">SQL Code Block</h3>
+          <div class="code-caption">sql</div>
+          <pre class="code-block language-sql"><code class="language-sql">SELECT
+    document_id,
+    title,
+    updated_at
+FROM documents
+WHERE status = "published"
+ORDER BY updated_at DESC;
+</code></pre>
+
+          <aside class="callout callout-warning">
+            To add another language such as cmd, bash, or JSON, load the corresponding Prism language component and change the <code>language-...</code> class to match.
+            If you add files from a CDN, also add SRI metadata for those files.
+          </aside>
+        </section>
+
+        <section id="mermaid" data-toc data-toc-title="Mermaid Diagrams">
+          <h2>6. Mermaid Diagrams</h2>
+          <p>
+            Mermaid renders flowcharts and structural diagrams from text definitions.
+            You can update a diagram by editing text in the HTML instead of recreating an image.
+            Mermaid also supports sequence diagrams, class diagrams, state diagrams, and more.
+          </p>
+
+          <div class="code-caption">mermaid</div>
+          <pre class="code-block language-mermaid"><code class="language-mermaid">flowchart LR
+    A[Define the document goal] --> B[Plan the section structure]
+    B --> C[Write the body text]
+    B --> D[Create exercises or code examples]
+    C --> E[Add diagrams and math]
+    D --> F[Check executable examples]
+    E --> G[Review the rendered document]
+    F --> G
+</code></pre>
+
+          <figure class="mermaid-figure">
+            <figcaption>Diagram rendered from the Mermaid definition above</figcaption>
+            <div class="mermaid-wrap">
+              <!-- Use div.mermaid as the Mermaid rendering hook; figure/figcaption provide the semantic structure. -->
+              <div class="mermaid">
+flowchart LR
+    A[Define the document goal] --> B[Plan the section structure]
+    B --> C[Write the body text]
+    B --> D[Create exercises or code examples]
+    C --> E[Add diagrams and math]
+    D --> F[Check executable examples]
+    E --> G[Review the rendered document]
+    F --> G
+              </div>
+            </div>
+          </figure>
+        </section>
+
+        <section id="notes" data-toc data-toc-title="Operational Notes">
+          <h2>7. Operational Notes</h2>
+          <div class="card card-muted">
+            <h3>Interpreting Runtime Results</h3>
+            <p>
+              Browser execution time is affected by device performance, battery state, browser optimization, and other running processes.
+              Treat timing output as a rough signal for behavior and trends, not as a strict benchmark.
+            </p>
+          </div>
+
+          <div class="card card-muted">
+            <h3>Progressive Reading Design</h3>
+            <p>
+              Body text, links, and code content remain readable as normal HTML.
+              TOC generation, Python execution, Mermaid, MathJax, and Prism are convenience enhancements added by JavaScript.
+            </p>
+          </div>
+        </section>
+
+        <section id="changelog" data-toc data-toc-title="Changelog">
+          <h2>8. Changelog</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Version</th>
+                  <th>Date</th>
+                  <th>Changes</th>
+                  <th>Author</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>0.1.0</td>
+                  <td>2026-04-25</td>
+                  <td>Initial technical HTML document template draft.</td>
+                  <td>Atsushi Suzuki</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <footer class="footer">
+          Prototype template with robust navigation and Pyodide runner.
+        </footer>
+      </article>
+    </main>
+  </div>
+
+  <script defer src="../assets/js/technical-doc.js"></script>
+</body>
+</html>
