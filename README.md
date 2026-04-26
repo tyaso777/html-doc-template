@@ -147,3 +147,10 @@ The initial Python code is stored in the `DEFAULT_CODE` JavaScript constant in `
 ## Notes
 
 This project is intended as a source template. Documents created from it should usually be copied into another project or an `examples/` directory rather than editing the base template directly for each document.
+
+## License
+
+The template files in this repository are licensed under the MIT License.
+
+Documents, course materials, and other content created with this template may use a different license.
+
