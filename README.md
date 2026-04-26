@@ -12,7 +12,6 @@ Main files:
 chapters-src/                         # editable chapter fragments and manifest
 layouts/chapter-shell.html             # shared shell used by the build script
 examples/content-example.html          # content-only fragment for AI-assisted authoring
-legacy/technical-doc-template.html      # old single-file document template
 ```
 
 ## Positioning
@@ -72,13 +71,9 @@ html-doc-template/
     chapter-shell.html
   examples/
     content-example.html
-  legacy/
-    technical-doc-template.html
 ```
 
 ## Folder Roles
-
-Use `legacy/technical-doc-template.html` only as the old single-file reference. The maintained multi-page workflow uses `chapters-src/`, `layouts/`, and `scripts/build_site.py`.
 
 Use `layouts/chapter-shell.html` as the shared wrapper for generated multi-page chapters. It contains the document shell: `<html>`, `<head>`, CDN assets, sidebar, shared CSS, and shared JavaScript.
 
