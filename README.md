@@ -7,7 +7,7 @@ The browser entry page is `index.html`.
 Main templates:
 
 ```text
-templates/technical-doc-shell.html      # document shell using assets/
+templates/technical-doc-template.html      # document template using assets/
 templates/content-example.html          # content-only fragment for AI-assisted authoring
 ```
 
@@ -33,8 +33,6 @@ html-doc-template/
   README.md
   index.html
   html-doc-template.code-workspace
-  archive/
-    technical-doc-template.old.html
   assets/
     css/
       technical-doc.css
@@ -43,21 +41,19 @@ html-doc-template/
   scripts/
     check_html.py
   templates/
-    technical-doc-shell.html
+    technical-doc-template.html
     content-example.html
 ```
 
 ## Template Files
 
-Use `templates/technical-doc-shell.html` as the maintained document shell. It keeps layout, CSS, and JavaScript separate from the document content, which is better for iterative authoring and AI-assisted content generation.
+Use `templates/technical-doc-template.html` as the maintained document template. It keeps layout, CSS, and JavaScript separate from the document content, which is better for iterative authoring and AI-assisted content generation.
 
 Use `templates/content-example.html` as a content-only reference. Generated content should be pasted inside `<article class="content">` in a shell document and should not include `<html>`, `<head>`, `<style>`, or `<script>`.
 
-`archive/technical-doc-template.old.html` is an unmaintained legacy single-file version kept only for reference. It is not part of the normal authoring workflow.
-
 ## Basic Usage
 
-Copy `templates/technical-doc-shell.html` and edit the copy.
+Copy `templates/technical-doc-template.html` and edit the copy.
 
 Typical edits:
 

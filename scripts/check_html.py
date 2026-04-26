@@ -231,21 +231,7 @@ def check_file(path: Path) -> list[Issue]:
 
 
 def check_project_policy(root: Path) -> list[Issue]:
-    issues: list[Issue] = []
-    old_template = root / "archive" / "technical-doc-template.old.html"
-    maintained_files = [root / "index.html", root / "templates" / "technical-doc-shell.html"]
-
-    if old_template.exists():
-        for path in maintained_files:
-            if not path.exists():
-                continue
-            text = path.read_text(encoding="utf-8")
-            if "technical-doc-template.old.html" in text:
-                issues.append(
-                    Issue("ERROR", path, 1, 1, "normal navigation should not link to the old single-file template")
-                )
-    return issues
-
+    return []
 
 def existing_html_files(paths: Iterable[str], root: Path) -> list[Path]:
     result: list[Path] = []
@@ -271,7 +257,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "paths",
         nargs="*",
-        default=["index.html", "templates/technical-doc-shell.html", "templates/content-example.html"],
+        default=["index.html", "templates/technical-doc-template.html", "templates/content-example.html"],
         help="HTML files or directories to check. Defaults to maintained project HTML files.",
     )
     parser.add_argument(
