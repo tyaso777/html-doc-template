@@ -92,16 +92,22 @@ Optional for browser smoke tests:
 - Node.js and npm
 - Playwright's Chromium browser
 
-## Basic Usage
+## Use This Template For A Document
 
-For the multi-page workflow, edit `chapters-src/*.html` and `chapters-src/site-manifest.json`, then build and check with Python.
+Use this section when you are creating a document from the template. This workflow requires only Python.
+
+For the multi-page workflow:
+
+1. Edit `chapters-src/*.html`.
+2. Edit `chapters-src/site-manifest.json`.
+3. Build the public files under `chapters/`.
+4. Run the HTML checker.
 
 Linux/macOS:
 
 ```bash
 python3 scripts/build_site.py
 python3 scripts/check_html.py
-python3 -m unittest discover -s tests/python
 ```
 
 Windows:
@@ -111,7 +117,7 @@ py -3 scripts/build_site.py
 py -3 scripts/check_html.py
 ```
 
-Node.js is not required for this workflow. If npm is available, the same build and check can also be run through the convenience commands:
+Node.js is not required for document authoring. If npm is available, the same build and check can also be run through convenience commands:
 
 ```bash
 npm run build
@@ -261,6 +267,8 @@ Mermaid code block and rendered diagram examples are included in the template.
 
 ## AI-Assisted Authoring
 
+Use this section when a generation model or coding agent is writing chapter content.
+
 When asking a generation model to create content for the split template, constrain the task to the article fragment only. A useful instruction is:
 
 ```text
@@ -279,7 +287,7 @@ python3 scripts/build_site.py
 python3 scripts/check_html.py
 ```
 
-Do not require Node.js or npm unless browser smoke tests are explicitly requested.
+Do not require Node.js, npm, Playwright, or browser tests unless browser smoke tests are explicitly requested.
 
 ## HTML Checker
 
@@ -295,7 +303,9 @@ The checker uses only the Python standard library. It validates duplicate IDs, m
 
 When using this template in another document project, copy `scripts/check_html.py`, `scripts/html_fragment.py`, and `scripts/site_manifest.py` with the template and run the checker against the generated HTML file. For multi-page chapter sets, keep `chapters-src/site-manifest.json`, `chapters-src/`, and `chapters/` together so the manifest checks can verify generated navigation.
 
-## Before Committing
+## Develop This Template
+
+Use this section when you are changing the template itself, including `assets/`, `layouts/`, `scripts/`, tests, CI, or the sample generated chapters.
 
 Run these Python-only checks before committing content or template changes:
 
@@ -312,7 +322,9 @@ If Node.js and Playwright are available, also run:
 npm run test:e2e
 ```
 
-## Browser Smoke Tests
+CI runs the same build, HTML checks, Python unit tests, JavaScript syntax checks, generated chapter diff check, and browser smoke tests.
+
+## Optional Browser Smoke Tests
 
 Browser smoke tests are optional and require Node.js, npm, and Playwright. They verify that generated chapters open in Chromium, the sidebar and chapter navigation work, and JavaScript enhancements initialize for copy buttons, CodeMirror, MathJax, and Mermaid.
 
