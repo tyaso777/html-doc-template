@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "python3 scripts/build_site.py",
-    "check:html": "python3 scripts/check_html.py",
+    "build": "node scripts/run_python.mjs scripts/build_site.py",
+    "check:html": "node scripts/run_python.mjs scripts/check_html.py",
     "test:e2e": "playwright test",
     "test:e2e:pyodide": "cross-env PYODIDE_SMOKE=1 playwright test --grep @pyodide"
   },

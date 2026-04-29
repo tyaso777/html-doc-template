@@ -60,6 +60,7 @@ html-doc-template/
     build_site.py
     check_html.py
     html_fragment.py
+    run_python.mjs
   chapters-src/
     site-manifest.json
     01-introduction.html
@@ -79,7 +80,7 @@ Use `layouts/chapter-shell.html` as the shared wrapper for generated multi-page 
 
 ## Basic Usage
 
-For the multi-page workflow, edit `chapters-src/*.html` and `chapters-src/site-manifest.json`, then run `python3 scripts/build_site.py`.
+For the multi-page workflow, edit `chapters-src/*.html` and `chapters-src/site-manifest.json`, then run `npm run build`.
 
 Typical edits:
 
@@ -115,8 +116,10 @@ Each file under `chapters-src/` is an article fragment, not a complete HTML docu
 Edit chapter source files under `chapters-src/`, define chapter order and shell metadata in `chapters-src/site-manifest.json`, then build the public chapter files under `chapters/`:
 
 ```bash
-python3 scripts/build_site.py
+npm run build
 ```
+
+The npm build command runs `scripts/build_site.py` through `scripts/run_python.mjs`, which detects Python from `PYTHON`, `python3`, `python`, or the Windows `py -3` launcher. If you prefer to call Python directly, use `python3 scripts/build_site.py` on Linux/macOS or `py -3 scripts/build_site.py` on Windows.
 
 Each source chapter should include a chapter navigation placeholder near the end of the fragment:
 
@@ -236,8 +239,10 @@ Use section elements with id, data-toc, and data-toc-title for TOC entries.
 Run the lightweight checker after editing generated or AI-assisted HTML:
 
 ```bash
-python3 scripts/check_html.py
+npm run check:html
 ```
+
+To run the checker directly without npm, use `python3 scripts/check_html.py` on Linux/macOS or `py -3 scripts/check_html.py` on Windows.
 
 The checker uses only the Python standard library. It validates duplicate IDs, missing `data-toc` IDs, local file links, same-page fragment links, `aria-describedby` references, `pre.code-block` / `code.language-*` consistency, chapter manifest integrity, shell template tokens, generated Previous/Next navigation, and the scoped IDs emitted for generated Python runners.
 
