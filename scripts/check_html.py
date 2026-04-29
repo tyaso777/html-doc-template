@@ -18,23 +18,10 @@ from pathlib import Path
 from typing import Iterable
 from urllib.parse import unquote, urlparse
 
-
-VOID_TAGS = {
-    "area",
-    "base",
-    "br",
-    "col",
-    "embed",
-    "hr",
-    "img",
-    "input",
-    "link",
-    "meta",
-    "param",
-    "source",
-    "track",
-    "wbr",
-}
+try:
+    from html_fragment import VOID_TAGS, has_class, language_from_classes
+except ModuleNotFoundError:
+    from scripts.html_fragment import VOID_TAGS, has_class, language_from_classes
 
 LOCAL_REF_ATTRS = {"href", "src"}
 SKIP_REF_SCHEMES = {"http", "https", "mailto", "tel", "data", "javascript"}
@@ -241,18 +228,6 @@ class DocumentParser(HTMLParser):
 
     def warn(self, line: int, column: int, message: str) -> None:
         self.issues.append(Issue("WARN", self.path, line, column, message))
-
-
-def has_class(attrs: dict[str, str | None], class_name: str) -> bool:
-    class_attr = attrs.get("class") or ""
-    return class_name in class_attr.split()
-
-
-def language_from_classes(class_attr: str | None) -> str | None:
-    for class_name in (class_attr or "").split():
-        if class_name.startswith("language-"):
-            return class_name.removeprefix("language-")
-    return None
 
 
 def check_file(path: Path) -> list[Issue]:

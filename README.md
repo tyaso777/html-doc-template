@@ -59,6 +59,7 @@ html-doc-template/
   scripts/
     build_site.py
     check_html.py
+    html_fragment.py
   chapters-src/
     site-manifest.json
     01-introduction.html
@@ -240,7 +241,7 @@ python3 scripts/check_html.py
 
 The checker uses only the Python standard library. It validates duplicate IDs, missing `data-toc` IDs, local file links, same-page fragment links, `aria-describedby` references, `pre.code-block` / `code.language-*` consistency, chapter manifest integrity, shell template tokens, generated Previous/Next navigation, and the scoped IDs emitted for generated Python runners.
 
-When using this template in another document project, copy `scripts/check_html.py` with the template and run it against the generated HTML file. For multi-page chapter sets, keep `chapters-src/site-manifest.json`, `chapters-src/`, and `chapters/` together so the manifest checks can verify generated navigation.
+When using this template in another document project, copy `scripts/check_html.py` and `scripts/html_fragment.py` with the template and run the checker against the generated HTML file. For multi-page chapter sets, keep `chapters-src/site-manifest.json`, `chapters-src/`, and `chapters/` together so the manifest checks can verify generated navigation.
 
 ## Browser Smoke Tests
 
