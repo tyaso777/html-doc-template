@@ -295,6 +295,23 @@ The checker uses only the Python standard library. It validates duplicate IDs, m
 
 When using this template in another document project, copy `scripts/check_html.py`, `scripts/html_fragment.py`, and `scripts/site_manifest.py` with the template and run the checker against the generated HTML file. For multi-page chapter sets, keep `chapters-src/site-manifest.json`, `chapters-src/`, and `chapters/` together so the manifest checks can verify generated navigation.
 
+## Before Committing
+
+Run these Python-only checks before committing content or template changes:
+
+```bash
+python3 scripts/build_site.py
+python3 scripts/check_html.py
+python3 -m unittest discover -s tests/python
+git diff --exit-code chapters
+```
+
+If Node.js and Playwright are available, also run:
+
+```bash
+npm run test:e2e
+```
+
 ## Browser Smoke Tests
 
 Browser smoke tests are optional and require Node.js, npm, and Playwright. They verify that generated chapters open in Chromium, the sidebar and chapter navigation work, and JavaScript enhancements initialize for copy buttons, CodeMirror, MathJax, and Mermaid.
