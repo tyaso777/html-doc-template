@@ -259,7 +259,7 @@ On Linux systems that do not already have Chromium runtime libraries, run Playwr
 npx playwright install-deps chromium
 ```
 
-Run the regular browser smoke tests:
+Run the regular browser smoke tests on Windows, macOS, Linux, or WSL:
 
 ```bash
 npm run test:e2e
@@ -270,6 +270,15 @@ The Pyodide runtime test is intentionally separate because it downloads and star
 ```bash
 npm run test:e2e:pyodide
 ```
+
+If a WSL environment accidentally points Node or Playwright temporary files at the Windows temp directory, set `TMPDIR` only for that local run:
+
+```bash
+TMPDIR=/tmp npm run test:e2e
+TMPDIR=/tmp npm run test:e2e:pyodide
+```
+
+Windows `cmd.exe` and PowerShell users usually do not need `TMPDIR`. The Pyodide smoke-test flag is set through `cross-env` in `package.json` so the same `npm run test:e2e:pyodide` command works across Windows, macOS, Linux, and WSL.
 
 ## External Libraries
 
