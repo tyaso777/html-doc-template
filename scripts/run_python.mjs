@@ -1,10 +1,9 @@
 import { spawnSync } from "node:child_process";
 
-const script = process.argv[2];
-const scriptArgs = process.argv.slice(3);
+const pythonArgs = process.argv.slice(2);
 
-if (!script) {
-  console.error("Usage: node scripts/run_python.mjs <script.py> [args...]");
+if (pythonArgs.length === 0) {
+  console.error("Usage: node scripts/run_python.mjs <script.py|-m module> [args...]");
   process.exit(2);
 }
 
@@ -25,7 +24,7 @@ for (const candidate of candidates) {
     continue;
   }
 
-  const result = spawnSync(candidate[0], [...candidate.slice(1), script, ...scriptArgs], {
+  const result = spawnSync(candidate[0], [...candidate.slice(1), ...pythonArgs], {
     stdio: "inherit",
     shell: false
   });
