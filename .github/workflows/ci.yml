@@ -1,0 +1,85 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      run_pyodide:
+        description: "Run the CDN-backed Pyodide browser smoke test"
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  check:
+    name: Build, check, and browser smoke
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Build generated chapters
+        run: npm run build
+
+      - name: Check HTML
+        run: npm run check:html
+
+      - name: Check Python syntax
+        run: python3 -m compileall scripts
+
+      - name: Check JavaScript syntax
+        run: node --check assets/js/technical-doc.js
+
+      - name: Run browser smoke tests
+        run: npm run test:e2e
+
+  pyodide-smoke:
+    name: Pyodide browser smoke
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && inputs.run_pyodide
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Build generated chapters
+        run: npm run build
+
+      - name: Run Pyodide browser smoke test
+        run: npm run test:e2e:pyodide
