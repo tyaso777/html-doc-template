@@ -57,6 +57,19 @@ REQUIRED_SHELL_TOKENS = {
     "{{MATERIALS_SECTION}}",
     "{{EXTERNAL_LINKS_SECTION}}",
 }
+LEGACY_PYTHON_RUNNER_IDS = {
+    "copy-python-code-button",
+    "load-button",
+    "output",
+    "print-python-code",
+    "print-python-output",
+    "pyodide-status",
+    "python-code",
+    "python-code-help",
+    "reset-button",
+    "restart-runtime-button",
+    "run-button",
+}
 
 
 @dataclass(frozen=True)
@@ -115,6 +128,8 @@ class DocumentParser(HTMLParser):
 
         element_id = attrs.get("id")
         if element_id:
+            if element_id in LEGACY_PYTHON_RUNNER_IDS:
+                self.error(line, column, f'legacy Python runner id "{element_id}" should use scoped generated IDs')
             if element_id in self.ids:
                 first_line, first_column = self.ids[element_id]
                 self.error(

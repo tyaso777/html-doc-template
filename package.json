@@ -1,0 +1,15 @@
+{
+  "name": "html-doc-template",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "python3 scripts/build_site.py",
+    "check:html": "python3 scripts/check_html.py",
+    "test:e2e": "TMPDIR=/tmp playwright test",
+    "test:e2e:pyodide": "TMPDIR=/tmp PYODIDE_SMOKE=1 playwright test --grep @pyodide"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.57.0"
+  }
+}

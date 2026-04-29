@@ -322,48 +322,50 @@
             For documents that require strict supply-chain control, host a reviewed Pyodide distribution locally.
           </aside>
 
-        <div class="runner-panel">
-          <p id="python-code-help">
+        <div class="runner-panel" data-python-runner-panel>
+          <p id="python-runner-1-help" data-python-runner-help>
             Try changing the input sizes and run the code.
             On slow connections or constrained devices, the first Python runtime load can take some time.
           </p>
 
           <div class="runner-toolbar">
-            <button id="load-button" class="button secondary" type="button">Load Python Runtime</button>
-            <button id="run-button" class="button" type="button" disabled>Run Python</button>
-            <button id="reset-button" class="button secondary" type="button">Reset Code Text</button>
-            <button id="restart-runtime-button" class="button secondary" type="button" disabled>Restart Python Runtime</button>
+            <button class="button secondary" type="button" data-python-load-button>Load Python Runtime</button>
+            <button class="button" type="button" data-python-run-button disabled>Run Python</button>
+            <button class="button secondary" type="button" data-python-reset-button>Reset Code Text</button>
+            <button class="button secondary" type="button" data-python-restart-button disabled>Restart Python Runtime</button>
           </div>
 
-          <label for="python-code" class="visually-hidden">Python code editor</label>
+          <label for="python-runner-1-code" class="visually-hidden">Python code editor</label>
           <div class="python-editor-wrap">
             <textarea
-              id="python-code"
+              id="python-runner-1-code"
               spellcheck="false"
-              aria-describedby="python-code-help output"
+              aria-describedby="python-runner-1-help python-runner-1-output"
               autocomplete="off"
               autocorrect="off"
               autocapitalize="off"
               data-initial-code-base64="ZnJvbSB0aW1lIGltcG9ydCBwZXJmX2NvdW50ZXIKCgpkZWYgbGluZWFyX3NlYXJjaF93aXRoX2NvdW50KHZhbHVlczogbGlzdFtpbnRdLCB0YXJnZXQ6IGludCkgLT4gdHVwbGVbaW50LCBpbnRdOgogICAgIiIiRmluZHMgdGhlIHRhcmdldCBieSBzY2FubmluZyB2YWx1ZXMgYW5kIGNvdW50cyBjb21wYXJpc29ucy4KCiAgICBBcmdzOgogICAgICAgIHZhbHVlczogU29ydGVkIGludGVnZXIgdmFsdWVzLgogICAgICAgIHRhcmdldDogVmFsdWUgdG8gZmluZC4KCiAgICBSZXR1cm5zOgogICAgICAgIEEgcGFpciBvZiB0aGUgdGFyZ2V0IGluZGV4IGFuZCB0aGUgbnVtYmVyIG9mIGNvbXBhcmlzb25zLgogICAgIiIiCiAgICBjb21wYXJpc29ucyA9IDAKCiAgICBmb3IgaW5kZXgsIHZhbHVlIGluIGVudW1lcmF0ZSh2YWx1ZXMpOgogICAgICAgIGNvbXBhcmlzb25zICs9IDEKICAgICAgICBpZiB2YWx1ZSA9PSB0YXJnZXQ6CiAgICAgICAgICAgIHJldHVybiBpbmRleCwgY29tcGFyaXNvbnMKCiAgICByZXR1cm4gLTEsIGNvbXBhcmlzb25zCgoKZGVmIGJpbmFyeV9zZWFyY2hfd2l0aF9jb3VudCh2YWx1ZXM6IGxpc3RbaW50XSwgdGFyZ2V0OiBpbnQpIC0+IHR1cGxlW2ludCwgaW50XToKICAgICIiIkZpbmRzIHRoZSB0YXJnZXQgdXNpbmcgYmluYXJ5IHNlYXJjaCBhbmQgY291bnRzIGNvbXBhcmlzb25zLgoKICAgIEFyZ3M6CiAgICAgICAgdmFsdWVzOiBTb3J0ZWQgaW50ZWdlciB2YWx1ZXMuCiAgICAgICAgdGFyZ2V0OiBWYWx1ZSB0byBmaW5kLgoKICAgIFJldHVybnM6CiAgICAgICAgQSBwYWlyIG9mIHRoZSB0YXJnZXQgaW5kZXggYW5kIHRoZSBudW1iZXIgb2YgY29tcGFyaXNvbnMuCiAgICAiIiIKICAgIGxlZnQgPSAwCiAgICByaWdodCA9IGxlbih2YWx1ZXMpIC0gMQogICAgY29tcGFyaXNvbnMgPSAwCgogICAgd2hpbGUgbGVmdCA8PSByaWdodDoKICAgICAgICBtaWRkbGUgPSAobGVmdCArIHJpZ2h0KSAvLyAyCiAgICAgICAgY29tcGFyaXNvbnMgKz0gMQoKICAgICAgICBpZiB2YWx1ZXNbbWlkZGxlXSA9PSB0YXJnZXQ6CiAgICAgICAgICAgIHJldHVybiBtaWRkbGUsIGNvbXBhcmlzb25zCgogICAgICAgIGlmIHZhbHVlc1ttaWRkbGVdIDwgdGFyZ2V0OgogICAgICAgICAgICBsZWZ0ID0gbWlkZGxlICsgMQogICAgICAgIGVsc2U6CiAgICAgICAgICAgIHJpZ2h0ID0gbWlkZGxlIC0gMQoKICAgIHJldHVybiAtMSwgY29tcGFyaXNvbnMKCgpkZWYgbWVhc3VyZV9vbmNlKG46IGludCwgcmVwZWF0czogaW50KSAtPiB0dXBsZVtpbnQsIGludCwgZmxvYXQsIGZsb2F0XToKICAgICIiIk1lYXN1cmVzIGNvbXBhcmlzb24gY291bnRzIGFuZCBhdmVyYWdlIGV4ZWN1dGlvbiB0aW1lcy4KCiAgICBBcmdzOgogICAgICAgIG46IE51bWJlciBvZiBlbGVtZW50cy4KICAgICAgICByZXBlYXRzOiBOdW1iZXIgb2YgcmVwZWF0ZWQgc2VhcmNoZXMuCgogICAgUmV0dXJuczoKICAgICAgICBMaW5lYXItc2VhcmNoIGNvbXBhcmlzb25zLCBiaW5hcnktc2VhcmNoIGNvbXBhcmlzb25zLCBhdmVyYWdlIGxpbmVhci1zZWFyY2gKICAgICAgICB0aW1lLCBhbmQgYXZlcmFnZSBiaW5hcnktc2VhcmNoIHRpbWUuCiAgICAiIiIKICAgIHZhbHVlcyA9IGxpc3QocmFuZ2UobikpCiAgICB0YXJnZXQgPSBuIC0gMQoKICAgIF8sIGxpbmVhcl9jb21wYXJpc29ucyA9IGxpbmVhcl9zZWFyY2hfd2l0aF9jb3VudCh2YWx1ZXMsIHRhcmdldCkKICAgIF8sIGJpbmFyeV9jb21wYXJpc29ucyA9IGJpbmFyeV9zZWFyY2hfd2l0aF9jb3VudCh2YWx1ZXMsIHRhcmdldCkKCiAgICBzdGFydCA9IHBlcmZfY291bnRlcigpCiAgICBmb3IgXyBpbiByYW5nZShyZXBlYXRzKToKICAgICAgICBsaW5lYXJfc2VhcmNoX3dpdGhfY291bnQodmFsdWVzLCB0YXJnZXQpCiAgICBsaW5lYXJfbXMgPSAocGVyZl9jb3VudGVyKCkgLSBzdGFydCkgKiAxMDAwIC8gcmVwZWF0cwoKICAgIHN0YXJ0ID0gcGVyZl9jb3VudGVyKCkKICAgIGZvciBfIGluIHJhbmdlKHJlcGVhdHMpOgogICAgICAgIGJpbmFyeV9zZWFyY2hfd2l0aF9jb3VudCh2YWx1ZXMsIHRhcmdldCkKICAgIGJpbmFyeV9tcyA9IChwZXJmX2NvdW50ZXIoKSAtIHN0YXJ0KSAqIDEwMDAgLyByZXBlYXRzCgogICAgcmV0dXJuIGxpbmVhcl9jb21wYXJpc29ucywgYmluYXJ5X2NvbXBhcmlzb25zLCBsaW5lYXJfbXMsIGJpbmFyeV9tcwoKCmRlZiBtYWluKCkgLT4gTm9uZToKICAgICIiIlJ1bnMgYSBzaW1wbGUgZ3Jvd3RoLXJhdGUgZXhwZXJpbWVudC4iIiIKICAgIHNpemVzID0gWzFfMDAwLCAxMF8wMDAsIDEwMF8wMDAsIDUwMF8wMDAsIDFfMDAwXzAwMF0KICAgIHJlcGVhdHNfYnlfc2l6ZSA9IHsKICAgICAgICAxXzAwMDogMjAwLAogICAgICAgIDEwXzAwMDogMTAwLAogICAgICAgIDEwMF8wMDA6IDIwLAogICAgICAgIDUwMF8wMDA6IDUsCiAgICAgICAgMV8wMDBfMDAwOiAzLAogICAgfQoKICAgIHByaW50KCJuICAgICAgICAgIGxpbmVhcl9jbXAgICBiaW5hcnlfY21wICAgY21wX3JhdGlvICAgbGluZWFyX21zICAgYmluYXJ5X21zIikKICAgIHByaW50KCItIiAqIDc4KQoKICAgIGZvciBuIGluIHNpemVzOgogICAgICAgIGxpbmVhcl9jbXAsIGJpbmFyeV9jbXAsIGxpbmVhcl9tcywgYmluYXJ5X21zID0gbWVhc3VyZV9vbmNlKG4sIHJlcGVhdHNfYnlfc2l6ZVtuXSkKICAgICAgICByYXRpbyA9IGxpbmVhcl9jbXAgLyBiaW5hcnlfY21wIGlmIGJpbmFyeV9jbXAgPiAwIGVsc2UgZmxvYXQoImluZiIpCiAgICAgICAgcHJpbnQoCiAgICAgICAgICAgIGYie246Pjl9ICAiCiAgICAgICAgICAgIGYie2xpbmVhcl9jbXA6PjEwfSAgIgogICAgICAgICAgICBmIntiaW5hcnlfY21wOj4xMH0gICIKICAgICAgICAgICAgZiJ7cmF0aW86PjkuMWZ9eCAgIgogICAgICAgICAgICBmIntsaW5lYXJfbXM6PjkuNGZ9ICAiCiAgICAgICAgICAgIGYie2JpbmFyeV9tczo+OS40Zn0iCiAgICAgICAgKQoKICAgIHByaW50KCkKICAgIHByaW50KCJJbnRlcnByZXRhdGlvbjoiKQogICAgcHJpbnQoIi0gQ29tcGFyaXNvbiBjb3VudHMgYXJlIHRoZSBjbGVhbmVzdCBzaWduYWwgaGVyZS4iKQogICAgcHJpbnQoIi0gTGluZWFyIHNlYXJjaCBjb21wYXJpc29ucyBncm93IGFsbW9zdCBkaXJlY3RseSB3aXRoIG4uIikKICAgIHByaW50KCItIEJpbmFyeSBzZWFyY2ggY29tcGFyaXNvbnMgZ3JvdyBzbG93bHkgYmVjYXVzZSB0aGUgc2VhcmNoIHJhbmdlIGlzIGhhbHZlZC4iKQogICAgcHJpbnQoIi0gVGltaW5nIG51bWJlcnMgYXJlIHVzZWZ1bCBidXQgbm9pc2llciB0aGFuIGNvbXBhcmlzb24gY291bnRzLiIpCgoKbWFpbigp"
+              data-python-code
             ></textarea>
-            <button id="copy-python-code-button" class="copy-code-button python-editor-copy-button" type="button" aria-label="Copy Python code">Copy</button>
+            <button class="copy-code-button python-editor-copy-button" type="button" aria-label="Copy Python code" data-python-copy-button>Copy</button>
           </div>
 
           <h3>Output</h3>
           <div
-            id="output"
+            id="python-runner-1-output"
             class="output"
             role="log"
             aria-live="polite"
             aria-atomic="true"
+            data-python-output
           >Press "Load Python Runtime" first. Python will run in a Web Worker.</div>
 
           <section class="print-only print-runner-snapshot" aria-label="Printed Python runner snapshot">
             <h3>Printed Python Code</h3>
-            <pre id="print-python-code" class="print-code-block"></pre>
+            <pre id="python-runner-1-print-code" class="print-code-block" data-python-print-code></pre>
 
             <h3>Printed Python Output</h3>
-            <pre id="print-python-output" class="print-output-block"></pre>
+            <pre id="python-runner-1-print-output" class="print-output-block" data-python-print-output></pre>
           </section>
         </div>
         </section>

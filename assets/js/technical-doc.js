@@ -134,12 +134,6 @@ main()
       indexUrl: "https://cdn.jsdelivr.net/pyodide/v0.29.3/full/"
     };
 
-    let pyodideWorker = null;
-    let pyodideWorkerUrl = null;
-    let pyodideReady = false;
-    let pyodideRequestId = 0;
-    const pyodidePendingRequests = new Map();
-
     function initializeMermaid() {
       if (window.mermaid) {
         window.mermaid.initialize({
@@ -273,79 +267,98 @@ main()
       buildNestedToc(toc, tocTargets);
     }
 
-    function setOutput(text) {
-      const output = document.getElementById("output");
+    function initializePythonRunner(panel) {
+      const codeArea = panel.querySelector("[data-python-code]");
+      const output = panel.querySelector("[data-python-output]");
+      const loadButton = panel.querySelector("[data-python-load-button]");
+      const runButton = panel.querySelector("[data-python-run-button]");
+      const resetButton = panel.querySelector("[data-python-reset-button]");
+      const restartRuntimeButton = panel.querySelector("[data-python-restart-button]");
+      const copyButton = panel.querySelector("[data-python-copy-button]");
+      const printCode = panel.querySelector("[data-python-print-code]");
+      const printOutput = panel.querySelector("[data-python-print-output]");
 
-      if (!output) {
+      if (!codeArea || !output || !loadButton || !runButton || !resetButton || !restartRuntimeButton) {
         return;
       }
 
-      output.textContent = text;
-      output.dataset.hasStreamOutput = text ? "true" : "false";
-      syncPrintRunnerSnapshot();
-    }
+      let pyodideWorker = null;
+      let pyodideWorkerUrl = null;
+      let pyodideReady = false;
+      let pyodideRequestId = 0;
+      let pythonEditor = null;
+      const pyodidePendingRequests = new Map();
+      const initialPythonCode = codeArea.dataset.initialCodeBase64
+        ? decodeBase64Utf8(codeArea.dataset.initialCodeBase64)
+        : codeArea.dataset.initialCode
+          ? codeArea.dataset.initialCode
+          : codeArea.value.trim()
+            ? codeArea.value
+            : DEFAULT_CODE;
 
-    function clearOutput() {
-      const output = document.getElementById("output");
+      function getPythonCode() {
+        if (pythonEditor) {
+          return pythonEditor.getValue();
+        }
 
-      if (!output) {
-        return;
+        return codeArea.value;
       }
 
-      output.textContent = "";
-      output.dataset.hasStreamOutput = "false";
-      syncPrintRunnerSnapshot();
-    }
+      function setPythonCode(value) {
+        if (pythonEditor) {
+          pythonEditor.setValue(value);
+        }
 
-    function appendOutput(text) {
-      const output = document.getElementById("output");
-
-      if (!output) {
-        return;
+        codeArea.value = value;
       }
 
-      output.textContent += text;
-      output.dataset.hasStreamOutput = "true";
-      output.scrollTop = output.scrollHeight;
-      syncPrintRunnerSnapshot();
-    }
+      function syncPrintRunnerSnapshot() {
+        if (printCode) {
+          printCode.textContent = getPythonCode() || "(empty code)";
+        }
 
-    function hasOutputContent() {
-      const output = document.getElementById("output");
-
-      if (!output) {
-        return false;
+        if (printOutput) {
+          printOutput.textContent = output.textContent || "(no output)";
+        }
       }
 
-      return output.dataset.hasStreamOutput === "true" && output.textContent.length > 0;
-    }
-
-    function setOutputBusy(isBusy) {
-      const output = document.getElementById("output");
-
-      if (!output) {
-        return;
+      function setOutput(text) {
+        output.textContent = text;
+        output.dataset.hasStreamOutput = text ? "true" : "false";
+        syncPrintRunnerSnapshot();
       }
 
-      output.setAttribute("aria-busy", String(isBusy));
-    }
-
-    function setStatus(text) {
-      const status = document.getElementById("pyodide-status");
-
-      if (!status) {
-        return;
+      function clearOutput() {
+        output.textContent = "";
+        output.dataset.hasStreamOutput = "false";
+        syncPrintRunnerSnapshot();
       }
 
-      status.textContent = text;
-    }
-
-    function createPyodideWorker() {
-      if (pyodideWorker) {
-        return pyodideWorker;
+      function appendOutput(text) {
+        output.textContent += text;
+        output.dataset.hasStreamOutput = "true";
+        output.scrollTop = output.scrollHeight;
+        syncPrintRunnerSnapshot();
       }
 
-      const workerSource = `
+      function hasOutputContent() {
+        return output.dataset.hasStreamOutput === "true" && output.textContent.length > 0;
+      }
+
+      function setOutputBusy(isBusy) {
+        output.setAttribute("aria-busy", String(isBusy));
+      }
+
+      function setStatus(text) {
+        panel.dataset.pythonRuntimeStatus = text;
+      }
+
+      function createPyodideWorker() {
+        if (pyodideWorker) {
+          return pyodideWorker;
+        }
+
+        const workerSource = `
         const pyodideScriptUrl = "${PYODIDE_WORKER_CONFIG.scriptUrl}";
         const pyodideIndexUrl = "${PYODIDE_WORKER_CONFIG.indexUrl}";
 
@@ -461,274 +474,251 @@ except BaseException:
             });
           }
         });
-      `;
+        `;
 
-      const blob = new Blob([workerSource], { type: "text/javascript" });
-      pyodideWorkerUrl = URL.createObjectURL(blob);
-      pyodideWorker = new Worker(pyodideWorkerUrl);
+        const blob = new Blob([workerSource], { type: "text/javascript" });
+        pyodideWorkerUrl = URL.createObjectURL(blob);
+        pyodideWorker = new Worker(pyodideWorkerUrl);
 
-      pyodideWorker.addEventListener("message", (event) => {
-        const { id, type, result, error, text } = event.data;
-        const request = pyodidePendingRequests.get(id);
+        pyodideWorker.addEventListener("message", (event) => {
+          const { id, type, result, error, text } = event.data;
+          const request = pyodidePendingRequests.get(id);
 
-        if (!request) {
-          return;
-        }
-
-        if (type === "stdout" || type === "stderr") {
-          if (request.onStream) {
-            request.onStream(text || "");
+          if (!request) {
+            return;
           }
+
+          if (type === "stdout" || type === "stderr") {
+            if (request.onStream) {
+              request.onStream(text || "");
+            }
+            return;
+          }
+
+          pyodidePendingRequests.delete(id);
+
+          if (type === "error") {
+            request.reject(new Error(error || "Unknown worker error."));
+            return;
+          }
+
+          request.resolve(result);
+        });
+
+        pyodideWorker.addEventListener("error", (event) => {
+          const details = [
+            event.message || "Worker error.",
+            event.filename ? `file: ${event.filename}` : "",
+            event.lineno ? `line: ${event.lineno}` : "",
+            event.colno ? `column: ${event.colno}` : ""
+          ]
+            .filter(Boolean)
+            .join(" ");
+
+          for (const request of pyodidePendingRequests.values()) {
+            request.reject(new Error(details));
+          }
+          pyodidePendingRequests.clear();
+        });
+
+        return pyodideWorker;
+      }
+
+      function sendPyodideWorkerMessage(type, payload = {}, handlers = {}) {
+        const worker = createPyodideWorker();
+        const id = ++pyodideRequestId;
+
+        return new Promise((resolve, reject) => {
+          pyodidePendingRequests.set(id, {
+            resolve,
+            reject,
+            onStream: handlers.onStream || null
+          });
+
+          worker.postMessage({
+            id,
+            type,
+            ...payload
+          });
+        });
+      }
+
+      async function loadPythonRuntime() {
+        if (pyodideReady) {
+          setStatus("Python runtime: already loaded in worker.");
+          runButton.disabled = false;
+          restartRuntimeButton.disabled = false;
           return;
         }
 
-        pyodidePendingRequests.delete(id);
+        loadButton.disabled = true;
+        setOutputBusy(true);
+        setStatus("Python runtime: loading in worker...");
+        setOutput("Loading Pyodide in a classic Web Worker. The page should remain responsive.");
 
-        if (type === "error") {
-          request.reject(new Error(error || "Unknown worker error."));
+        try {
+          await sendPyodideWorkerMessage("load");
+          pyodideReady = true;
+          setStatus("Python runtime: loaded in worker.");
+          setOutput("Python runtime loaded in worker. Press Run Python.");
+          setOutputBusy(false);
+          runButton.disabled = false;
+          restartRuntimeButton.disabled = false;
+        } catch (error) {
+          loadButton.disabled = false;
+          setStatus("Python runtime: failed to load in worker.");
+          setOutput(String(error));
+          setOutputBusy(false);
+        }
+      }
+
+      async function runPythonCode() {
+        const code = getPythonCode();
+
+        if (!pyodideReady) {
+          setOutput("Python runtime is not loaded.");
           return;
         }
 
-        request.resolve(result);
-      });
+        runButton.disabled = true;
+        setOutputBusy(true);
+        clearOutput();
+        setStatus("Python runtime: running code in worker.");
 
-      pyodideWorker.addEventListener("error", (event) => {
-        const details = [
-          event.message || "Worker error.",
-          event.filename ? `file: ${event.filename}` : "",
-          event.lineno ? `line: ${event.lineno}` : "",
-          event.colno ? `column: ${event.colno}` : ""
-        ]
-          .filter(Boolean)
-          .join(" ");
+        try {
+          const result = await sendPyodideWorkerMessage(
+            "run",
+            { code },
+            {
+              onStream: (text) => {
+                appendOutput(text);
+              }
+            }
+          );
 
+          if (result) {
+            appendOutput(result);
+          }
+
+          if (!hasOutputContent()) {
+            setOutput("(no output)");
+          }
+
+          setStatus("Python runtime: run completed.");
+        } catch (error) {
+          appendOutput(String(error));
+          setStatus("Python runtime: run failed.");
+        } finally {
+          runButton.disabled = false;
+          setOutputBusy(false);
+        }
+      }
+
+      function resetCode() {
+        setPythonCode(initialPythonCode);
+        syncPrintRunnerSnapshot();
+        setOutputBusy(false);
+        setOutput("Code text reset. Python runtime state was not changed.");
+      }
+
+      function restartPythonRuntime() {
         for (const request of pyodidePendingRequests.values()) {
-          request.reject(new Error(details));
+          request.reject(new Error("Python runtime was restarted."));
         }
         pyodidePendingRequests.clear();
-      });
 
-      return pyodideWorker;
-    }
+        if (pyodideWorker) {
+          pyodideWorker.terminate();
+          pyodideWorker = null;
+        }
 
-    function sendPyodideWorkerMessage(type, payload = {}, handlers = {}) {
-      const worker = createPyodideWorker();
-      const id = ++pyodideRequestId;
+        if (pyodideWorkerUrl) {
+          URL.revokeObjectURL(pyodideWorkerUrl);
+          pyodideWorkerUrl = null;
+        }
 
-      return new Promise((resolve, reject) => {
-        pyodidePendingRequests.set(id, {
-          resolve,
-          reject,
-          onStream: handlers.onStream || null
-        });
-
-        worker.postMessage({
-          id,
-          type,
-          ...payload
-        });
-      });
-    }
-
-    async function loadPythonRuntime() {
-      const loadButton = document.getElementById("load-button");
-      const runButton = document.getElementById("run-button");
-
-      if (pyodideReady) {
-        setStatus("Python runtime: already loaded in worker.");
-        runButton.disabled = false;
-        document.getElementById("restart-runtime-button").disabled = false;
-        return;
-      }
-
-      loadButton.disabled = true;
-      setOutputBusy(true);
-      setStatus("Python runtime: loading in worker...");
-      setOutput("Loading Pyodide in a classic Web Worker. The page should remain responsive.");
-
-      try {
-        await sendPyodideWorkerMessage("load");
-        pyodideReady = true;
-        setStatus("Python runtime: loaded in worker.");
-        setOutput("Python runtime loaded in worker. Press Run Python.");
-        setOutputBusy(false);
-        runButton.disabled = false;
-        document.getElementById("restart-runtime-button").disabled = false;
-      } catch (error) {
+        pyodideReady = false;
         loadButton.disabled = false;
-        setStatus("Python runtime: failed to load in worker.");
-        setOutput(String(error));
+        runButton.disabled = true;
+        restartRuntimeButton.disabled = true;
+
         setOutputBusy(false);
-      }
-    }
-
-    async function runPythonCode() {
-      const runButton = document.getElementById("run-button");
-      const code = getPythonCode();
-
-      if (!pyodideReady) {
-        setOutput("Python runtime is not loaded.");
-        return;
+        setStatus("Python runtime: restarted. Load it again before running code.");
+        setOutput("Python runtime was restarted. Press Load Python Runtime.");
       }
 
-      runButton.disabled = true;
-      setOutputBusy(true);
-      clearOutput();
-      setStatus("Python runtime: running code in worker.");
+      function initializePythonEditor() {
+        if (!window.CodeMirror) {
+          return;
+        }
 
-      try {
-        const result = await sendPyodideWorkerMessage(
-          "run",
-          { code },
-          {
-            onStream: (text) => {
-              appendOutput(text);
+        pythonEditor = window.CodeMirror.fromTextArea(codeArea, {
+          mode: "python",
+          lineNumbers: true,
+          indentUnit: 4,
+          tabSize: 4,
+          indentWithTabs: false,
+          lineWrapping: false,
+          viewportMargin: Infinity,
+          extraKeys: {
+            Tab: (editor) => {
+              if (editor.somethingSelected()) {
+                editor.indentSelection("add");
+                return;
+              }
+
+              editor.replaceSelection("    ", "end");
             }
           }
-        );
+        });
 
-        if (result) {
-          appendOutput(result);
-        }
-
-        if (!hasOutputContent()) {
-          setOutput("(no output)");
-        }
-
-        setStatus("Python runtime: run completed.");
-      } catch (error) {
-        appendOutput(String(error));
-        setStatus("Python runtime: run failed.");
-      } finally {
-        runButton.disabled = false;
-        setOutputBusy(false);
-      }
-    }
-
-    function decodeBase64Utf8(value) {
-      const bytes = Uint8Array.from(atob(value), (character) => character.charCodeAt(0));
-      return new TextDecoder().decode(bytes);
-    }
-
-    function resetCode() {
-      setPythonCode(initialPythonCode);
-      syncPrintRunnerSnapshot();
-      setOutputBusy(false);
-      setOutput("Code text reset. Python runtime state was not changed.");
-    }
-
-    function restartPythonRuntime() {
-      const loadButton = document.getElementById("load-button");
-      const runButton = document.getElementById("run-button");
-      const restartRuntimeButton = document.getElementById("restart-runtime-button");
-
-      for (const request of pyodidePendingRequests.values()) {
-        request.reject(new Error("Python runtime was restarted."));
-      }
-      pyodidePendingRequests.clear();
-
-      if (pyodideWorker) {
-        pyodideWorker.terminate();
-        pyodideWorker = null;
+        pythonEditor.on("change", () => {
+          pythonEditor.save();
+          syncPrintRunnerSnapshot();
+        });
       }
 
-      if (pyodideWorkerUrl) {
-        URL.revokeObjectURL(pyodideWorkerUrl);
-        pyodideWorkerUrl = null;
-      }
-
-      pyodideReady = false;
-      loadButton.disabled = false;
-      runButton.disabled = true;
-      restartRuntimeButton.disabled = true;
-
-      setOutputBusy(false);
-      setStatus("Python runtime: restarted. Load it again before running code.");
-      setOutput("Python runtime was restarted. Press Load Python Runtime.");
-    }
-
-    let pythonEditor = null;
-    let initialPythonCode = DEFAULT_CODE;
-
-    function getPythonCode() {
-      const codeArea = document.getElementById("python-code");
-
-      if (pythonEditor) {
-        return pythonEditor.getValue();
-      }
-
-      return codeArea ? codeArea.value : "";
-    }
-
-    function setPythonCode(value) {
-      const codeArea = document.getElementById("python-code");
-
-      if (pythonEditor) {
-        pythonEditor.setValue(value);
-      }
-
-      if (codeArea) {
-        codeArea.value = value;
-      }
-    }
-
-    function initializePythonEditor() {
-      const codeArea = document.getElementById("python-code");
-
-      if (!codeArea || !window.CodeMirror) {
-        return;
-      }
-
-      pythonEditor = window.CodeMirror.fromTextArea(codeArea, {
-        mode: "python",
-        lineNumbers: true,
-        indentUnit: 4,
-        tabSize: 4,
-        indentWithTabs: false,
-        lineWrapping: false,
-        viewportMargin: Infinity,
-        extraKeys: {
-          Tab: (editor) => {
-            if (editor.somethingSelected()) {
-              editor.indentSelection("add");
-              return;
-            }
-
-            editor.replaceSelection("    ", "end");
-          }
-        }
-      });
-
-      pythonEditor.on("change", () => {
-        pythonEditor.save();
+      function initializePrintSnapshotSync() {
         syncPrintRunnerSnapshot();
-      });
-    }
-
-    function syncPrintRunnerSnapshot() {
-      const codeArea = document.getElementById("python-code");
-      const output = document.getElementById("output");
-      const printCode = document.getElementById("print-python-code");
-      const printOutput = document.getElementById("print-python-output");
-
-      if (printCode) {
-        printCode.textContent = getPythonCode() || "(empty code)";
-      }
-
-      if (output && printOutput) {
-        printOutput.textContent = output.textContent || "(no output)";
-      }
-    }
-
-    function initializePrintSnapshotSync() {
-      const codeArea = document.getElementById("python-code");
-
-      syncPrintRunnerSnapshot();
-
-      if (codeArea) {
         codeArea.addEventListener("input", syncPrintRunnerSnapshot);
       }
 
+      function initializePythonCodeCopyButton() {
+        if (!copyButton) {
+          return;
+        }
+
+        copyButton.addEventListener("click", async () => {
+          const originalText = copyButton.textContent;
+          copyButton.disabled = true;
+
+          try {
+            await copyTextToClipboard(getPythonCode());
+            copyButton.textContent = "Copied";
+          } catch (error) {
+            copyButton.textContent = "Error";
+          } finally {
+            window.setTimeout(() => {
+              copyButton.textContent = originalText;
+              copyButton.disabled = false;
+            }, 1400);
+          }
+        });
+      }
+
+      setPythonCode(initialPythonCode);
+      initializePythonEditor();
+      setPythonCode(initialPythonCode);
+      initializePrintSnapshotSync();
+      initializePythonCodeCopyButton();
+
+      loadButton.addEventListener("click", loadPythonRuntime);
+      runButton.addEventListener("click", runPythonCode);
+      resetButton.addEventListener("click", resetCode);
+      restartRuntimeButton.addEventListener("click", restartPythonRuntime);
+    }
+
+    function initializePrintSnapshotSync(runners) {
       window.addEventListener("beforeprint", syncPrintRunnerSnapshot);
 
       if (window.matchMedia) {
@@ -739,6 +729,28 @@ except BaseException:
           }
         });
       }
+
+      function syncPrintRunnerSnapshot() {
+        for (const runner of runners) {
+          const code = runner.querySelector("[data-python-code]");
+          const output = runner.querySelector("[data-python-output]");
+          const printCode = runner.querySelector("[data-python-print-code]");
+          const printOutput = runner.querySelector("[data-python-print-output]");
+
+          if (printCode && code) {
+            printCode.textContent = code.value || "(empty code)";
+          }
+
+          if (printOutput && output) {
+            printOutput.textContent = output.textContent || "(no output)";
+          }
+        }
+      }
+    }
+
+    function decodeBase64Utf8(value) {
+      const bytes = Uint8Array.from(atob(value), (character) => character.charCodeAt(0));
+      return new TextDecoder().decode(bytes);
     }
 
     async function copyTextToClipboard(text) {
@@ -760,31 +772,6 @@ except BaseException:
       } finally {
         textarea.remove();
       }
-    }
-
-    function initializePythonCodeCopyButton() {
-      const button = document.getElementById("copy-python-code-button");
-
-      if (!button) {
-        return;
-      }
-
-      button.addEventListener("click", async () => {
-        const originalText = button.textContent;
-        button.disabled = true;
-
-        try {
-          await copyTextToClipboard(getPythonCode());
-          button.textContent = "Copied";
-        } catch (error) {
-          button.textContent = "Error";
-        } finally {
-          window.setTimeout(() => {
-            button.textContent = originalText;
-            button.disabled = false;
-          }, 1400);
-        }
-      });
     }
 
     function initializeCodeCopyButtons() {
@@ -832,33 +819,17 @@ except BaseException:
 
     document.addEventListener("DOMContentLoaded", () => {
       buildToc();
-      const codeArea = document.getElementById("python-code");
-      initialPythonCode = codeArea && codeArea.dataset.initialCodeBase64
-        ? decodeBase64Utf8(codeArea.dataset.initialCodeBase64)
-        : codeArea && codeArea.dataset.initialCode
-          ? codeArea.dataset.initialCode
-          : codeArea && codeArea.value.trim()
-            ? codeArea.value
-            : DEFAULT_CODE;
-      setPythonCode(initialPythonCode);
-      initializePythonEditor();
-      setPythonCode(initialPythonCode);
-      initializePrintSnapshotSync();
+      const runners = Array.from(document.querySelectorAll("[data-python-runner-panel]"));
 
-      const loadButton = document.getElementById("load-button");
-      const runButton = document.getElementById("run-button");
-      const resetButton = document.getElementById("reset-button");
-      const restartRuntimeButton = document.getElementById("restart-runtime-button");
+      for (const runner of runners) {
+        initializePythonRunner(runner);
+      }
 
-      if (loadButton) loadButton.addEventListener("click", loadPythonRuntime);
-      if (runButton) runButton.addEventListener("click", runPythonCode);
-      if (resetButton) resetButton.addEventListener("click", resetCode);
-      if (restartRuntimeButton) restartRuntimeButton.addEventListener("click", restartPythonRuntime);
+      initializePrintSnapshotSync(runners);
 
       if (window.Prism) {
         window.Prism.highlightAll();
       }
-      initializePythonCodeCopyButton();
       initializeCodeCopyButtons();
       initializeMermaid();
     });

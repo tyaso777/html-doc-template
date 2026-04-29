@@ -63,9 +63,11 @@ html-doc-template/
     site-manifest.json
     01-introduction.html
     02-examples.html
+    03-reference.html
   chapters/
     01-introduction.html
     02-examples.html
+    03-reference.html
   layouts/
     chapter-shell.html
 ```
@@ -105,7 +107,7 @@ Optional lower-level TOC entries can use:
 
 ## Multi-page Documents
 
-This template can be used for multi-page documents by sharing one shell template and the same `assets/` directory across generated HTML files. In this workflow, edit `chapters-src/` and treat `chapters/` as generated output. See `chapters/01-introduction.html` and `chapters/02-examples.html` for a minimal two-page example.
+This template can be used for multi-page documents by sharing one shell template and the same `assets/` directory across generated HTML files. In this workflow, edit `chapters-src/` and treat `chapters/` as generated output. See `chapters/01-introduction.html`, `chapters/02-examples.html`, and `chapters/03-reference.html` for a minimal three-page example.
 
 Each file under `chapters-src/` is an article fragment, not a complete HTML document. It should contain only the content that belongs inside `<article class="content">`. Keep CDN assets, `<head>`, sidebar markup, shared CSS, and shared JavaScript in `layouts/chapter-shell.html`.
 
@@ -121,7 +123,7 @@ Each source chapter should include a chapter navigation placeholder near the end
 <nav class="chapter-nav" data-chapter-nav aria-label="Chapter navigation"></nav>
 ```
 
-`scripts/build_site.py` reads `chapters-src/site-manifest.json`, combines each source fragment with `layouts/chapter-shell.html`, writes the left-side nested Contents tree from all chapter TOC entries, renders manifest-managed Materials and External Links sections, and writes the generated Previous and Next links into each output file. This keeps chapter order, document language, shell metadata, and document-level link lists in one place while keeping the generated HTML usable through GitHub Pages or direct `file://` previews.
+`scripts/build_site.py` reads `chapters-src/site-manifest.json`, combines each source fragment with `layouts/chapter-shell.html`, writes the left-side nested Contents tree from all chapter TOC entries, renders manifest-managed Materials and External Links sections, and writes the generated Previous and Next links into each output file. It uses Python's standard-library HTML parser for chapter TOC extraction, Python runner expansion, and chapter navigation replacement. This keeps chapter order, document language, shell metadata, and document-level link lists in one place while keeping the generated HTML usable through GitHub Pages or direct `file://` previews.
 
 ```json
 {
@@ -143,6 +145,13 @@ Each source chapter should include a chapter navigation placeholder near the end
       "subtitle": "Multi-page example",
       "source": "02-examples.html",
       "href": "02-examples.html"
+    },
+    {
+      "title": "Chapter 3: Reference Page",
+      "sidebarTitle": "Chapter 3\nReference Page",
+      "subtitle": "Multi-page example",
+      "source": "03-reference.html",
+      "href": "03-reference.html"
     }
   ],
   "materials": [
@@ -204,7 +213,7 @@ print(sum(scores) / len(scores))</code></pre>
 </div>
 ```
 
-`build_site.py` expands `div[data-python-runner]` into the full Pyodide runner UI in the generated `chapters/` files. Do not write Load, Run, Restart buttons, textareas, or output panels by hand in `chapters-src/`.
+`build_site.py` expands each `div[data-python-runner]` into a scoped Pyodide runner UI in the generated `chapters/` files. A generated page may contain multiple runner blocks. Do not write Load, Run, Restart buttons, textareas, or output panels by hand in `chapters-src/`.
 
 Mermaid code block and rendered diagram examples are included in the template.
 
@@ -229,9 +238,38 @@ Run the lightweight checker after editing generated or AI-assisted HTML:
 python3 scripts/check_html.py
 ```
 
-The checker uses only the Python standard library. It validates duplicate IDs, missing `data-toc` IDs, local file links, same-page fragment links, `aria-describedby` references, `pre.code-block` / `code.language-*` consistency, chapter manifest integrity, shell template tokens, and generated Previous/Next navigation.
+The checker uses only the Python standard library. It validates duplicate IDs, missing `data-toc` IDs, local file links, same-page fragment links, `aria-describedby` references, `pre.code-block` / `code.language-*` consistency, chapter manifest integrity, shell template tokens, generated Previous/Next navigation, and the scoped IDs emitted for generated Python runners.
 
 When using this template in another document project, copy `scripts/check_html.py` with the template and run it against the generated HTML file. For multi-page chapter sets, keep `chapters-src/site-manifest.json`, `chapters-src/`, and `chapters/` together so the manifest checks can verify generated navigation.
+
+## Browser Smoke Tests
+
+Browser smoke tests use Playwright as a development dependency. They verify that generated chapters open in Chromium, the sidebar and chapter navigation work, and JavaScript enhancements initialize for copy buttons, CodeMirror, MathJax, and Mermaid.
+
+Install the test dependency and browser once:
+
+```bash
+npm install
+npx playwright install chromium
+```
+
+On Linux systems that do not already have Chromium runtime libraries, run Playwright's dependency helper:
+
+```bash
+npx playwright install-deps chromium
+```
+
+Run the regular browser smoke tests:
+
+```bash
+npm run test:e2e
+```
+
+The Pyodide runtime test is intentionally separate because it downloads and starts Pyodide from the CDN:
+
+```bash
+npm run test:e2e:pyodide
+```
 
 ## External Libraries
 
@@ -266,4 +304,3 @@ This template loads third-party libraries from public CDNs. Those libraries are 
 The template files in this repository are licensed under the MIT License.
 
 Documents, course materials, and other content created with this template may use a different license.
-

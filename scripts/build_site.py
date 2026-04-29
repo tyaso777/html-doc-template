@@ -15,22 +15,27 @@ import html
 import json
 import os
 import re
+from dataclasses import dataclass, field
+from html.parser import HTMLParser
 from pathlib import Path
 from typing import Any
 
-NAV_PATTERN = re.compile(
-    r'<nav class="chapter-nav" data-chapter-nav aria-label="Chapter navigation">.*?</nav>',
-    re.S,
-)
-PYTHON_RUNNER_SOURCE_PATTERN = re.compile(
-    r'<div class="python-runner-source" data-python-runner>\s*'
-    r'(?:<p class="runner-caption">(?P<caption>.*?)</p>\s*)?'
-    r'<pre><code class="language-python">(?P<code>.*?)</code></pre>\s*'
-    r'</div>',
-    re.S,
-)
-ATTR_PATTERN = re.compile(r'([:\w-]+)(?:\s*=\s*"([^"]*)")?')
-TOC_TARGET_PATTERN = re.compile(r'<(?P<tag>section|h[2-6])\b(?P<attrs>[^>]*)>', re.I)
+VOID_TAGS = {
+    "area",
+    "base",
+    "br",
+    "col",
+    "embed",
+    "hr",
+    "img",
+    "input",
+    "link",
+    "meta",
+    "param",
+    "source",
+    "track",
+    "wbr",
+}
 REQUIRED_SHELL_TOKENS = {
     "{{DOCUMENT_LANG}}",
     "{{DOCUMENT_TITLE}}",
@@ -52,6 +57,95 @@ FORBIDDEN_SOURCE_PATTERNS = (
 )
 
 
+@dataclass
+class FragmentNode:
+    tag: str
+    attrs: dict[str, str | None]
+    start: int
+    start_tag_end: int
+    end_tag_start: int | None = None
+    end: int | None = None
+    children: list["FragmentNode"] = field(default_factory=list)
+
+
+class FragmentParser(HTMLParser):
+    def __init__(self, source: str) -> None:
+        super().__init__(convert_charrefs=False)
+        self.source = source
+        self.line_starts = self.build_line_starts(source)
+        self.roots: list[FragmentNode] = []
+        self.stack: list[FragmentNode] = []
+
+    @staticmethod
+    def build_line_starts(source: str) -> list[int]:
+        starts = [0]
+        for index, character in enumerate(source):
+            if character == "\n":
+                starts.append(index + 1)
+        return starts
+
+    def current_index(self) -> int:
+        line, column = self.getpos()
+        return self.line_starts[line - 1] + column
+
+    def append_node(self, node: FragmentNode) -> None:
+        if self.stack:
+            self.stack[-1].children.append(node)
+        else:
+            self.roots.append(node)
+
+    def handle_starttag(self, tag: str, attrs_list: list[tuple[str, str | None]]) -> None:
+        start = self.current_index()
+        start_tag_text = self.get_starttag_text() or ""
+        node = FragmentNode(
+            tag=tag.lower(),
+            attrs=dict(attrs_list),
+            start=start,
+            start_tag_end=start + len(start_tag_text),
+        )
+        self.append_node(node)
+
+        if node.tag not in VOID_TAGS:
+            self.stack.append(node)
+        else:
+            node.end_tag_start = node.start_tag_end
+            node.end = node.start_tag_end
+
+    def handle_startendtag(self, tag: str, attrs_list: list[tuple[str, str | None]]) -> None:
+        start = self.current_index()
+        start_tag_text = self.get_starttag_text() or ""
+        node = FragmentNode(
+            tag=tag.lower(),
+            attrs=dict(attrs_list),
+            start=start,
+            start_tag_end=start + len(start_tag_text),
+            end_tag_start=start + len(start_tag_text),
+            end=start + len(start_tag_text),
+        )
+        self.append_node(node)
+
+    def handle_endtag(self, tag: str) -> None:
+        tag = tag.lower()
+        end_tag_start = self.current_index()
+        end = self.source.find(">", end_tag_start)
+        end_tag_end = len(self.source) if end == -1 else end + 1
+
+        for index in range(len(self.stack) - 1, -1, -1):
+            if self.stack[index].tag == tag:
+                node = self.stack[index]
+                node.end_tag_start = end_tag_start
+                node.end = end_tag_end
+                del self.stack[index:]
+                return
+
+    def close(self) -> None:
+        super().close()
+        for node in self.stack:
+            node.end_tag_start = len(self.source)
+            node.end = len(self.source)
+        self.stack.clear()
+
+
 def load_manifest(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
@@ -71,6 +165,58 @@ def sidebar_title_html(title: str) -> str:
 
 def indent_content(content: str, indent: str) -> str:
     return "\n".join((indent + line if line else "") for line in content.splitlines())
+
+
+def parse_fragment(source: str) -> list[FragmentNode]:
+    parser = FragmentParser(source)
+    parser.feed(source)
+    parser.close()
+    return parser.roots
+
+
+def iter_nodes(nodes: list[FragmentNode]) -> list[FragmentNode]:
+    result: list[FragmentNode] = []
+    stack = list(reversed(nodes))
+
+    while stack:
+        node = stack.pop()
+        result.append(node)
+        stack.extend(reversed(node.children))
+
+    return result
+
+
+def has_class(attrs: dict[str, str | None], class_name: str) -> bool:
+    return class_name in (attrs.get("class") or "").split()
+
+
+def node_inner_html(source: str, node: FragmentNode) -> str:
+    end = node.end_tag_start if node.end_tag_start is not None else node.end or len(source)
+    return source[node.start_tag_end:end]
+
+
+def text_content(source: str, node: FragmentNode) -> str:
+    class TextCollector(HTMLParser):
+        def __init__(self) -> None:
+            super().__init__(convert_charrefs=True)
+            self.parts: list[str] = []
+
+        def handle_data(self, data: str) -> None:
+            self.parts.append(data)
+
+    collector = TextCollector()
+    collector.feed(node_inner_html(source, node))
+    collector.close()
+    return "".join(collector.parts).strip()
+
+
+def replace_ranges(source: str, replacements: list[tuple[int, int, str]]) -> str:
+    rendered = source
+
+    for start, end, replacement in sorted(replacements, key=lambda item: item[0], reverse=True):
+        rendered = rendered[:start] + replacement + rendered[end:]
+
+    return rendered
 
 
 def render_nav_link(direction: str, title: str, href: str, indent: str) -> str:
@@ -104,18 +250,14 @@ def render_chapter_nav(chapters: list[dict[str, str]], index: int, output_path: 
     return '<nav class="chapter-nav" data-chapter-nav aria-label="Chapter navigation">\n' + "\n".join(links) + f"\n{indent}</nav>"
 
 
-
-
-def parse_attrs(raw_attrs: str) -> dict[str, str | None]:
-    return {name: value for name, value in ATTR_PATTERN.findall(raw_attrs)}
-
-
 def extract_toc_entries(source: str) -> list[dict[str, str | int]]:
     entries: list[dict[str, str | int]] = []
-    source = re.sub(r"<!--.*?-->", "", source, flags=re.S)
 
-    for match in TOC_TARGET_PATTERN.finditer(source):
-        attrs = parse_attrs(match.group("attrs"))
+    for node in iter_nodes(parse_fragment(source)):
+        if node.tag != "section" and not re.fullmatch(r"h[2-6]", node.tag):
+            continue
+
+        attrs = node.attrs
         if "data-toc" not in attrs or "id" not in attrs:
             continue
 
@@ -123,12 +265,22 @@ def extract_toc_entries(source: str) -> list[dict[str, str | int]]:
         if not element_id or element_id == "...":
             continue
 
-        title = attrs.get("data-toc-title") or element_id
+        title = attrs.get("data-toc-title")
+        if not title and node.tag == "section":
+            headings = [
+                child
+                for child in node.children
+                if child.tag in {"h2", "h3", "h4", "h5", "h6"}
+            ]
+            title = text_content(source, headings[0]) if headings else None
+        if not title:
+            title = text_content(source, node) if node.tag.startswith("h") else element_id
+
         raw_level = attrs.get("data-toc-level")
         if raw_level and raw_level.isdigit():
             level = int(raw_level)
-        elif match.group("tag").lower().startswith("h"):
-            level = int(match.group("tag")[1])
+        elif node.tag.startswith("h"):
+            level = int(node.tag[1])
         else:
             level = 2
 
@@ -208,73 +360,120 @@ def render_contents_tree(
 
     return "\n".join(lines)
 
-def render_python_runner(caption: str | None, code: str) -> str:
-    help_text = caption or "Edit the code in the highlighted Python editor, then press Run Python."
+def render_python_runner(caption: str | None, code: str, runner_id: str) -> str:
+    default_help = "Edit the code in the highlighted Python editor, then press Run Python."
+    help_text = html.escape(html.unescape(caption or default_help))
     encoded_code = base64.b64encode(html.unescape(code).strip("\n").encode("utf-8")).decode("ascii")
-    return f'''<div class="runner-panel">
-  <p id="python-code-help">
+    help_id = f"{runner_id}-help"
+    code_id = f"{runner_id}-code"
+    output_id = f"{runner_id}-output"
+    print_code_id = f"{runner_id}-print-code"
+    print_output_id = f"{runner_id}-print-output"
+    return f'''<div class="runner-panel" data-python-runner-panel>
+  <p id="{help_id}" data-python-runner-help>
     {help_text}
     On slow connections or constrained devices, the first Python runtime load can take some time.
   </p>
 
   <div class="runner-toolbar">
-    <button id="load-button" class="button secondary" type="button">Load Python Runtime</button>
-    <button id="run-button" class="button" type="button" disabled>Run Python</button>
-    <button id="reset-button" class="button secondary" type="button">Reset Code Text</button>
-    <button id="restart-runtime-button" class="button secondary" type="button" disabled>Restart Python Runtime</button>
+    <button class="button secondary" type="button" data-python-load-button>Load Python Runtime</button>
+    <button class="button" type="button" data-python-run-button disabled>Run Python</button>
+    <button class="button secondary" type="button" data-python-reset-button>Reset Code Text</button>
+    <button class="button secondary" type="button" data-python-restart-button disabled>Restart Python Runtime</button>
   </div>
 
-  <label for="python-code" class="visually-hidden">Python code editor</label>
+  <label for="{code_id}" class="visually-hidden">Python code editor</label>
   <div class="python-editor-wrap">
     <textarea
-      id="python-code"
+      id="{code_id}"
       spellcheck="false"
-      aria-describedby="python-code-help output"
+      aria-describedby="{help_id} {output_id}"
       autocomplete="off"
       autocorrect="off"
       autocapitalize="off"
       data-initial-code-base64="{encoded_code}"
+      data-python-code
     ></textarea>
-    <button id="copy-python-code-button" class="copy-code-button python-editor-copy-button" type="button" aria-label="Copy Python code">Copy</button>
+    <button class="copy-code-button python-editor-copy-button" type="button" aria-label="Copy Python code" data-python-copy-button>Copy</button>
   </div>
 
   <h3>Output</h3>
   <div
-    id="output"
+    id="{output_id}"
     class="output"
     role="log"
     aria-live="polite"
     aria-atomic="true"
+    data-python-output
   >Press "Load Python Runtime" first. Python will run in a Web Worker.</div>
 
   <section class="print-only print-runner-snapshot" aria-label="Printed Python runner snapshot">
     <h3>Printed Python Code</h3>
-    <pre id="print-python-code" class="print-code-block"></pre>
+    <pre id="{print_code_id}" class="print-code-block" data-python-print-code></pre>
 
     <h3>Printed Python Output</h3>
-    <pre id="print-python-output" class="print-output-block"></pre>
+    <pre id="{print_output_id}" class="print-output-block" data-python-print-output></pre>
   </section>
 </div>'''
 
 
-def expand_python_runners(source: str) -> str:
-    def replace(match: re.Match[str]) -> str:
-        return render_python_runner(match.group("caption"), match.group("code"))
+def extract_python_runner_source(source: str, node: FragmentNode) -> tuple[str | None, str]:
+    descendants = iter_nodes(node.children)
+    caption_nodes = [
+        child
+        for child in descendants
+        if child.tag == "p" and has_class(child.attrs, "runner-caption")
+    ]
+    code_nodes = [
+        child
+        for child in descendants
+        if child.tag == "code" and has_class(child.attrs, "language-python")
+    ]
 
-    return PYTHON_RUNNER_SOURCE_PATTERN.sub(replace, source)
+    if len(code_nodes) != 1:
+        raise ValueError("each data-python-runner element must contain exactly one code.language-python element")
+
+    caption = text_content(source, caption_nodes[0]) if caption_nodes else None
+    code = node_inner_html(source, code_nodes[0])
+    return caption, code
+
+
+def expand_python_runners(source: str) -> str:
+    replacements: list[tuple[int, int, str]] = []
+    runner_nodes = [
+        node
+        for node in iter_nodes(parse_fragment(source))
+        if "data-python-runner" in node.attrs
+    ]
+
+    for runner_index, node in enumerate(runner_nodes, start=1):
+        if node.end is None:
+            raise ValueError("data-python-runner element is missing its closing tag")
+
+        caption, code = extract_python_runner_source(source, node)
+        replacements.append((node.start, node.end, render_python_runner(caption, code, f"python-runner-{runner_index}")))
+
+    return replace_ranges(source, replacements)
 
 
 def inject_chapter_nav(source: str, chapters: list[dict[str, str]], index: int, output_path: Path, output_dir: Path) -> str:
-    matches = list(NAV_PATTERN.finditer(source))
+    matches = [
+        node
+        for node in iter_nodes(parse_fragment(source))
+        if node.tag == "nav" and "data-chapter-nav" in node.attrs
+    ]
 
     if len(matches) != 1:
         raise ValueError(f'{chapters[index]["source"]} must contain exactly one data-chapter-nav element')
 
     match = matches[0]
-    line_start = source.rfind("\n", 0, match.start()) + 1
-    indent = source[line_start:match.start()]
+    if match.end is None:
+        raise ValueError(f'{chapters[index]["source"]} data-chapter-nav element is missing its closing tag')
+
+    line_start = source.rfind("\n", 0, match.start) + 1
+    indent = source[line_start:match.start]
     nav = render_chapter_nav(chapters, index, output_path, output_dir, indent)
-    return source[:match.start()] + nav + source[match.end():]
+    return replace_ranges(source, [(match.start, match.end, nav)])
 
 
 def validate_source_fragment(source_path: Path, text: str) -> None:
