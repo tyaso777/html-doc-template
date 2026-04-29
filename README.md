@@ -79,9 +79,43 @@ html-doc-template/
 
 Use `layouts/chapter-shell.html` as the shared wrapper for generated multi-page chapters. It contains the document shell: `<html>`, `<head>`, CDN assets, sidebar, shared CSS, and shared JavaScript.
 
+## Requirements
+
+Building chapters and running the static HTML checker require only Python 3 and the Python standard library. Node.js and npm are optional unless you want to use the npm convenience commands or run the Playwright browser smoke tests.
+
+Required for Python-only authoring:
+
+- Python 3.10 or newer
+
+Optional for browser smoke tests:
+
+- Node.js and npm
+- Playwright's Chromium browser
+
 ## Basic Usage
 
-For the multi-page workflow, edit `chapters-src/*.html` and `chapters-src/site-manifest.json`, then run `npm run build`.
+For the multi-page workflow, edit `chapters-src/*.html` and `chapters-src/site-manifest.json`, then build and check with Python.
+
+Linux/macOS:
+
+```bash
+python3 scripts/build_site.py
+python3 scripts/check_html.py
+```
+
+Windows:
+
+```powershell
+py -3 scripts/build_site.py
+py -3 scripts/check_html.py
+```
+
+Node.js is not required for this workflow. If npm is available, the same build and check can also be run through the convenience commands:
+
+```bash
+npm run build
+npm run check:html
+```
 
 Typical edits:
 
@@ -117,10 +151,10 @@ Each file under `chapters-src/` is an article fragment, not a complete HTML docu
 Edit chapter source files under `chapters-src/`, define chapter order and shell metadata in `chapters-src/site-manifest.json`, then build the public chapter files under `chapters/`:
 
 ```bash
-npm run build
+python3 scripts/build_site.py
 ```
 
-The npm build command runs `scripts/build_site.py` through `scripts/run_python.mjs`, which detects Python from `PYTHON`, `python3`, `python`, or the Windows `py -3` launcher. If you prefer to call Python directly, use `python3 scripts/build_site.py` on Linux/macOS or `py -3 scripts/build_site.py` on Windows.
+On Windows, use `py -3 scripts/build_site.py`. If npm is available, `npm run build` runs the same Python build script through `scripts/run_python.mjs`, which detects Python from `PYTHON`, `python3`, `python`, or the Windows `py -3` launcher.
 
 Each source chapter should include a chapter navigation placeholder near the end of the fragment:
 
@@ -237,15 +271,24 @@ Do not write Pyodide buttons, textareas, output panels, or runtime wiring by han
 Use section elements with id, data-toc, and data-toc-title for TOC entries.
 ```
 
+If the agent only has Python available, it can still build and check the document:
+
+```bash
+python3 scripts/build_site.py
+python3 scripts/check_html.py
+```
+
+Do not require Node.js or npm unless browser smoke tests are explicitly requested.
+
 ## HTML Checker
 
 Run the lightweight checker after editing generated or AI-assisted HTML:
 
 ```bash
-npm run check:html
+python3 scripts/check_html.py
 ```
 
-To run the checker directly without npm, use `python3 scripts/check_html.py` on Linux/macOS or `py -3 scripts/check_html.py` on Windows.
+On Windows, use `py -3 scripts/check_html.py`. If npm is available, `npm run check:html` runs the same checker through the Python launcher wrapper.
 
 The checker uses only the Python standard library. It validates duplicate IDs, missing `data-toc` IDs, local file links, same-page fragment links, `aria-describedby` references, `pre.code-block` / `code.language-*` consistency, chapter manifest integrity, shell template tokens, generated Previous/Next navigation, and the scoped IDs emitted for generated Python runners.
 
@@ -253,7 +296,7 @@ When using this template in another document project, copy `scripts/check_html.p
 
 ## Browser Smoke Tests
 
-Browser smoke tests use Playwright as a development dependency. They verify that generated chapters open in Chromium, the sidebar and chapter navigation work, and JavaScript enhancements initialize for copy buttons, CodeMirror, MathJax, and Mermaid.
+Browser smoke tests are optional and require Node.js, npm, and Playwright. They verify that generated chapters open in Chromium, the sidebar and chapter navigation work, and JavaScript enhancements initialize for copy buttons, CodeMirror, MathJax, and Mermaid.
 
 Install the test dependency and browser once:
 
