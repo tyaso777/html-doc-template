@@ -49,6 +49,9 @@ jobs:
       - name: Check Python syntax
         run: python3 -m compileall scripts
 
+      - name: Run Python unit tests
+        run: python3 -m unittest discover -s tests/python
+
       - name: Check JavaScript syntax
         run: node --check assets/js/technical-doc.js
 

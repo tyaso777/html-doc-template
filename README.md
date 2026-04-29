@@ -101,6 +101,7 @@ Linux/macOS:
 ```bash
 python3 scripts/build_site.py
 python3 scripts/check_html.py
+python3 -m unittest discover -s tests/python
 ```
 
 Windows:
