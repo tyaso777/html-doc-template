@@ -130,6 +130,8 @@ Each source chapter should include a chapter navigation placeholder near the end
 
 `scripts/build_site.py` reads `chapters-src/site-manifest.json`, combines each source fragment with `layouts/chapter-shell.html`, writes the left-side nested Contents tree from all chapter TOC entries, renders manifest-managed Materials and External Links sections, and writes the generated Previous and Next links into each output file. It uses Python's standard-library HTML parser for chapter TOC extraction, Python runner expansion, and chapter navigation replacement. This keeps chapter order, document language, shell metadata, and document-level link lists in one place while keeping the generated HTML usable through GitHub Pages or direct `file://` previews.
 
+CI runs the build and checks that the generated `chapters/` files have no uncommitted diff, so updates to `chapters-src/` should be committed together with the rebuilt public chapter files.
+
 ```json
 {
   "title": "html-doc-template chapter examples",

@@ -40,6 +40,9 @@ jobs:
       - name: Build generated chapters
         run: npm run build
 
+      - name: Check generated chapters are committed
+        run: git diff --exit-code chapters
+
       - name: Check HTML
         run: npm run check:html
 
