@@ -12,7 +12,6 @@ from __future__ import annotations
 import argparse
 import base64
 import html
-import json
 import os
 import re
 from pathlib import Path
@@ -28,6 +27,12 @@ try:
         replace_ranges,
         text_content,
     )
+    from site_manifest import (
+        forbidden_source_patterns,
+        load_manifest,
+        missing_shell_tokens,
+        normalize_manifest,
+    )
 except ModuleNotFoundError:
     from scripts.html_fragment import (
         FragmentNode,
@@ -38,30 +43,12 @@ except ModuleNotFoundError:
         replace_ranges,
         text_content,
     )
-
-REQUIRED_SHELL_TOKENS = {
-    "{{DOCUMENT_LANG}}",
-    "{{DOCUMENT_TITLE}}",
-    "{{SIDEBAR_TITLE}}",
-    "{{SIDEBAR_SUBTITLE}}",
-    "{{ASSET_PREFIX}}",
-    "{{CONTENT}}",
-    "{{CONTENTS_TREE}}",
-    "{{MATERIALS_SECTION}}",
-    "{{EXTERNAL_LINKS_SECTION}}",
-}
-FORBIDDEN_SOURCE_PATTERNS = (
-    re.compile(r"<!doctype", re.I),
-    re.compile(r"<html(?:\s|>)", re.I),
-    re.compile(r"<head(?:\s|>)", re.I),
-    re.compile(r"<body(?:\s|>)", re.I),
-    re.compile(r"<script(?:\s|>)", re.I),
-    re.compile(r"<link(?:\s|>)", re.I),
-)
-
-
-def load_manifest(path: Path) -> dict[str, Any]:
-    return json.loads(path.read_text(encoding="utf-8"))
+    from scripts.site_manifest import (
+        forbidden_source_patterns,
+        load_manifest,
+        missing_shell_tokens,
+        normalize_manifest,
+    )
 
 
 def relative_path(from_file: Path, to_file: Path) -> str:
@@ -339,9 +326,8 @@ def inject_chapter_nav(source: str, chapters: list[dict[str, str]], index: int, 
 
 
 def validate_source_fragment(source_path: Path, text: str) -> None:
-    for pattern in FORBIDDEN_SOURCE_PATTERNS:
-        if pattern.search(text):
-            raise ValueError(f"{source_path} should be an article fragment and must not match {pattern.pattern}")
+    for pattern in forbidden_source_patterns(text):
+        raise ValueError(f"{source_path} should be an article fragment and must not match {pattern.pattern}")
 
 
 
@@ -492,59 +478,9 @@ def build_chapter(
 
 
 def validate_shell(shell: str, shell_path: Path) -> None:
-    missing = sorted(token for token in REQUIRED_SHELL_TOKENS if token not in shell)
+    missing = missing_shell_tokens(shell)
     if missing:
         raise ValueError(f"{shell_path} is missing required token(s): {', '.join(missing)}")
-
-
-def validate_manifest(manifest: dict[str, Any]) -> tuple[str, str, str, list[dict[str, str]], list[Any], list[Any]]:
-    shell = manifest.get("shell", "../layouts/chapter-shell.html")
-    output_dir = manifest.get("outputDir", "../chapters")
-    document_lang = manifest.get("lang", "en")
-    materials = manifest.get("materials", [])
-    external_links = manifest.get("externalLinks", [])
-
-    if not isinstance(shell, str) or not shell.strip():
-        raise ValueError("site manifest must have a non-empty shell path")
-    if not isinstance(output_dir, str) or not output_dir.strip():
-        raise ValueError("site manifest must have a non-empty outputDir")
-    if not isinstance(document_lang, str) or not document_lang.strip():
-        raise ValueError("site manifest lang must be a non-empty string")
-
-    if not isinstance(materials, list):
-        raise ValueError("site manifest materials must be an array when provided")
-    if not isinstance(external_links, list):
-        raise ValueError("site manifest externalLinks must be an array when provided")
-
-    chapters = manifest.get("chapters")
-    if not isinstance(chapters, list):
-        raise ValueError("site manifest must contain a chapters array")
-
-    normalized: list[dict[str, str]] = []
-    for index, chapter in enumerate(chapters, start=1):
-        if not isinstance(chapter, dict):
-            raise ValueError(f"chapter {index} must be an object")
-
-        title = chapter.get("title")
-        href = chapter.get("href")
-        source = chapter.get("source")
-        sidebar_title = chapter.get("sidebarTitle", title)
-        subtitle = chapter.get("subtitle", "")
-
-        if not isinstance(title, str) or not title.strip():
-            raise ValueError(f"chapter {index} must have a non-empty title")
-        if not isinstance(href, str) or not href.strip():
-            raise ValueError(f"chapter {index} must have a non-empty href")
-        if not isinstance(source, str) or not source.strip():
-            raise ValueError(f"chapter {index} must have a non-empty source")
-        if not isinstance(sidebar_title, str):
-            raise ValueError(f"chapter {index} sidebarTitle must be a string")
-        if not isinstance(subtitle, str):
-            raise ValueError(f"chapter {index} subtitle must be a string")
-
-        normalized.append({"title": title, "href": href, "source": source, "sidebarTitle": sidebar_title, "subtitle": subtitle})
-
-    return shell, output_dir, document_lang, normalized, materials, external_links
 
 
 def parse_args() -> argparse.Namespace:
@@ -559,30 +495,29 @@ def main() -> int:
     root = Path(args.root).resolve()
     manifest_path = (root / args.manifest).resolve()
     manifest_dir = manifest_path.parent
-    manifest = load_manifest(manifest_path)
-    shell_path_raw, output_dir_raw, document_lang, chapters, materials, external_links = validate_manifest(manifest)
-    shell_path = (manifest_dir / shell_path_raw).resolve()
-    output_dir = (manifest_dir / output_dir_raw).resolve()
+    manifest = normalize_manifest(load_manifest(manifest_path))
+    shell_path = (manifest_dir / manifest.shell).resolve()
+    output_dir = (manifest_dir / manifest.output_dir).resolve()
     shell = shell_path.read_text(encoding="utf-8")
     validate_shell(shell, shell_path)
 
     toc_entries_by_chapter = [
         extract_toc_entries((manifest_dir / chapter["source"]).read_text(encoding="utf-8"))
-        for chapter in chapters
+        for chapter in manifest.chapters
     ]
 
-    for index in range(len(chapters)):
+    for index in range(len(manifest.chapters)):
         output_path = build_chapter(
             root,
             manifest_dir,
             output_dir,
             shell,
-            chapters,
+            manifest.chapters,
             index,
             toc_entries_by_chapter,
-            document_lang,
-            materials,
-            external_links,
+            manifest.document_lang,
+            manifest.materials,
+            manifest.external_links,
         )
         print(f"built {output_path.relative_to(root)}")
 

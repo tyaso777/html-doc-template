@@ -50,6 +50,86 @@ test("generated chapter navigation works", async ({ page }) => {
   await expect(page.locator("h1")).toHaveText("Chapter 3: Reference Page");
 });
 
+test("first and last generated chapters expose the correct edge navigation", async ({ page }) => {
+  await page.goto("/chapters/01-introduction.html");
+
+  await expect(page.locator(".chapter-nav-link.previous")).toHaveCount(0);
+  await expect(page.locator(".chapter-nav-link.next")).toContainText("Chapter 2: Minimal Page");
+
+  await page.goto("/chapters/03-reference.html");
+
+  await expect(page.locator(".chapter-nav-link.previous")).toContainText("Chapter 2: Minimal Page");
+  await expect(page.locator(".chapter-nav-link.next")).toHaveCount(0);
+});
+
+test("mobile layout remains readable without page-level horizontal overflow", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/chapters/01-introduction.html");
+
+  await expect(page.locator(".sidebar")).toBeVisible();
+  await expect(page.locator(".content")).toBeVisible();
+
+  const chapterNavColumns = await page.locator(".chapter-nav").evaluate((element) =>
+    getComputedStyle(element).gridTemplateColumns.split(" ").filter(Boolean)
+  );
+  expect(chapterNavColumns).toHaveLength(1);
+
+  const overflow = await page.evaluate(() => ({
+    clientWidth: document.documentElement.clientWidth,
+    scrollWidth: document.documentElement.scrollWidth
+  }));
+  expect(overflow.scrollWidth).toBeLessThanOrEqual(overflow.clientWidth + 1);
+});
+
+test("static code copy button writes the code text", async ({ page }) => {
+  await page.addInitScript(() => {
+    window.__copiedText = "";
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: {
+        writeText: async (text) => {
+          window.__copiedText = text;
+        }
+      }
+    });
+  });
+
+  await page.goto("/chapters/01-introduction.html");
+
+  const copyButton = page.locator(".code-block-wrap .copy-code-button").first();
+  await copyButton.click();
+
+  await expect(copyButton).toHaveText("Copied");
+  await expect.poll(() => page.evaluate(() => window.__copiedText)).toContain("def summarize");
+});
+
+test("python runner reset and print snapshots stay in sync without loading Pyodide", async ({ page }) => {
+  await page.goto("/chapters/01-introduction.html");
+
+  const runner = page.locator("[data-python-runner-panel]");
+  const editor = runner.locator(".CodeMirror");
+  const textarea = runner.locator("[data-python-code]");
+  const printCode = runner.locator("[data-python-print-code]");
+  const printOutput = runner.locator("[data-python-print-output]");
+
+  await expect(printCode).toContainText("linear_search_with_count");
+  await expect(printOutput).toContainText('Press "Load Python Runtime" first');
+
+  await editor.click();
+  await page.keyboard.press(process.platform === "darwin" ? "Meta+A" : "Control+A");
+  await page.keyboard.type('print("changed by smoke test")');
+
+  await expect(textarea).toHaveValue('print("changed by smoke test")');
+  await expect(printCode).toContainText('print("changed by smoke test")');
+
+  await runner.locator("[data-python-reset-button]").click();
+
+  await expect(textarea).toHaveValue(/linear_search_with_count/);
+  await expect(printCode).toContainText("linear_search_with_count");
+  await expect(runner.locator("[data-python-output]")).toContainText("Code text reset");
+  await expect(printOutput).toContainText("Code text reset");
+});
+
 test("python runner can load Pyodide and execute code @pyodide", async ({ page }) => {
   test.skip(process.env.PYODIDE_SMOKE !== "1", "Set PYODIDE_SMOKE=1 to run the slow CDN-backed Pyodide smoke test.");
   test.setTimeout(180_000);

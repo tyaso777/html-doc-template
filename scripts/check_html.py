@@ -10,7 +10,6 @@ from __future__ import annotations
 import argparse
 import json
 import os
-import re
 import sys
 from dataclasses import dataclass
 from html.parser import HTMLParser
@@ -20,30 +19,25 @@ from urllib.parse import unquote, urlparse
 
 try:
     from html_fragment import VOID_TAGS, has_class, language_from_classes
+    from site_manifest import (
+        forbidden_source_patterns,
+        load_manifest,
+        manifest_validation_errors,
+        missing_shell_tokens,
+        normalize_manifest,
+    )
 except ModuleNotFoundError:
     from scripts.html_fragment import VOID_TAGS, has_class, language_from_classes
+    from scripts.site_manifest import (
+        forbidden_source_patterns,
+        load_manifest,
+        manifest_validation_errors,
+        missing_shell_tokens,
+        normalize_manifest,
+    )
 
 LOCAL_REF_ATTRS = {"href", "src"}
 SKIP_REF_SCHEMES = {"http", "https", "mailto", "tel", "data", "javascript"}
-SOURCE_FRAGMENT_FORBIDDEN_PATTERNS = (
-    re.compile(r"<!doctype", re.I),
-    re.compile(r"<html(?:\s|>)", re.I),
-    re.compile(r"<head(?:\s|>)", re.I),
-    re.compile(r"<body(?:\s|>)", re.I),
-    re.compile(r"<script(?:\s|>)", re.I),
-    re.compile(r"<link(?:\s|>)", re.I),
-)
-REQUIRED_SHELL_TOKENS = {
-    "{{DOCUMENT_LANG}}",
-    "{{DOCUMENT_TITLE}}",
-    "{{SIDEBAR_TITLE}}",
-    "{{SIDEBAR_SUBTITLE}}",
-    "{{ASSET_PREFIX}}",
-    "{{CONTENT}}",
-    "{{CONTENTS_TREE}}",
-    "{{MATERIALS_SECTION}}",
-    "{{EXTERNAL_LINKS_SECTION}}",
-}
 LEGACY_PYTHON_RUNNER_IDS = {
     "copy-python-code-button",
     "load-button",
@@ -248,68 +242,46 @@ def check_site_manifest(root: Path, manifest_path: Path) -> list[Issue]:
         return [Issue("ERROR", manifest_path, 1, 1, "site manifest file does not exist")]
 
     try:
-        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        manifest_data = load_manifest(manifest_path)
     except json.JSONDecodeError as exc:
         return [Issue("ERROR", manifest_path, exc.lineno, exc.colno, f"invalid JSON: {exc.msg}")]
 
     manifest_dir = manifest_path.parent
-    shell = manifest.get("shell", "../layouts/chapter-shell.html")
-    output_dir_raw = manifest.get("outputDir", "../chapters")
-    chapters = manifest.get("chapters")
-    if not isinstance(chapters, list):
-        return [Issue("ERROR", manifest_path, 1, 1, "site manifest must contain a chapters array")]
-
     issues: list[Issue] = []
+    manifest_errors = manifest_validation_errors(manifest_data)
+    for message in manifest_errors:
+        issues.append(Issue("ERROR", manifest_path, 1, 1, message))
 
-    if not isinstance(shell, str) or not shell.strip():
-        issues.append(Issue("ERROR", manifest_path, 1, 1, "site manifest must have a non-empty shell path"))
-    else:
-        shell_path = (manifest_dir / shell).resolve()
-        if not shell_path.exists():
-            issues.append(Issue("ERROR", manifest_path, 1, 1, f'shell references missing file "{shell}"'))
-        else:
-            shell_text = shell_path.read_text(encoding="utf-8")
-            for token in sorted(REQUIRED_SHELL_TOKENS):
-                if token not in shell_text:
-                    issues.append(Issue("ERROR", shell_path, 1, 1, f'shell is missing token "{token}"'))
+    if manifest_errors:
+        return issues
 
-    if not isinstance(output_dir_raw, str) or not output_dir_raw.strip():
-        issues.append(Issue("ERROR", manifest_path, 1, 1, "site manifest must have a non-empty outputDir"))
-        output_dir = root / "chapters"
+    manifest = normalize_manifest(manifest_data)
+
+    shell_path = (manifest_dir / manifest.shell).resolve()
+    if not shell_path.exists():
+        issues.append(Issue("ERROR", manifest_path, 1, 1, f'shell references missing file "{manifest.shell}"'))
     else:
-        output_dir = (manifest_dir / output_dir_raw).resolve()
+        shell_text = shell_path.read_text(encoding="utf-8")
+        for token in missing_shell_tokens(shell_text):
+            issues.append(Issue("ERROR", shell_path, 1, 1, f'shell is missing token "{token}"'))
+
+    output_dir = (manifest_dir / manifest.output_dir).resolve()
 
     seen_hrefs: set[str] = set()
 
-    for index, chapter in enumerate(chapters, start=1):
-        if not isinstance(chapter, dict):
-            issues.append(Issue("ERROR", manifest_path, 1, 1, f"chapter {index} must be an object"))
-            continue
+    for index, chapter in enumerate(manifest.chapters, start=1):
+        href = chapter["href"]
+        source = chapter["source"]
 
-        title = chapter.get("title")
-        href = chapter.get("href")
-        source = chapter.get("source")
-
-        if not isinstance(title, str) or not title.strip():
-            issues.append(Issue("ERROR", manifest_path, 1, 1, f"chapter {index} must have a non-empty title"))
-
-        if not isinstance(source, str) or not source.strip():
-            issues.append(Issue("ERROR", manifest_path, 1, 1, f"chapter {index} must have a non-empty source"))
+        source_path = (manifest_dir / source).resolve()
+        if not source_path.exists():
+            issues.append(Issue("ERROR", manifest_path, 1, 1, f'chapter source references missing file "{source}"'))
         else:
-            source_path = (manifest_dir / source).resolve()
-            if not source_path.exists():
-                issues.append(Issue("ERROR", manifest_path, 1, 1, f'chapter source references missing file "{source}"'))
-            else:
-                source_text = source_path.read_text(encoding="utf-8")
-                if "data-chapter-nav" not in source_text:
-                    issues.append(Issue("ERROR", source_path, 1, 1, "chapter source must contain a data-chapter-nav placeholder"))
-                for pattern in SOURCE_FRAGMENT_FORBIDDEN_PATTERNS:
-                    if pattern.search(source_text):
-                        issues.append(Issue("ERROR", source_path, 1, 1, f"chapter source should be an article fragment and must not match {pattern.pattern}"))
-
-        if not isinstance(href, str) or not href.strip():
-            issues.append(Issue("ERROR", manifest_path, 1, 1, f"chapter {index} must have a non-empty href"))
-            continue
+            source_text = source_path.read_text(encoding="utf-8")
+            if "data-chapter-nav" not in source_text:
+                issues.append(Issue("ERROR", source_path, 1, 1, "chapter source must contain a data-chapter-nav placeholder"))
+            for pattern in forbidden_source_patterns(source_text):
+                issues.append(Issue("ERROR", source_path, 1, 1, f"chapter source should be an article fragment and must not match {pattern.pattern}"))
 
         if href in seen_hrefs:
             issues.append(Issue("ERROR", manifest_path, 1, 1, f'duplicate chapter href "{href}"'))
@@ -325,18 +297,16 @@ def check_site_manifest(root: Path, manifest_path: Path) -> list[Issue]:
             issues.append(Issue("ERROR", chapter_path, 1, 1, "generated chapter must contain a data-chapter-nav element"))
 
         if index > 1:
-            previous_href = chapters[index - 2].get("href") if isinstance(chapters[index - 2], dict) else None
-            if isinstance(previous_href, str):
-                expected_previous = Path(os.path.relpath((output_dir / previous_href).resolve(), chapter_path.parent)).as_posix()
-                if expected_previous not in chapter_text:
-                    issues.append(Issue("ERROR", chapter_path, 1, 1, f'generated chapter is missing previous link "{expected_previous}"'))
+            previous_href = manifest.chapters[index - 2]["href"]
+            expected_previous = Path(os.path.relpath((output_dir / previous_href).resolve(), chapter_path.parent)).as_posix()
+            if expected_previous not in chapter_text:
+                issues.append(Issue("ERROR", chapter_path, 1, 1, f'generated chapter is missing previous link "{expected_previous}"'))
 
-        if index < len(chapters):
-            next_href = chapters[index].get("href") if isinstance(chapters[index], dict) else None
-            if isinstance(next_href, str):
-                expected_next = Path(os.path.relpath((output_dir / next_href).resolve(), chapter_path.parent)).as_posix()
-                if expected_next not in chapter_text:
-                    issues.append(Issue("ERROR", chapter_path, 1, 1, f'generated chapter is missing next link "{expected_next}"'))
+        if index < len(manifest.chapters):
+            next_href = manifest.chapters[index]["href"]
+            expected_next = Path(os.path.relpath((output_dir / next_href).resolve(), chapter_path.parent)).as_posix()
+            if expected_next not in chapter_text:
+                issues.append(Issue("ERROR", chapter_path, 1, 1, f'generated chapter is missing next link "{expected_next}"'))
 
     return issues
 
