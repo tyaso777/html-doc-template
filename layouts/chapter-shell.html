@@ -3,9 +3,9 @@
 <head>
 <!--
   Security note:
-  CDN assets should use integrity and crossorigin="anonymous" whenever possible.
-  Some CDN assets below intentionally keep TODO comments instead of unverified SRI values,
-  because an incorrect integrity value blocks the asset from loading.
+  Browser-loaded CDN script and stylesheet assets are pinned with SRI and
+  crossorigin="anonymous". Pyodide is loaded separately inside a Web Worker;
+  see README.md for the importScripts() SRI limitation.
 -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">

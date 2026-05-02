@@ -299,7 +299,7 @@ python3 scripts/check_html.py
 
 On Windows, use `py -3 scripts/check_html.py`. If npm is available, `npm run check:html` runs the same checker through the Python launcher wrapper.
 
-The checker uses only the Python standard library. It validates duplicate IDs, missing `data-toc` IDs, local file links, same-page fragment links, `aria-describedby` references, `pre.code-block` / `code.language-*` consistency, chapter manifest integrity, shell template tokens, generated Previous/Next navigation, and the scoped IDs emitted for generated Python runners.
+The checker uses only the Python standard library. It validates duplicate IDs, missing `data-toc` IDs, local file links, same-page fragment links, `aria-describedby` references, `pre.code-block` / `code.language-*` consistency, external CDN script and stylesheet SRI attributes, chapter manifest integrity, shell template tokens, generated Previous/Next navigation, and the scoped IDs emitted for generated Python runners.
 
 When using this template in another document project, copy `scripts/check_html.py`, `scripts/html_fragment.py`, and `scripts/site_manifest.py` with the template and run the checker against the generated HTML file. For multi-page chapter sets, keep `chapters-src/site-manifest.json`, `chapters-src/`, and `chapters/` together so the manifest checks can verify generated navigation.
 
@@ -372,7 +372,7 @@ The template currently loads these libraries from CDN:
 - Mermaid
 - Pyodide
 
-Normal script and stylesheet CDN assets use SRI where applicable.
+Browser-loaded script and stylesheet CDN assets use SRI with `crossorigin="anonymous"`, and the HTML checker reports external script or stylesheet tags that omit those attributes.
 
 Pyodide is different: it is loaded inside a Web Worker with `importScripts()` when the user presses `Load Python Runtime`. `importScripts()` does not support normal script-tag SRI. If strict supply-chain verification is required, host a reviewed Pyodide build locally and update `PYODIDE_WORKER_CONFIG` in the template or split JavaScript.
 

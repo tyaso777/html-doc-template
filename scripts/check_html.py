@@ -38,6 +38,7 @@ except ModuleNotFoundError:
 
 LOCAL_REF_ATTRS = {"href", "src"}
 SKIP_REF_SCHEMES = {"http", "https", "mailto", "tel", "data", "javascript"}
+EXTERNAL_ASSET_SCHEMES = {"http", "https"}
 LEGACY_PYTHON_RUNNER_IDS = {
     "copy-python-code-button",
     "load-button",
@@ -138,6 +139,8 @@ class DocumentParser(HTMLParser):
             if value and self.is_local_ref(value):
                 self.local_refs.append(LocalRef(attr=attr, value=value, line=line, column=column))
 
+        self.validate_external_asset_policy(tag, attrs, line, column)
+
         if tag == "pre" and has_class(attrs, "code-block"):
             self.open_code_blocks.append(
                 CodeBlock(line=line, column=column, pre_language=language_from_classes(attrs.get("class")))
@@ -216,6 +219,27 @@ class DocumentParser(HTMLParser):
         if value.startswith("//"):
             return False
         return True
+
+    def validate_external_asset_policy(self, tag: str, attrs: dict[str, str | None], line: int, column: int) -> None:
+        asset_url = None
+
+        if tag == "script":
+            asset_url = attrs.get("src")
+        elif tag == "link" and "stylesheet" in (attrs.get("rel") or "").lower().split():
+            asset_url = attrs.get("href")
+
+        if not asset_url:
+            return
+
+        parsed = urlparse(asset_url)
+        if parsed.scheme.lower() not in EXTERNAL_ASSET_SCHEMES:
+            return
+
+        if not attrs.get("integrity"):
+            self.error(line, column, f'external {tag} asset "{asset_url}" must declare integrity')
+
+        if attrs.get("crossorigin") != "anonymous":
+            self.error(line, column, f'external {tag} asset "{asset_url}" must declare crossorigin="anonymous"')
 
     def error(self, line: int, column: int, message: str) -> None:
         self.issues.append(Issue("ERROR", self.path, line, column, message))
