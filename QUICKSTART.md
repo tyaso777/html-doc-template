@@ -2,6 +2,8 @@
 
 Use this file when you want to create a document from this template. This workflow requires only Python 3 and the Python standard library.
 
+For project overview, template development, CI, and browser-test details, see [README.md](README.md).
+
 ## 1. Edit Content
 
 Edit the source files under `chapters-src/`:
