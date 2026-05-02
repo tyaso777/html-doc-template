@@ -96,7 +96,7 @@ Optional for browser smoke tests:
 - Node.js and npm
 - Playwright's Chromium browser
 
-## Use This Template For A Document
+## Document Authoring Overview
 
 For document-authoring steps, see [QUICKSTART.md](QUICKSTART.md). This workflow requires only Python.
 
@@ -109,19 +109,9 @@ The short version:
 
 On Windows, use `py -3` instead of `python3`. Node.js is not required for document authoring.
 
-## Multi-page Documents
-
 This template can be used for multi-page documents by sharing one shell template and the same `assets/` directory across generated HTML files. In this workflow, edit `chapters-src/` and treat `chapters/` as generated output. See `chapters/01-introduction.html`, `chapters/02-examples.html`, and `chapters/03-reference.html` for a minimal three-page example.
 
 Each file under `chapters-src/` is an article fragment, not a complete HTML document. It should contain only the content that belongs inside `<article class="content">`. Keep CDN assets, `<head>`, sidebar markup, shared CSS, and shared JavaScript in `layouts/chapter-shell.html`.
-
-Edit chapter source files under `chapters-src/`, define chapter order and shell metadata in `chapters-src/site-manifest.json`, then build the public chapter files under `chapters/`:
-
-```bash
-python3 scripts/build_site.py
-```
-
-On Windows, use `py -3 scripts/build_site.py`. If npm is available, `npm run build` runs the same Python build script through `scripts/run_python.mjs`, which detects Python from `PYTHON`, `python3`, `python`, or the Windows `py -3` launcher.
 
 Each source chapter should include a chapter navigation placeholder near the end of the fragment:
 
@@ -132,6 +122,8 @@ Each source chapter should include a chapter navigation placeholder near the end
 `scripts/build_site.py` reads `chapters-src/site-manifest.json`, combines each source fragment with `layouts/chapter-shell.html`, writes the left-side nested Contents tree from all chapter TOC entries, renders manifest-managed Materials and External Links sections, and writes the generated Previous and Next links into each output file. It uses Python's standard-library HTML parser for chapter TOC extraction, Python runner expansion, and chapter navigation replacement. This keeps chapter order, document language, shell metadata, and document-level link lists in one place while keeping the generated HTML usable through GitHub Pages or direct `file://` previews.
 
 CI runs the build and checks that the generated `chapters/` files have no uncommitted diff, so updates to `chapters-src/` should be committed together with the rebuilt public chapter files.
+
+AI agents should follow [QUICKSTART.md](QUICKSTART.md), edit `chapters-src/` instead of generated `chapters/`, and avoid requiring Node.js, npm, Playwright, or browser tests unless explicitly requested.
 
 ```json
 {
@@ -224,30 +216,6 @@ print(sum(scores) / len(scores))</code></pre>
 `build_site.py` expands each `div[data-python-runner]` into a scoped Pyodide runner UI in the generated `chapters/` files. A generated page may contain multiple runner blocks. Do not write Load, Run, Restart buttons, textareas, or output panels by hand in `chapters-src/`.
 
 Mermaid code block and rendered diagram examples are included in the template.
-
-## AI-Assisted Authoring
-
-Use this section when a generation model or coding agent is writing chapter content.
-
-When asking a generation model to create content for the split template, constrain the task to the article fragment only. A useful instruction is:
-
-```text
-Create only the HTML fragment that will be inserted inside <article class="content">.
-Do not include doctype, html, head, body, style, script, link, CDN, or external library tags.
-Use existing classes such as callout, card, code-block, math-block, and mermaid.
-For executable Python examples, use div.python-runner-source with data-python-runner and a pre/code.language-python block.
-Do not write Pyodide buttons, textareas, output panels, or runtime wiring by hand.
-Use section elements with id, data-toc, and data-toc-title for TOC entries.
-```
-
-If the agent only has Python available, it can still build and check the document:
-
-```bash
-python3 scripts/build_site.py
-python3 scripts/check_html.py
-```
-
-Do not require Node.js, npm, Playwright, or browser tests unless browser smoke tests are explicitly requested.
 
 ## HTML Checker
 
