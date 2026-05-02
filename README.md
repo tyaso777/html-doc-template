@@ -98,60 +98,16 @@ Optional for browser smoke tests:
 
 ## Use This Template For A Document
 
-Use this section when you are creating a document from the template. This workflow requires only Python.
+For document-authoring steps, see [QUICKSTART.md](QUICKSTART.md). This workflow requires only Python.
 
-For the multi-page workflow:
+The short version:
 
 1. Edit `chapters-src/*.html`.
 2. Edit `chapters-src/site-manifest.json`.
-3. Build the public files under `chapters/`.
-4. Run the HTML checker.
+3. Run `python3 scripts/build_site.py`.
+4. Run `python3 scripts/check_html.py`.
 
-Linux/macOS:
-
-```bash
-python3 scripts/build_site.py
-python3 scripts/check_html.py
-```
-
-Windows:
-
-```powershell
-py -3 scripts/build_site.py
-py -3 scripts/check_html.py
-```
-
-Node.js is not required for document authoring. If npm is available, the same build and check can also be run through convenience commands:
-
-```bash
-npm run build
-npm run check:html
-```
-
-Typical edits:
-
-- Replace the document title and subtitle.
-- Update the document metadata.
-- Add sections with `id`, `data-toc`, and `data-toc-title`.
-- Replace sample math, code, Mermaid, and Python runner content.
-- Update Materials and External Links in the sidebar as needed.
-- Update the changelog when publishing a new version.
-
-Top-level sections that should appear in the sidebar TOC should use this pattern:
-
-```html
-<section id="example-section" data-toc data-toc-title="Example Section">
-  <h2>Example Section</h2>
-</section>
-```
-
-Optional lower-level TOC entries can use:
-
-```html
-<h3 id="example-subsection" data-toc data-toc-level="3" data-toc-title="Example Subsection">
-  Example Subsection
-</h3>
-```
+On Windows, use `py -3` instead of `python3`. Node.js is not required for document authoring.
 
 ## Multi-page Documents
 
