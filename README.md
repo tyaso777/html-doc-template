@@ -6,9 +6,12 @@ Live demo: https://tyaso777.github.io/html-doc-template/
 
 The browser entry page is `index.html`.
 
+For document authors and AI agents, start with [QUICKSTART.md](QUICKSTART.md). It gives the Python-only workflow needed to edit, build, and check a document from this template.
+
 Main files:
 
 ```text
+QUICKSTART.md                         # shortest document-authoring workflow
 chapters-src/                         # editable chapter fragments and manifest
 layouts/chapter-shell.html             # shared shell used by the build script
 ```
@@ -49,6 +52,7 @@ If you primarily want Markdown-first authoring, automatic page generation, site-
 ```text
 html-doc-template/
   README.md
+  QUICKSTART.md
   index.html
   html-doc-template.code-workspace
   assets/
