@@ -294,21 +294,21 @@
 
           <div class="code-caption">python</div>
           <pre class="code-block language-python"><code class="language-python">def summarize_scores(scores: list[int]) -> dict[str, float]:
-            """Returns simple summary statistics for a score list."""
-            total = sum(scores)
-            count = len(scores)
+    """Returns simple summary statistics for a score list."""
+    total = sum(scores)
+    count = len(scores)
 
-            return {
+    return {
         "count": count,
         "average": total / count,
         "maximum": max(scores),
-            }
+    }
 
 
-        scores = [82, 90, 76, 88]
-        summary = summarize_scores(scores)
-        print(summary)
-        </code></pre>
+scores = [82, 90, 76, 88]
+summary = summarize_scores(scores)
+print(summary)
+</code></pre>
 
           <h3 id="python-runner-example" data-toc data-toc-level="3" data-toc-title="Executable Code Example">Executable Code Example</h3>
           <p>
@@ -380,20 +380,20 @@
           <h3 id="powershell-code-example" data-toc data-toc-level="3" data-toc-title="PowerShell Code Block">PowerShell Code Block</h3>
           <div class="code-caption">powershell</div>
           <pre class="code-block language-powershell"><code class="language-powershell">Get-ChildItem -Path . -Filter "*.html" |
-            Select-Object Name, Length, LastWriteTime |
-            Sort-Object LastWriteTime -Descending
-        </code></pre>
+    Select-Object Name, Length, LastWriteTime |
+    Sort-Object LastWriteTime -Descending
+</code></pre>
 
           <h3 id="sql-code-example" data-toc data-toc-level="3" data-toc-title="SQL Code Block">SQL Code Block</h3>
           <div class="code-caption">sql</div>
           <pre class="code-block language-sql"><code class="language-sql">SELECT
-            document_id,
-            title,
-            updated_at
-        FROM documents
-        WHERE status = "published"
-        ORDER BY updated_at DESC;
-        </code></pre>
+    document_id,
+    title,
+    updated_at
+FROM documents
+WHERE status = "published"
+ORDER BY updated_at DESC;
+</code></pre>
 
           <aside class="callout callout-warning">
             To add another language such as cmd, bash, or JSON, load the corresponding Prism language component and change the <code>language-...</code> class to match.
@@ -411,14 +411,14 @@
 
           <div class="code-caption">mermaid</div>
           <pre class="code-block language-mermaid"><code class="language-mermaid">flowchart LR
-            A[Define the document goal] --> B[Plan the section structure]
-            B --> C[Write the body text]
-            B --> D[Create exercises or code examples]
-            C --> E[Add diagrams and math]
-            D --> F[Check executable examples]
-            E --> G[Review the rendered document]
-            F --> G
-        </code></pre>
+    A[Define the document goal] --> B[Plan the section structure]
+    B --> C[Write the body text]
+    B --> D[Create exercises or code examples]
+    C --> E[Add diagrams and math]
+    D --> F[Check executable examples]
+    E --> G[Review the rendered document]
+    F --> G
+</code></pre>
 
           <figure class="mermaid-figure">
             <figcaption>Diagram rendered from the Mermaid definition above</figcaption>

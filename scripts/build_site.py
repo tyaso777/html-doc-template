@@ -64,8 +64,33 @@ def sidebar_title_html(title: str) -> str:
     return "<br>".join(html.escape(part.strip()) for part in title.splitlines() if part.strip())
 
 
-def indent_content(content: str, indent: str) -> str:
-    return "\n".join((indent + line if line else "") for line in content.splitlines())
+RAW_TEXT_INDENT_TAGS = {"pre", "code", "script", "style", "textarea"}
+
+
+def indent_content_preserving_raw_text(content: str, indent: str) -> str:
+    protected_ranges: list[tuple[int, int]] = []
+
+    for node in iter_nodes(parse_fragment(content)):
+        if node.tag in RAW_TEXT_INDENT_TAGS and node.end_tag_start is not None:
+            protected_ranges.append((node.start_tag_end, node.end_tag_start))
+
+    protected_ranges.sort()
+    protected_index = 0
+    rendered_lines: list[str] = []
+    line_start = 0
+
+    for line in content.splitlines(keepends=True):
+        while protected_index < len(protected_ranges) and protected_ranges[protected_index][1] <= line_start:
+            protected_index += 1
+
+        in_protected_range = (
+            protected_index < len(protected_ranges)
+            and protected_ranges[protected_index][0] <= line_start < protected_ranges[protected_index][1]
+        )
+        rendered_lines.append(line if in_protected_range or not line.strip() else indent + line)
+        line_start += len(line)
+
+    return "".join(rendered_lines)
 
 
 def render_nav_link(direction: str, title: str, href: str, indent: str) -> str:
@@ -427,7 +452,7 @@ def render_shell(
         "{{CONTENTS_TREE}}": render_contents_tree(chapters, current_index, output_path, output_dir, toc_entries_by_chapter),
         "{{MATERIALS_SECTION}}": render_link_section("Materials", materials, manifest_dir, output_path),
         "{{EXTERNAL_LINKS_SECTION}}": render_link_section("External Links", external_links, manifest_dir, output_path, external_section=True),
-        "{{CONTENT}}": indent_content(content.rstrip(), "        "),
+        "{{CONTENT}}": indent_content_preserving_raw_text(content.rstrip(), "        "),
     }
 
     rendered = shell
