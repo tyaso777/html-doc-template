@@ -34,6 +34,7 @@ test("chapter page initializes document enhancements", async ({ page }) => {
   await expect(page.locator("[data-python-run-button]")).toBeDisabled();
   await expect(page.locator(".CodeMirror")).toBeVisible();
 
+  await expect.poll(() => page.evaluate(() => Boolean(window.Prism?.languages?.java))).toBe(true);
   await expect(page.locator("mjx-container").first()).toBeVisible();
   await expect(page.locator(".mermaid svg").first()).toBeVisible();
 });
