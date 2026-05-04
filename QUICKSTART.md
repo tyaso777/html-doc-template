@@ -13,6 +13,8 @@ Edit the source files under `chapters-src/`:
 
 Files under `chapters-src/` are article fragments. They are inserted into `<article class="content">` by `scripts/build_site.py`.
 
+Use top-level `externalLinks` in `chapters-src/site-manifest.json` for links that should appear on every chapter. Use optional chapter-level `externalLinks` for links that should appear only on that chapter.
+
 Do not include these in chapter fragments:
 
 - `<!doctype>`

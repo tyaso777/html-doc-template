@@ -16,7 +16,18 @@
       "sidebarTitle": "Chapter 2\nMinimal Page",
       "subtitle": "Multi-page example",
       "source": "02-examples.html",
-      "href": "02-examples.html"
+      "href": "02-examples.html",
+      "externalLinks": [
+        {
+          "title": "Chapter-specific links",
+          "items": [
+            {
+              "label": "MDN HTML",
+              "href": "https://developer.mozilla.org/en-US/docs/Web/HTML"
+            }
+          ]
+        }
+      ]
     },
     {
       "title": "Chapter 3: Reference Page",

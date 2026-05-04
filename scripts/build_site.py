@@ -105,7 +105,7 @@ def render_nav_link(direction: str, title: str, href: str, indent: str) -> str:
     )
 
 
-def render_chapter_nav(chapters: list[dict[str, str]], index: int, output_path: Path, output_dir: Path, indent: str = "") -> str:
+def render_chapter_nav(chapters: list[dict[str, Any]], index: int, output_path: Path, output_dir: Path, indent: str = "") -> str:
     links: list[str] = []
 
     if index > 0:
@@ -208,7 +208,7 @@ def render_chapter_toc_entries(entries: list[dict[str, str | int]], chapter_path
 
 
 def render_contents_tree(
-    chapters: list[dict[str, str]],
+    chapters: list[dict[str, Any]],
     current_index: int,
     output_path: Path,
     output_dir: Path,
@@ -330,7 +330,7 @@ def expand_python_runners(source: str) -> str:
     return replace_ranges(source, replacements)
 
 
-def inject_chapter_nav(source: str, chapters: list[dict[str, str]], index: int, output_path: Path, output_dir: Path) -> str:
+def inject_chapter_nav(source: str, chapters: list[dict[str, Any]], index: int, output_path: Path, output_dir: Path) -> str:
     matches = [
         node
         for node in iter_nodes(parse_fragment(source))
@@ -428,15 +428,24 @@ def render_link_section(
         f'{indent}</details>'
     )
 
+
+def chapter_external_links(common_external_links: list[Any], chapter: dict[str, Any]) -> list[Any]:
+    specific_external_links = chapter.get("externalLinks", [])
+    if not specific_external_links:
+        return common_external_links
+    assert isinstance(specific_external_links, list)
+    return [*common_external_links, *specific_external_links]
+
+
 def render_shell(
     shell: str,
-    chapter: dict[str, str],
+    chapter: dict[str, Any],
     content: str,
     output_path: Path,
     root: Path,
     manifest_dir: Path,
     document_lang: str,
-    chapters: list[dict[str, str]],
+    chapters: list[dict[str, Any]],
     current_index: int,
     output_dir: Path,
     toc_entries_by_chapter: list[list[dict[str, str | int]]],
@@ -451,7 +460,13 @@ def render_shell(
         "{{ASSET_PREFIX}}": asset_prefix(output_path, root),
         "{{CONTENTS_TREE}}": render_contents_tree(chapters, current_index, output_path, output_dir, toc_entries_by_chapter),
         "{{MATERIALS_SECTION}}": render_link_section("Materials", materials, manifest_dir, output_path),
-        "{{EXTERNAL_LINKS_SECTION}}": render_link_section("External Links", external_links, manifest_dir, output_path, external_section=True),
+        "{{EXTERNAL_LINKS_SECTION}}": render_link_section(
+            "External Links",
+            chapter_external_links(external_links, chapter),
+            manifest_dir,
+            output_path,
+            external_section=True,
+        ),
         "{{CONTENT}}": indent_content_preserving_raw_text(content.rstrip(), "        "),
     }
 
@@ -466,7 +481,7 @@ def build_chapter(
     manifest_dir: Path,
     output_dir: Path,
     shell: str,
-    chapters: list[dict[str, str]],
+    chapters: list[dict[str, Any]],
     index: int,
     toc_entries_by_chapter: list[list[dict[str, str | int]]],
     document_lang: str,

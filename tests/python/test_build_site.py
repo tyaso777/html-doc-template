@@ -1,6 +1,7 @@
 import unittest
+from pathlib import Path
 
-from scripts.build_site import indent_content_preserving_raw_text
+from scripts.build_site import chapter_external_links, indent_content_preserving_raw_text, render_shell
 
 
 class BuildSiteTests(unittest.TestCase):
@@ -36,6 +37,57 @@ for log in logs:
         self.assertIn("  <div>", rendered)
         self.assertIn("<textarea>line one\n  line two\n", rendered)
         self.assertNotIn("\n    line two", rendered)
+
+    def test_chapter_external_links_append_to_common_links(self) -> None:
+        common = [{"title": "Common", "items": [{"label": "Common link", "href": "https://example.com/common"}]}]
+        chapter = {
+            "externalLinks": [
+                {"title": "Chapter", "items": [{"label": "Chapter link", "href": "https://example.com/chapter"}]}
+            ]
+        }
+
+        links = chapter_external_links(common, chapter)
+
+        self.assertEqual([item["title"] for item in links], ["Common", "Chapter"])
+        self.assertEqual([item["title"] for item in common], ["Common"])
+
+    def test_render_shell_includes_common_and_chapter_external_links(self) -> None:
+        shell = (
+            "{{DOCUMENT_LANG}} {{DOCUMENT_TITLE}} {{SIDEBAR_TITLE}} {{SIDEBAR_SUBTITLE}} "
+            "{{ASSET_PREFIX}} {{CONTENTS_TREE}} {{MATERIALS_SECTION}} "
+            "{{EXTERNAL_LINKS_SECTION}} {{CONTENT}}"
+        )
+        chapter = {
+            "title": "Chapter",
+            "href": "chapter.html",
+            "source": "chapter.html",
+            "sidebarTitle": "Chapter",
+            "subtitle": "",
+            "externalLinks": [
+                {"title": "Chapter links", "items": [{"label": "Chapter link", "href": "https://example.com/chapter"}]}
+            ],
+        }
+
+        rendered = render_shell(
+            shell,
+            chapter,
+            "<p>Body</p>",
+            Path("/tmp/project/chapters/chapter.html"),
+            Path("/tmp/project"),
+            Path("/tmp/project/chapters-src"),
+            "en",
+            [chapter],
+            0,
+            Path("/tmp/project/chapters"),
+            [[]],
+            [],
+            [{"title": "Common", "items": [{"label": "Common link", "href": "https://example.com/common"}]}],
+        )
+
+        self.assertIn("Common link", rendered)
+        self.assertIn("Chapter link", rendered)
+        self.assertIn('href="https://example.com/common" target="_blank" rel="noopener"', rendered)
+        self.assertIn('href="https://example.com/chapter" target="_blank" rel="noopener"', rendered)
 
 
 if __name__ == "__main__":

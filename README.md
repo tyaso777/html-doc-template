@@ -119,7 +119,7 @@ Each source chapter should include a chapter navigation placeholder near the end
 <nav class="chapter-nav" data-chapter-nav aria-label="Chapter navigation"></nav>
 ```
 
-`scripts/build_site.py` reads `chapters-src/site-manifest.json`, combines each source fragment with `layouts/chapter-shell.html`, writes the left-side nested Contents tree from all chapter TOC entries, renders manifest-managed Materials and External Links sections, and writes the generated Previous and Next links into each output file. It uses Python's standard-library HTML parser for chapter TOC extraction, Python runner expansion, and chapter navigation replacement. This keeps chapter order, document language, shell metadata, and document-level link lists in one place while keeping the generated HTML usable through GitHub Pages or direct `file://` previews.
+`scripts/build_site.py` reads `chapters-src/site-manifest.json`, combines each source fragment with `layouts/chapter-shell.html`, writes the left-side nested Contents tree from all chapter TOC entries, renders manifest-managed Materials and External Links sections, and writes the generated Previous and Next links into each output file. It uses Python's standard-library HTML parser for chapter TOC extraction, Python runner expansion, and chapter navigation replacement. This keeps chapter order, document language, shell metadata, and shared link lists in one place while keeping the generated HTML usable through GitHub Pages or direct `file://` previews.
 
 CI runs the build and checks that the generated `chapters/` files have no uncommitted diff, so updates to `chapters-src/` should be committed together with the rebuilt public chapter files.
 
@@ -144,7 +144,15 @@ AI agents should follow [QUICKSTART.md](QUICKSTART.md), edit `chapters-src/` ins
       "sidebarTitle": "Chapter 2\nMinimal Page",
       "subtitle": "Multi-page example",
       "source": "02-examples.html",
-      "href": "02-examples.html"
+      "href": "02-examples.html",
+      "externalLinks": [
+        {
+          "title": "Chapter-specific links",
+          "items": [
+            { "label": "MDN HTML", "href": "https://developer.mozilla.org/en-US/docs/Web/HTML" }
+          ]
+        }
+      ]
     },
     {
       "title": "Chapter 3: Reference Page",
@@ -182,7 +190,7 @@ AI agents should follow [QUICKSTART.md](QUICKSTART.md), edit `chapters-src/` ins
 }
 ```
 
-`materials` and `externalLinks` use the same recursive `items` structure. An item with `label` and `href` is rendered as a link. An item with `title` and `items` is rendered as a nested group.
+`materials` and `externalLinks` use the same recursive `items` structure. An item with `label` and `href` is rendered as a link. An item with `title` and `items` is rendered as a nested group. Top-level `externalLinks` are shown on every chapter. Optional `externalLinks` inside a chapter are appended after the shared links for that chapter only.
 
 ## Common Components
 

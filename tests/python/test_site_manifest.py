@@ -36,9 +36,38 @@ class SiteManifestTests(unittest.TestCase):
                     "href": "01-introduction.html",
                     "sidebarTitle": "Intro",
                     "subtitle": "",
+                    "externalLinks": [],
                 }
             ],
         )
+
+    def test_normalize_manifest_keeps_chapter_external_links(self) -> None:
+        manifest = normalize_manifest(
+            {
+                "externalLinks": [
+                    {
+                        "title": "Common",
+                        "items": [{"label": "Common link", "href": "https://example.com/common"}],
+                    }
+                ],
+                "chapters": [
+                    {
+                        "title": "Intro",
+                        "source": "01-introduction.html",
+                        "href": "01-introduction.html",
+                        "externalLinks": [
+                            {
+                                "title": "Chapter links",
+                                "items": [{"label": "Chapter link", "href": "https://example.com/chapter"}],
+                            }
+                        ],
+                    }
+                ],
+            }
+        )
+
+        self.assertEqual(manifest.external_links[0]["title"], "Common")
+        self.assertEqual(manifest.chapters[0]["externalLinks"][0]["title"], "Chapter links")
 
     def test_manifest_validation_reports_invalid_shapes(self) -> None:
         self.assertEqual(manifest_validation_errors([]), ["site manifest must be a JSON object"])
@@ -58,6 +87,7 @@ class SiteManifestTests(unittest.TestCase):
                         "href": "",
                         "sidebarTitle": 123,
                         "subtitle": 456,
+                        "externalLinks": {},
                     },
                 ],
             }
@@ -74,6 +104,31 @@ class SiteManifestTests(unittest.TestCase):
         self.assertIn("chapter 2 must have a non-empty href", errors)
         self.assertIn("chapter 2 sidebarTitle must be a string", errors)
         self.assertIn("chapter 2 subtitle must be a string", errors)
+        self.assertIn("chapter 2 externalLinks must be an array when provided", errors)
+
+    def test_manifest_validation_reports_invalid_link_tree_items(self) -> None:
+        errors = manifest_validation_errors(
+            {
+                "externalLinks": [
+                    {"title": "Broken group", "items": [{"label": "Missing href"}]},
+                    {"label": "", "href": ""},
+                ],
+                "chapters": [
+                    {
+                        "title": "Intro",
+                        "source": "01-introduction.html",
+                        "href": "01-introduction.html",
+                        "externalLinks": [{"title": "", "items": "bad"}],
+                    }
+                ],
+            }
+        )
+
+        self.assertIn("site manifest externalLinks item 1 group items item 1 link must have a non-empty href", errors)
+        self.assertIn("site manifest externalLinks item 2 link must have a non-empty label", errors)
+        self.assertIn("site manifest externalLinks item 2 link must have a non-empty href", errors)
+        self.assertIn("chapter 1 externalLinks item 1 group must have a non-empty title", errors)
+        self.assertIn("chapter 1 externalLinks item 1 group items must be an array", errors)
 
     def test_normalize_manifest_raises_for_invalid_manifest(self) -> None:
         with self.assertRaisesRegex(ValueError, "site manifest must contain a chapters array"):

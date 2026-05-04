@@ -34,9 +34,43 @@ class SiteManifest:
     shell: str
     output_dir: str
     document_lang: str
-    chapters: list[dict[str, str]]
+    chapters: list[dict[str, Any]]
     materials: list[Any]
     external_links: list[Any]
+
+
+def link_tree_validation_errors(items: Any, path: str) -> list[str]:
+    errors: list[str] = []
+
+    if not isinstance(items, list):
+        return [f"{path} must be an array when provided"]
+
+    for index, item in enumerate(items, start=1):
+        item_path = f"{path} item {index}"
+        if not isinstance(item, dict):
+            errors.append(f"{item_path} must be an object")
+            continue
+
+        title = item.get("title")
+        nested_items = item.get("items")
+        label = item.get("label")
+        href = item.get("href")
+
+        if "items" in item or "title" in item:
+            if not isinstance(title, str) or not title.strip():
+                errors.append(f"{item_path} group must have a non-empty title")
+            if not isinstance(nested_items, list):
+                errors.append(f"{item_path} group items must be an array")
+            else:
+                errors.extend(link_tree_validation_errors(nested_items, f"{item_path} group items"))
+            continue
+
+        if not isinstance(label, str) or not label.strip():
+            errors.append(f"{item_path} link must have a non-empty label")
+        if not isinstance(href, str) or not href.strip():
+            errors.append(f"{item_path} link must have a non-empty href")
+
+    return errors
 
 
 def load_manifest(path: Path) -> dict[str, Any]:
@@ -62,10 +96,8 @@ def manifest_validation_errors(manifest: Any) -> list[str]:
         errors.append("site manifest must have a non-empty outputDir")
     if not isinstance(document_lang, str) or not document_lang.strip():
         errors.append("site manifest lang must be a non-empty string")
-    if not isinstance(materials, list):
-        errors.append("site manifest materials must be an array when provided")
-    if not isinstance(external_links, list):
-        errors.append("site manifest externalLinks must be an array when provided")
+    errors.extend(link_tree_validation_errors(materials, "site manifest materials"))
+    errors.extend(link_tree_validation_errors(external_links, "site manifest externalLinks"))
     if not isinstance(chapters, list):
         errors.append("site manifest must contain a chapters array")
         return errors
@@ -80,6 +112,7 @@ def manifest_validation_errors(manifest: Any) -> list[str]:
         source = chapter.get("source")
         sidebar_title = chapter.get("sidebarTitle", title)
         subtitle = chapter.get("subtitle", "")
+        chapter_external_links = chapter.get("externalLinks", [])
 
         if not isinstance(title, str) or not title.strip():
             errors.append(f"chapter {index} must have a non-empty title")
@@ -91,6 +124,7 @@ def manifest_validation_errors(manifest: Any) -> list[str]:
             errors.append(f"chapter {index} sidebarTitle must be a string")
         if not isinstance(subtitle, str):
             errors.append(f"chapter {index} subtitle must be a string")
+        errors.extend(link_tree_validation_errors(chapter_external_links, f"chapter {index} externalLinks"))
 
     return errors
 
@@ -115,7 +149,7 @@ def normalize_manifest(manifest: Any) -> SiteManifest:
     assert isinstance(external_links, list)
     assert isinstance(raw_chapters, list)
 
-    chapters: list[dict[str, str]] = []
+    chapters: list[dict[str, Any]] = []
     for chapter in raw_chapters:
         assert isinstance(chapter, dict)
         title = chapter["title"]
@@ -123,11 +157,13 @@ def normalize_manifest(manifest: Any) -> SiteManifest:
         source = chapter["source"]
         sidebar_title = chapter.get("sidebarTitle", title)
         subtitle = chapter.get("subtitle", "")
+        chapter_external_links = chapter.get("externalLinks", [])
         assert isinstance(title, str)
         assert isinstance(href, str)
         assert isinstance(source, str)
         assert isinstance(sidebar_title, str)
         assert isinstance(subtitle, str)
+        assert isinstance(chapter_external_links, list)
         chapters.append(
             {
                 "title": title,
@@ -135,6 +171,7 @@ def normalize_manifest(manifest: Any) -> SiteManifest:
                 "source": source,
                 "sidebarTitle": sidebar_title,
                 "subtitle": subtitle,
+                "externalLinks": chapter_external_links,
             }
         )
 

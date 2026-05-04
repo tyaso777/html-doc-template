@@ -62,6 +62,24 @@ test("first and last generated chapters expose the correct edge navigation", asy
   await expect(page.locator(".chapter-nav-link.next")).toHaveCount(0);
 });
 
+test("chapter-specific external links are appended to shared links", async ({ page }) => {
+  await page.goto("/chapters/01-introduction.html");
+
+  await expect(page.locator(".nav-section", { hasText: "External Links" })).toContainText("Prism.js");
+  await expect(page.locator(".nav-section", { hasText: "External Links" })).not.toContainText("MDN HTML");
+
+  await page.goto("/chapters/02-examples.html");
+
+  const externalLinks = page.locator(".nav-section", { hasText: "External Links" });
+  await expect(externalLinks).toContainText("Prism.js");
+  await expect(externalLinks).toContainText("Chapter-specific links");
+  await expect(externalLinks).toContainText("MDN HTML");
+  await expect(externalLinks.locator('a[href="https://developer.mozilla.org/en-US/docs/Web/HTML"]')).toHaveAttribute(
+    "target",
+    "_blank"
+  );
+});
+
 test("mobile layout remains readable without page-level horizontal overflow", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/chapters/01-introduction.html");
