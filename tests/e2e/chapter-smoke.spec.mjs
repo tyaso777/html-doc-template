@@ -100,6 +100,27 @@ test("mobile layout remains readable without page-level horizontal overflow", as
   expect(overflow.scrollWidth).toBeLessThanOrEqual(overflow.clientWidth + 1);
 });
 
+test("print layout fits wide content to the printable page width", async ({ page }) => {
+  await page.setViewportSize({ width: 794, height: 1123 });
+  await page.emulateMedia({ media: "print" });
+  await page.goto("/chapters/01-introduction.html");
+
+  await expect(page.locator(".sidebar")).toBeHidden();
+  await expect(page.locator(".copy-code-button").first()).toBeHidden();
+  await expect(page.locator("[data-python-code]")).toBeHidden();
+  await expect(page.locator("[data-python-print-code]")).toBeVisible();
+
+  await expect(page.locator(".code-block").first()).toHaveCSS("white-space", "pre-wrap");
+  await expect(page.locator(".code-block > code").first()).toHaveCSS("min-width", "0px");
+  await expect(page.locator(".mermaid").first()).toHaveCSS("min-width", "0px");
+
+  const overflow = await page.evaluate(() => ({
+    clientWidth: document.documentElement.clientWidth,
+    scrollWidth: document.documentElement.scrollWidth
+  }));
+  expect(overflow.scrollWidth).toBeLessThanOrEqual(overflow.clientWidth + 1);
+});
+
 test("static code copy button writes the code text", async ({ page }) => {
   await page.addInitScript(() => {
     window.__copiedText = "";

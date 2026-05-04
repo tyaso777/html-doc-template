@@ -709,6 +709,10 @@ textarea {
   background: #ffffff;
 }
 
+@page {
+  margin: 14mm;
+}
+
 @media (max-width: 900px) {
   .layout {
     display: block;
@@ -755,22 +759,36 @@ textarea {
 }
 
 @media print {
+  html,
   body {
+    width: auto;
+    max-width: 100%;
+    overflow: visible;
     background: #fff;
   }
 
   .layout {
     display: block;
+    width: auto;
     max-width: none;
     padding: 0;
+    margin: 0;
   }
 
   .sidebar {
     display: none;
   }
 
+  main,
+  .content {
+    width: auto;
+    max-width: 100%;
+    overflow: visible;
+  }
+
   .content {
     border: 0;
+    border-radius: 0;
     box-shadow: none;
     padding: 0;
   }
@@ -784,10 +802,66 @@ textarea {
   }
 
   .runner-toolbar,
+  .copy-code-button,
   #python-code,
+  [data-python-code],
   .CodeMirror,
-  #output {
+  #output,
+  [data-python-output] {
     display: none !important;
+  }
+
+  pre.code-block,
+  pre[class*="language-"].code-block,
+  .output,
+  textarea {
+    max-width: 100%;
+    overflow: visible;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  pre.code-block > code,
+  pre[class*="language-"].code-block > code,
+  pre[class*="language-"].code-block > code[class*="language-"],
+  code[class*="language-"] {
+    display: block;
+    width: auto;
+    min-width: 0;
+    max-width: 100%;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .table-wrap,
+  .math-block,
+  .mermaid-wrap {
+    max-width: 100%;
+    overflow: visible;
+  }
+
+  table {
+    width: 100%;
+    table-layout: fixed;
+  }
+
+  th,
+  td {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .mermaid {
+    min-width: 0;
+    max-width: 100%;
+    overflow: visible;
+  }
+
+  .mermaid svg,
+  mjx-container {
+    max-width: 100% !important;
   }
 
   .runner-panel {
