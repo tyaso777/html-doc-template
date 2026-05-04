@@ -22,6 +22,8 @@ This project is not a full static site generator, Markdown converter, or web app
 
 It can be used for single-page or multi-page HTML documents. For multi-page chapter sets, `scripts/build_site.py` copies source chapters from `chapters-src/` to `chapters/` and injects Previous/Next navigation from `chapters-src/site-manifest.json`. It does not provide routes, search indexes, theme systems, or content pipelines.
 
+The primary target is browser viewing. The stylesheet includes a print layout that hides screen-only navigation and reduces common horizontal overflow from code blocks, tables, math, and diagrams, but PDF/print output is a secondary use case. If PDF distribution is a primary deliverable, treat it as a separate design target and add document-specific print styling plus PDF generation checks.
+
 Use this template when you want:
 
 - Direct control over document HTML, CSS, and browser behavior.
@@ -262,7 +264,9 @@ CI runs the same build, HTML checks, Python unit tests, JavaScript syntax checks
 
 ## Optional Browser Smoke Tests
 
-Browser smoke tests are optional and require Node.js, npm, and Playwright. They verify that generated chapters open in Chromium, the sidebar and chapter navigation work, and JavaScript enhancements initialize for copy buttons, CodeMirror, MathJax, and Mermaid.
+Browser smoke tests are optional and require Node.js, npm, and Playwright. They verify that generated chapters open in Chromium, the sidebar and chapter navigation work, JavaScript enhancements initialize for copy buttons, CodeMirror, MathJax, and Mermaid, and the basic print media layout does not create page-level horizontal overflow.
+
+The print smoke test is intentionally limited. It does not generate or visually review a PDF, and it does not guarantee that every wide table, card layout, or diagram is publication-ready on paper.
 
 Install the test dependency and browser once:
 
