@@ -3,6 +3,12 @@
   "lang": "en",
   "shell": "../layouts/chapter-shell.html",
   "outputDir": "../chapters",
+  "headingNumbering": {
+    "enabled": true,
+    "body": true,
+    "toc": true,
+    "format": "{number}. {title}"
+  },
   "chapters": [
     {
       "title": "Chapter 1: Introduction",

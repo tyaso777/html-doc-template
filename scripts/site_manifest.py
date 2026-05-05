@@ -37,6 +37,10 @@ class SiteManifest:
     chapters: list[dict[str, Any]]
     materials: list[Any]
     external_links: list[Any]
+    heading_numbering: dict[str, Any]
+
+
+HEADING_NUMBERING_TITLE_MODES = {"numbered", "plain"}
 
 
 def link_tree_validation_errors(items: Any, path: str) -> list[str]:
@@ -77,6 +81,78 @@ def load_manifest(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def heading_numbering_validation_errors(config: Any) -> list[str]:
+    errors: list[str] = []
+
+    if config is None:
+        return errors
+    if not isinstance(config, dict):
+        return ["site manifest headingNumbering must be an object when provided"]
+
+    enabled = config.get("enabled", False)
+    levels = config.get("levels", [])
+    body = config.get("body", True)
+    toc = config.get("toc", True)
+    default_format = config.get("format", "{number}. {title}")
+    level_formats = config.get("levelFormats", {})
+    toc_title_mode = config.get("tocTitleMode", "numbered")
+
+    if not isinstance(enabled, bool):
+        errors.append("site manifest headingNumbering enabled must be a boolean")
+    if not isinstance(body, bool):
+        errors.append("site manifest headingNumbering body must be a boolean")
+    if not isinstance(toc, bool):
+        errors.append("site manifest headingNumbering toc must be a boolean")
+    if not isinstance(default_format, str) or "{title}" not in default_format:
+        errors.append('site manifest headingNumbering format must be a string containing "{title}"')
+    if not isinstance(levels, list) or not all(isinstance(level, int) and 2 <= level <= 6 for level in levels):
+        errors.append("site manifest headingNumbering levels must be an array of integers from 2 to 6")
+    if not isinstance(level_formats, dict):
+        errors.append("site manifest headingNumbering levelFormats must be an object")
+    else:
+        for raw_level, format_text in level_formats.items():
+            if str(raw_level) not in {"2", "3", "4", "5", "6"}:
+                errors.append("site manifest headingNumbering levelFormats keys must be heading levels 2 through 6")
+            if not isinstance(format_text, str) or "{title}" not in format_text:
+                errors.append(f'site manifest headingNumbering levelFormats {raw_level} must be a string containing "{{title}}"')
+    if toc_title_mode not in HEADING_NUMBERING_TITLE_MODES:
+        errors.append('site manifest headingNumbering tocTitleMode must be "numbered" or "plain"')
+
+    return errors
+
+
+def normalize_heading_numbering(config: Any) -> dict[str, Any]:
+    if config is None:
+        config = {}
+
+    assert isinstance(config, dict)
+    enabled = config.get("enabled", False)
+    levels = config.get("levels", [])
+    body = config.get("body", True)
+    toc = config.get("toc", True)
+    default_format = config.get("format", "{number}. {title}")
+    level_formats = config.get("levelFormats", {})
+    toc_title_mode = config.get("tocTitleMode", "numbered")
+
+    assert isinstance(enabled, bool)
+    assert isinstance(levels, list)
+    assert isinstance(body, bool)
+    assert isinstance(toc, bool)
+    assert isinstance(default_format, str)
+    assert isinstance(level_formats, dict)
+    assert isinstance(toc_title_mode, str)
+
+    return {
+        "enabled": enabled,
+        "levels": levels,
+        "body": body,
+        "toc": toc,
+        "format": default_format,
+        "levelFormats": level_formats,
+        "tocTitleMode": toc_title_mode,
+    }
+
+
 def manifest_validation_errors(manifest: Any) -> list[str]:
     errors: list[str] = []
 
@@ -88,6 +164,7 @@ def manifest_validation_errors(manifest: Any) -> list[str]:
     document_lang = manifest.get("lang", "en")
     materials = manifest.get("materials", [])
     external_links = manifest.get("externalLinks", [])
+    heading_numbering = manifest.get("headingNumbering", {})
     chapters = manifest.get("chapters")
 
     if not isinstance(shell, str) or not shell.strip():
@@ -98,6 +175,7 @@ def manifest_validation_errors(manifest: Any) -> list[str]:
         errors.append("site manifest lang must be a non-empty string")
     errors.extend(link_tree_validation_errors(materials, "site manifest materials"))
     errors.extend(link_tree_validation_errors(external_links, "site manifest externalLinks"))
+    errors.extend(heading_numbering_validation_errors(heading_numbering))
     if not isinstance(chapters, list):
         errors.append("site manifest must contain a chapters array")
         return errors
@@ -140,6 +218,7 @@ def normalize_manifest(manifest: Any) -> SiteManifest:
     document_lang = manifest.get("lang", "en")
     materials = manifest.get("materials", [])
     external_links = manifest.get("externalLinks", [])
+    heading_numbering = normalize_heading_numbering(manifest.get("headingNumbering", {}))
     raw_chapters = manifest["chapters"]
 
     assert isinstance(shell, str)
@@ -182,6 +261,7 @@ def normalize_manifest(manifest: Any) -> SiteManifest:
         chapters=chapters,
         materials=materials,
         external_links=external_links,
+        heading_numbering=heading_numbering,
     )
 
 

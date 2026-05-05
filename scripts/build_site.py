@@ -65,6 +65,8 @@ def sidebar_title_html(title: str) -> str:
 
 
 RAW_TEXT_INDENT_TAGS = {"pre", "code", "script", "style", "textarea"}
+HEADING_TAG_PATTERN = re.compile(r"h[2-6]")
+HEADING_NUMBER_TOKENS = re.compile(r"(\{title\}|\{number\}|\{local\})")
 
 
 def indent_content_preserving_raw_text(content: str, indent: str) -> str:
@@ -124,11 +126,149 @@ def render_chapter_nav(chapters: list[dict[str, Any]], index: int, output_path: 
     return '<nav class="chapter-nav" data-chapter-nav aria-label="Chapter navigation">\n' + "\n".join(links) + f"\n{indent}</nav>"
 
 
-def extract_toc_entries(source: str) -> list[dict[str, str | int]]:
+def heading_level(node: FragmentNode) -> int:
+    raw_level = node.attrs.get("data-toc-level")
+    if raw_level and raw_level.isdigit():
+        return int(raw_level)
+    if node.tag.startswith("h") and node.tag[1:].isdigit():
+        return int(node.tag[1:])
+    return 2
+
+
+def heading_number_format(config: dict[str, Any], level: int) -> str:
+    level_formats = config.get("levelFormats", {})
+    if isinstance(level_formats, dict):
+        format_text = level_formats.get(str(level))
+        if isinstance(format_text, str):
+            return format_text
+    format_text = config.get("format", "{number}. {title}")
+    return format_text if isinstance(format_text, str) else "{number}. {title}"
+
+
+def format_numbered_heading_html(format_text: str, number: str, local: str, title_html: str) -> str:
+    parts: list[str] = []
+    for token in HEADING_NUMBER_TOKENS.split(format_text):
+        if token == "{title}":
+            parts.append(title_html)
+        elif token == "{number}":
+            parts.append(html.escape(number))
+        elif token == "{local}":
+            parts.append(html.escape(local))
+        else:
+            parts.append(html.escape(token))
+    return "".join(parts)
+
+
+def format_numbered_heading_text(format_text: str, number: str, local: str, title: str) -> str:
+    return format_text.replace("{number}", number).replace("{local}", local).replace("{title}", title)
+
+
+def first_heading_child(node: FragmentNode) -> FragmentNode | None:
+    return next((child for child in node.children if HEADING_TAG_PATTERN.fullmatch(child.tag)), None)
+
+
+def section_toc_level(section: FragmentNode, heading: FragmentNode) -> int:
+    raw_level = section.attrs.get("data-toc-level")
+    if raw_level and raw_level.isdigit():
+        return int(raw_level)
+    return heading_level(heading)
+
+
+def heading_numbering_targets(source: str, config: dict[str, Any]) -> list[dict[str, Any]]:
+    if not config.get("enabled", False):
+        return []
+
+    roots = parse_fragment(source)
+    nodes = iter_nodes(roots)
+    levels = set(config.get("levels", []))
+    section_targets: dict[int, tuple[str, int]] = {}
+
+    for node in nodes:
+        if node.tag != "section" or "data-toc" not in node.attrs:
+            continue
+        element_id = node.attrs.get("id")
+        heading = first_heading_child(node)
+        if element_id and heading is not None:
+            section_targets[heading.start] = (element_id, section_toc_level(node, heading))
+
+    targets: list[dict[str, Any]] = []
+    seen: set[int] = set()
+    for node in nodes:
+        if not HEADING_TAG_PATTERN.fullmatch(node.tag):
+            continue
+
+        target_id: str | None = None
+        level = heading_level(node)
+        if node.start in section_targets:
+            target_id, level = section_targets[node.start]
+        elif "data-toc" in node.attrs and isinstance(node.attrs.get("id"), str):
+            target_id = node.attrs["id"]
+
+        if node.start in section_targets or "data-toc" in node.attrs or level in levels:
+            if node.start in seen:
+                continue
+            targets.append({"node": node, "id": target_id, "level": level})
+            seen.add(node.start)
+
+    return targets
+
+
+def apply_heading_numbering(source: str, config: dict[str, Any]) -> tuple[str, dict[str, str]]:
+    targets = heading_numbering_targets(source, config)
+    if not targets:
+        return source, {}
+
+    counters = {level: 0 for level in range(2, 7)}
+    replacements: list[tuple[int, int, str]] = []
+    numbered_titles: dict[str, str] = {}
+
+    for target in targets:
+        node = target["node"]
+        assert isinstance(node, FragmentNode)
+        level = int(target["level"])
+        counters[level] += 1
+        for deeper_level in range(level + 1, 7):
+            counters[deeper_level] = 0
+        for parent_level in range(2, level):
+            if counters[parent_level] == 0:
+                counters[parent_level] = 1
+
+        parts = [str(counters[number_level]) for number_level in range(2, level + 1)]
+        number = ".".join(parts)
+        local = str(counters[level])
+        format_text = heading_number_format(config, level)
+        title_html = node_inner_html(source, node)
+        title_text = text_content(source, node)
+
+        target_id = target.get("id")
+        if isinstance(target_id, str):
+            numbered_titles[target_id] = format_numbered_heading_text(format_text, number, local, title_text)
+
+        if config.get("body", True) and node.end_tag_start is not None:
+            replacements.append(
+                (
+                    node.start_tag_end,
+                    node.end_tag_start,
+                    format_numbered_heading_html(format_text, number, local, title_html),
+                )
+            )
+
+    return replace_ranges(source, replacements), numbered_titles
+
+
+def extract_toc_entries(
+    source: str,
+    numbered_titles: dict[str, str] | None = None,
+    heading_numbering: dict[str, Any] | None = None,
+) -> list[dict[str, str | int]]:
     entries: list[dict[str, str | int]] = []
+    numbered_titles = numbered_titles or {}
+    heading_numbering = heading_numbering or {}
+    use_numbered_toc = heading_numbering.get("enabled", False) and heading_numbering.get("toc", True)
+    toc_title_mode = heading_numbering.get("tocTitleMode", "numbered")
 
     for node in iter_nodes(parse_fragment(source)):
-        if node.tag != "section" and not re.fullmatch(r"h[2-6]", node.tag):
+        if node.tag != "section" and not HEADING_TAG_PATTERN.fullmatch(node.tag):
             continue
 
         attrs = node.attrs
@@ -150,14 +290,10 @@ def extract_toc_entries(source: str) -> list[dict[str, str | int]]:
         if not title:
             title = text_content(source, node) if node.tag.startswith("h") else element_id
 
-        raw_level = attrs.get("data-toc-level")
-        if raw_level and raw_level.isdigit():
-            level = int(raw_level)
-        elif node.tag.startswith("h"):
-            level = int(node.tag[1])
-        else:
-            level = 2
+        if use_numbered_toc and toc_title_mode == "numbered" and element_id in numbered_titles:
+            title = numbered_titles[element_id]
 
+        level = heading_level(node)
         entries.append({"id": element_id, "title": title, "level": level})
 
     return entries
@@ -487,6 +623,7 @@ def build_chapter(
     document_lang: str,
     materials: list[Any],
     external_links: list[Any],
+    heading_numbering: dict[str, Any],
 ) -> Path:
     chapter = chapters[index]
     source_path = manifest_dir / chapter["source"]
@@ -494,6 +631,7 @@ def build_chapter(
 
     source = source_path.read_text(encoding="utf-8")
     validate_source_fragment(source_path, source)
+    source, _ = apply_heading_numbering(source, heading_numbering)
     source = expand_python_runners(source)
     content = inject_chapter_nav(source, chapters, index, output_path, output_dir)
     text = render_shell(
@@ -542,7 +680,10 @@ def main() -> int:
     validate_shell(shell, shell_path)
 
     toc_entries_by_chapter = [
-        extract_toc_entries((manifest_dir / chapter["source"]).read_text(encoding="utf-8"))
+        extract_toc_entries(
+            *apply_heading_numbering((manifest_dir / chapter["source"]).read_text(encoding="utf-8"), manifest.heading_numbering),
+            manifest.heading_numbering,
+        )
         for chapter in manifest.chapters
     ]
 
@@ -558,6 +699,7 @@ def main() -> int:
             manifest.document_lang,
             manifest.materials,
             manifest.external_links,
+            manifest.heading_numbering,
         )
         print(f"built {output_path.relative_to(root)}")
 

@@ -28,6 +28,18 @@ class SiteManifestTests(unittest.TestCase):
         self.assertEqual(manifest.materials, [])
         self.assertEqual(manifest.external_links, [])
         self.assertEqual(
+            manifest.heading_numbering,
+            {
+                "enabled": False,
+                "levels": [],
+                "body": True,
+                "toc": True,
+                "format": "{number}. {title}",
+                "levelFormats": {},
+                "tocTitleMode": "numbered",
+            },
+        )
+        self.assertEqual(
             manifest.chapters,
             [
                 {
@@ -69,6 +81,34 @@ class SiteManifestTests(unittest.TestCase):
         self.assertEqual(manifest.external_links[0]["title"], "Common")
         self.assertEqual(manifest.chapters[0]["externalLinks"][0]["title"], "Chapter links")
 
+    def test_normalize_manifest_keeps_heading_numbering(self) -> None:
+        manifest = normalize_manifest(
+            {
+                "headingNumbering": {
+                    "enabled": True,
+                    "levels": [2, 3],
+                    "body": False,
+                    "toc": True,
+                    "format": "{number}. {title}",
+                    "levelFormats": {"2": "第{local}章 {title}", "3": "{number} {title}"},
+                    "tocTitleMode": "plain",
+                },
+                "chapters": [
+                    {
+                        "title": "Intro",
+                        "source": "01-introduction.html",
+                        "href": "01-introduction.html",
+                    }
+                ],
+            }
+        )
+
+        self.assertTrue(manifest.heading_numbering["enabled"])
+        self.assertEqual(manifest.heading_numbering["levels"], [2, 3])
+        self.assertFalse(manifest.heading_numbering["body"])
+        self.assertEqual(manifest.heading_numbering["levelFormats"]["2"], "第{local}章 {title}")
+        self.assertEqual(manifest.heading_numbering["tocTitleMode"], "plain")
+
     def test_manifest_validation_reports_invalid_shapes(self) -> None:
         self.assertEqual(manifest_validation_errors([]), ["site manifest must be a JSON object"])
 
@@ -79,6 +119,15 @@ class SiteManifestTests(unittest.TestCase):
                 "lang": "",
                 "materials": {},
                 "externalLinks": {},
+                "headingNumbering": {
+                    "enabled": "yes",
+                    "levels": [1, "3"],
+                    "body": "yes",
+                    "toc": "yes",
+                    "format": "{number}",
+                    "levelFormats": {"1": "{title}", "2": "{number}"},
+                    "tocTitleMode": "bad",
+                },
                 "chapters": [
                     "not an object",
                     {
@@ -98,6 +147,14 @@ class SiteManifestTests(unittest.TestCase):
         self.assertIn("site manifest lang must be a non-empty string", errors)
         self.assertIn("site manifest materials must be an array when provided", errors)
         self.assertIn("site manifest externalLinks must be an array when provided", errors)
+        self.assertIn("site manifest headingNumbering enabled must be a boolean", errors)
+        self.assertIn("site manifest headingNumbering body must be a boolean", errors)
+        self.assertIn("site manifest headingNumbering toc must be a boolean", errors)
+        self.assertIn("site manifest headingNumbering levels must be an array of integers from 2 to 6", errors)
+        self.assertIn('site manifest headingNumbering format must be a string containing "{title}"', errors)
+        self.assertIn("site manifest headingNumbering levelFormats keys must be heading levels 2 through 6", errors)
+        self.assertIn('site manifest headingNumbering levelFormats 2 must be a string containing "{title}"', errors)
+        self.assertIn('site manifest headingNumbering tocTitleMode must be "numbered" or "plain"', errors)
         self.assertIn("chapter 1 must be an object", errors)
         self.assertIn("chapter 2 must have a non-empty title", errors)
         self.assertIn("chapter 2 must have a non-empty source", errors)

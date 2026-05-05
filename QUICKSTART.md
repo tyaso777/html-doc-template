@@ -15,6 +15,8 @@ Files under `chapters-src/` are article fragments. They are inserted into `<arti
 
 Use top-level `externalLinks` in `chapters-src/site-manifest.json` for links that should appear on every chapter. Use optional chapter-level `externalLinks` for links that should appear only on that chapter.
 
+If `headingNumbering.enabled` is `true` in `chapters-src/site-manifest.json`, write headings without hand-written numbers. The build script will add heading numbers to the generated `chapters/` files.
+
 Do not include these in chapter fragments:
 
 - `<!doctype>`

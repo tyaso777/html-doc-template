@@ -41,7 +41,7 @@ If you primarily want Markdown-first authoring, automatic page generation, site-
 - Document metadata block for version, update date, and author.
 - Callout blocks for notes and warnings.
 - Card components for compact document sections.
-- Prism code highlighting for Python, PowerShell, SQL, and Mermaid.
+- Prism code highlighting for Python, PowerShell, Java, SQL, and Mermaid.
 - Copy buttons for static code blocks and the Python runner editor.
 - MathJax support for inline and display math.
 - Mermaid diagram rendering from text definitions.
@@ -133,6 +133,12 @@ AI agents should follow [QUICKSTART.md](QUICKSTART.md), edit `chapters-src/` ins
   "lang": "en",
   "shell": "../layouts/chapter-shell.html",
   "outputDir": "../chapters",
+  "headingNumbering": {
+    "enabled": true,
+    "body": true,
+    "toc": true,
+    "format": "{number}. {title}"
+  },
   "chapters": [
     {
       "title": "Chapter 1: Introduction",
@@ -193,6 +199,8 @@ AI agents should follow [QUICKSTART.md](QUICKSTART.md), edit `chapters-src/` ins
 ```
 
 `materials` and `externalLinks` use the same recursive `items` structure. An item with `label` and `href` is rendered as a link. An item with `title` and `items` is rendered as a nested group. Top-level `externalLinks` are shown on every chapter. Optional `externalLinks` inside a chapter are appended after the shared links for that chapter only.
+
+`headingNumbering` is optional and disabled by default. When enabled, the build script can add generated numbers to body headings and Contents entries. With `levels` omitted or empty, only TOC targets are numbered: `section[data-toc]` numbers its first heading, and heading elements with `data-toc` number themselves. Set `levels` to an array such as `[2, 3]` to number all headings at those levels. Use `format` or `levelFormats` with `{number}`, `{local}`, and `{title}` to control display, for example `{number}. {title}`, `第{local}章 {title}`, or `第{local}節 {title}`. Set `body` or `toc` to `false` to disable numbering in that output, and set `tocTitleMode` to `plain` to keep existing `data-toc-title` text unnumbered in the sidebar.
 
 ## Common Components
 

@@ -24,7 +24,9 @@ test("chapter page initializes document enhancements", async ({ page }) => {
 
   await expect(page).toHaveTitle("Chapter 1: Introduction");
   await expect(page.locator("h1")).toHaveText("Chapter 1: Introduction");
+  await expect(page.locator("#overview h2")).toHaveText("1. Overview");
   await expect(page.locator(".site-contents-tree a", { hasText: "Math Examples" })).toBeVisible();
+  await expect(page.locator(".site-contents-tree a", { hasText: "3.1. Inline Math" })).toBeVisible();
   await expect(page.locator(".site-contents-tree a", { hasText: "Mermaid Diagrams" })).toBeVisible();
   await expect(page.locator(".chapter-nav-link.next")).toContainText("Chapter 2: Minimal Page");
 

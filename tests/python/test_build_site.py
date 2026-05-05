@@ -1,7 +1,13 @@
 import unittest
 from pathlib import Path
 
-from scripts.build_site import chapter_external_links, indent_content_preserving_raw_text, render_shell
+from scripts.build_site import (
+    apply_heading_numbering,
+    chapter_external_links,
+    extract_toc_entries,
+    indent_content_preserving_raw_text,
+    render_shell,
+)
 
 
 class BuildSiteTests(unittest.TestCase):
@@ -50,6 +56,63 @@ for log in logs:
 
         self.assertEqual([item["title"] for item in links], ["Common", "Chapter"])
         self.assertEqual([item["title"] for item in common], ["Common"])
+
+    def test_heading_numbering_updates_body_and_toc_titles(self) -> None:
+        source = """<section id="overview" data-toc data-toc-title="Overview">
+  <h2>Overview</h2>
+</section>
+<section id="diagrams" data-toc data-toc-title="Diagrams">
+  <h2>Diagrams</h2>
+  <h3 id="flow" data-toc data-toc-level="3" data-toc-title="Flow">Flow</h3>
+  <h3 id="sequence" data-toc data-toc-level="3">Sequence</h3>
+</section>"""
+        config = {"enabled": True, "body": True, "toc": True, "format": "{number}. {title}", "levels": []}
+
+        rendered, numbered_titles = apply_heading_numbering(source, config)
+        entries = extract_toc_entries(rendered, numbered_titles, config)
+
+        self.assertIn("<h2>1. Overview</h2>", rendered)
+        self.assertIn("<h2>2. Diagrams</h2>", rendered)
+        self.assertIn('<h3 id="flow" data-toc data-toc-level="3" data-toc-title="Flow">2.1. Flow</h3>', rendered)
+        self.assertEqual([entry["title"] for entry in entries], ["1. Overview", "2. Diagrams", "2.1. Flow", "2.2. Sequence"])
+
+    def test_heading_numbering_can_keep_toc_titles_plain(self) -> None:
+        source = """<section id="overview" data-toc data-toc-title="Overview">
+  <h2>Overview</h2>
+</section>"""
+        config = {
+            "enabled": True,
+            "body": True,
+            "toc": True,
+            "tocTitleMode": "plain",
+            "format": "第{local}章 {title}",
+            "levels": [],
+        }
+
+        rendered, numbered_titles = apply_heading_numbering(source, config)
+        entries = extract_toc_entries(rendered, numbered_titles, config)
+
+        self.assertIn("<h2>第1章 Overview</h2>", rendered)
+        self.assertEqual([entry["title"] for entry in entries], ["Overview"])
+
+    def test_heading_numbering_can_target_configured_levels(self) -> None:
+        source = """<section>
+  <h2>Untoced Heading</h2>
+  <h3>Untoced Detail</h3>
+</section>"""
+        config = {
+            "enabled": True,
+            "body": True,
+            "toc": False,
+            "format": "{number}. {title}",
+            "levels": [2, 3],
+        }
+
+        rendered, numbered_titles = apply_heading_numbering(source, config)
+
+        self.assertIn("<h2>1. Untoced Heading</h2>", rendered)
+        self.assertIn("<h3>1.1. Untoced Detail</h3>", rendered)
+        self.assertEqual(numbered_titles, {})
 
     def test_render_shell_includes_common_and_chapter_external_links(self) -> None:
         shell = (
