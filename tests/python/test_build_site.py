@@ -170,6 +170,36 @@ for log in logs:
         self.assertIn('href="https://example.com/common" target="_blank" rel="noopener"', rendered)
         self.assertIn('href="https://example.com/chapter" target="_blank" rel="noopener"', rendered)
 
+    def test_render_shell_marks_numbered_toc_lists(self) -> None:
+        shell = "{{DOCUMENT_LANG}} {{DOCUMENT_TITLE}} {{SIDEBAR_TITLE}} {{SIDEBAR_SUBTITLE}} {{ASSET_PREFIX}} {{CONTENTS_TREE}} {{MATERIALS_SECTION}} {{EXTERNAL_LINKS_SECTION}} {{CONTENT}}"
+        chapter = {
+            "title": "Chapter",
+            "href": "chapter.html",
+            "source": "chapter.html",
+            "sidebarTitle": "Chapter",
+            "subtitle": "",
+            "externalLinks": [],
+        }
+
+        rendered = render_shell(
+            shell,
+            chapter,
+            "<p>Body</p>",
+            Path("/tmp/project/chapters/chapter.html"),
+            Path("/tmp/project"),
+            Path("/tmp/project/chapters-src"),
+            "en",
+            [chapter],
+            0,
+            Path("/tmp/project/chapters"),
+            [[{"id": "intro", "title": "1. Intro", "level": 2}]],
+            [],
+            [],
+            {"enabled": True, "toc": True},
+        )
+
+        self.assertIn('class="toc-tree toc-tree-numbered"', rendered)
+
 
 if __name__ == "__main__":
     unittest.main()

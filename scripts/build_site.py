@@ -350,9 +350,11 @@ def render_contents_tree(
     output_path: Path,
     output_dir: Path,
     toc_entries_by_chapter: list[list[dict[str, str | int]]],
+    numbered_toc: bool = False,
     indent: str = "            ",
 ) -> str:
     lines: list[str] = []
+    toc_tree_class = "toc-tree toc-tree-numbered" if numbered_toc else "toc-tree"
 
     for index, chapter in enumerate(chapters):
         chapter_path = output_dir / chapter["href"]
@@ -363,7 +365,7 @@ def render_contents_tree(
         lines.append(f'{indent}<li class="site-contents-chapter">')
         lines.append(f'{indent}  <details{open_attr}>')
         lines.append(f'{indent}    <summary><a href="{href}"{current_attr}>{title}</a></summary>')
-        lines.append(f'{indent}    <ol class="toc-tree">')
+        lines.append(f'{indent}    <ol class="{toc_tree_class}">')
         lines.append(render_chapter_toc_entries(toc_entries_by_chapter[index], chapter_path, output_path, indent + "      "))
         lines.append(f'{indent}    </ol>')
         lines.append(f'{indent}  </details>')
@@ -588,14 +590,23 @@ def render_shell(
     toc_entries_by_chapter: list[list[dict[str, str | int]]],
     materials: list[Any],
     external_links: list[Any],
+    heading_numbering: dict[str, Any] | None = None,
 ) -> str:
+    numbered_toc = bool((heading_numbering or {}).get("enabled", False) and (heading_numbering or {}).get("toc", True))
     replacements = {
         "{{DOCUMENT_LANG}}": html.escape(document_lang, quote=True),
         "{{DOCUMENT_TITLE}}": html.escape(chapter["title"]),
         "{{SIDEBAR_TITLE}}": sidebar_title_html(chapter.get("sidebarTitle", chapter["title"])),
         "{{SIDEBAR_SUBTITLE}}": html.escape(chapter.get("subtitle", "")),
         "{{ASSET_PREFIX}}": asset_prefix(output_path, root),
-        "{{CONTENTS_TREE}}": render_contents_tree(chapters, current_index, output_path, output_dir, toc_entries_by_chapter),
+        "{{CONTENTS_TREE}}": render_contents_tree(
+            chapters,
+            current_index,
+            output_path,
+            output_dir,
+            toc_entries_by_chapter,
+            numbered_toc=numbered_toc,
+        ),
         "{{MATERIALS_SECTION}}": render_link_section("Materials", materials, manifest_dir, output_path),
         "{{EXTERNAL_LINKS_SECTION}}": render_link_section(
             "External Links",
@@ -649,6 +660,7 @@ def build_chapter(
         toc_entries_by_chapter,
         materials,
         external_links,
+        heading_numbering,
     )
 
     output_path.parent.mkdir(parents=True, exist_ok=True)

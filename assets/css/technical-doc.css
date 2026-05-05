@@ -188,6 +188,16 @@ textarea:focus-visible {
   font-size: 0.92em;
 }
 
+.toc-tree-numbered,
+.toc-tree-numbered ol {
+  list-style: none;
+  padding-left: 0;
+}
+
+.toc-tree-numbered ol {
+  padding-left: 1rem;
+}
+
 .site-contents-tree {
   list-style: none;
   margin-left: -10px;
