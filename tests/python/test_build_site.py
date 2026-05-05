@@ -68,17 +68,35 @@ for log in logs:
 </section>"""
         config = {"enabled": True, "body": True, "toc": True, "format": "{number}. {title}", "levels": []}
 
-        rendered, numbered_titles = apply_heading_numbering(source, config)
-        entries = extract_toc_entries(rendered, numbered_titles, config)
+        rendered, numbering_by_id = apply_heading_numbering(source, config)
+        entries = extract_toc_entries(rendered, numbering_by_id, config)
 
         self.assertIn("<h2>1. Overview</h2>", rendered)
         self.assertIn("<h2>2. Diagrams</h2>", rendered)
         self.assertIn('<h3 id="flow" data-toc data-toc-level="3" data-toc-title="Flow">2.1. Flow</h3>', rendered)
         self.assertEqual([entry["title"] for entry in entries], ["1. Overview", "2. Diagrams", "2.1. Flow", "2.2. Sequence"])
 
+    def test_heading_numbering_numbers_data_toc_title_separately_from_body_heading(self) -> None:
+        source = """<section id="failure-patterns" data-toc data-toc-title="Typical Failures">
+  <h2>Typical Big Data Failure Patterns</h2>
+</section>"""
+        config = {
+            "enabled": True,
+            "body": True,
+            "toc": True,
+            "format": "{number}. {title}",
+            "levels": [],
+        }
+
+        rendered, numbering_by_id = apply_heading_numbering(source, config)
+        entries = extract_toc_entries(rendered, numbering_by_id, config)
+
+        self.assertIn("<h2>1. Typical Big Data Failure Patterns</h2>", rendered)
+        self.assertEqual([entry["title"] for entry in entries], ["1. Typical Failures"])
+
     def test_heading_numbering_can_keep_toc_titles_plain(self) -> None:
-        source = """<section id="overview" data-toc data-toc-title="Overview">
-  <h2>Overview</h2>
+        source = """<section id="overview" data-toc data-toc-title="Short Overview">
+  <h2>Long Overview Heading</h2>
 </section>"""
         config = {
             "enabled": True,
@@ -89,11 +107,11 @@ for log in logs:
             "levels": [],
         }
 
-        rendered, numbered_titles = apply_heading_numbering(source, config)
-        entries = extract_toc_entries(rendered, numbered_titles, config)
+        rendered, numbering_by_id = apply_heading_numbering(source, config)
+        entries = extract_toc_entries(rendered, numbering_by_id, config)
 
-        self.assertIn("<h2>第1章 Overview</h2>", rendered)
-        self.assertEqual([entry["title"] for entry in entries], ["Overview"])
+        self.assertIn("<h2>第1章 Long Overview Heading</h2>", rendered)
+        self.assertEqual([entry["title"] for entry in entries], ["Short Overview"])
 
     def test_heading_numbering_can_target_configured_levels(self) -> None:
         source = """<section>
@@ -108,11 +126,11 @@ for log in logs:
             "levels": [2, 3],
         }
 
-        rendered, numbered_titles = apply_heading_numbering(source, config)
+        rendered, numbering_by_id = apply_heading_numbering(source, config)
 
         self.assertIn("<h2>1. Untoced Heading</h2>", rendered)
         self.assertIn("<h3>1.1. Untoced Detail</h3>", rendered)
-        self.assertEqual(numbered_titles, {})
+        self.assertEqual(numbering_by_id, {})
 
     def test_render_shell_includes_common_and_chapter_external_links(self) -> None:
         shell = (

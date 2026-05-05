@@ -213,14 +213,14 @@ def heading_numbering_targets(source: str, config: dict[str, Any]) -> list[dict[
     return targets
 
 
-def apply_heading_numbering(source: str, config: dict[str, Any]) -> tuple[str, dict[str, str]]:
+def apply_heading_numbering(source: str, config: dict[str, Any]) -> tuple[str, dict[str, dict[str, str]]]:
     targets = heading_numbering_targets(source, config)
     if not targets:
         return source, {}
 
     counters = {level: 0 for level in range(2, 7)}
     replacements: list[tuple[int, int, str]] = []
-    numbered_titles: dict[str, str] = {}
+    numbering_by_id: dict[str, dict[str, str]] = {}
 
     for target in targets:
         node = target["node"]
@@ -242,7 +242,7 @@ def apply_heading_numbering(source: str, config: dict[str, Any]) -> tuple[str, d
 
         target_id = target.get("id")
         if isinstance(target_id, str):
-            numbered_titles[target_id] = format_numbered_heading_text(format_text, number, local, title_text)
+            numbering_by_id[target_id] = {"format": format_text, "number": number, "local": local, "title": title_text}
 
         if config.get("body", True) and node.end_tag_start is not None:
             replacements.append(
@@ -253,16 +253,16 @@ def apply_heading_numbering(source: str, config: dict[str, Any]) -> tuple[str, d
                 )
             )
 
-    return replace_ranges(source, replacements), numbered_titles
+    return replace_ranges(source, replacements), numbering_by_id
 
 
 def extract_toc_entries(
     source: str,
-    numbered_titles: dict[str, str] | None = None,
+    numbering_by_id: dict[str, dict[str, str]] | None = None,
     heading_numbering: dict[str, Any] | None = None,
 ) -> list[dict[str, str | int]]:
     entries: list[dict[str, str | int]] = []
-    numbered_titles = numbered_titles or {}
+    numbering_by_id = numbering_by_id or {}
     heading_numbering = heading_numbering or {}
     use_numbered_toc = heading_numbering.get("enabled", False) and heading_numbering.get("toc", True)
     toc_title_mode = heading_numbering.get("tocTitleMode", "numbered")
@@ -286,12 +286,13 @@ def extract_toc_entries(
                 for child in node.children
                 if child.tag in {"h2", "h3", "h4", "h5", "h6"}
             ]
-            title = text_content(source, headings[0]) if headings else None
+            title = numbering_by_id[element_id]["title"] if element_id in numbering_by_id else text_content(source, headings[0]) if headings else None
         if not title:
-            title = text_content(source, node) if node.tag.startswith("h") else element_id
+            title = numbering_by_id[element_id]["title"] if element_id in numbering_by_id else text_content(source, node) if node.tag.startswith("h") else element_id
 
-        if use_numbered_toc and toc_title_mode == "numbered" and element_id in numbered_titles:
-            title = numbered_titles[element_id]
+        if use_numbered_toc and toc_title_mode == "numbered" and element_id in numbering_by_id:
+            numbering = numbering_by_id[element_id]
+            title = format_numbered_heading_text(numbering["format"], numbering["number"], numbering["local"], title)
 
         level = heading_level(node)
         entries.append({"id": element_id, "title": title, "level": level})
