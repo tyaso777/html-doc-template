@@ -2,8 +2,10 @@ import unittest
 from pathlib import Path
 
 from scripts.build_site import (
+    apply_numbered_items,
     apply_heading_numbering,
     chapter_external_links,
+    collect_numbered_items,
     extract_toc_entries,
     indent_content_preserving_raw_text,
     render_shell,
@@ -199,6 +201,86 @@ for log in logs:
         )
 
         self.assertIn('class="toc-tree toc-tree-numbered"', rendered)
+
+    def test_numbered_items_add_labels_and_resolve_refs(self) -> None:
+        sources = [
+            """<p>See <span data-ref="flow"></span>, 表(logs), and 式(cost-model).</p>
+<figure id="flow" data-numbered="figure">
+  <figcaption>MapReduce flow</figcaption>
+</figure>
+<table id="logs" data-numbered="table">
+  <caption>Log sample</caption>
+</table>
+<div id="cost-model" class="math-block" data-numbered="equation">
+  \\[T(n) = O(n \\log n)\\]
+</div>"""
+        ]
+        chapters = [{"href": "chapter.html", "source": "chapter.html", "number": "2"}]
+        numbering = {
+            "figures": {"enabled": True, "format": "図{chapter}-{index}", "reset": "chapter"},
+            "tables": {"enabled": True, "format": "表{chapter}-{index}", "reset": "chapter"},
+            "equations": {"enabled": True, "format": "式{chapter}-{index}", "reset": "chapter"},
+        }
+
+        registry = collect_numbered_items(sources, chapters, numbering)
+        rendered = apply_numbered_items(
+            sources[0],
+            registry,
+            Path("/tmp/project/chapters/chapter.html"),
+            Path("/tmp/project/chapters"),
+        )
+
+        self.assertIn('<span class="numbered-label figure-number">図2-1</span> MapReduce flow', rendered)
+        self.assertIn('<span class="numbered-label table-number">表2-1</span> Log sample', rendered)
+        self.assertIn('<div class="equation-label"><span class="numbered-label equation-number">式2-1</span></div>', rendered)
+        self.assertIn('<a class="xref figure-ref" href="chapter.html#flow">図2-1</a>', rendered)
+        self.assertIn('<a class="xref table-ref" href="chapter.html#logs">表2-1</a>', rendered)
+        self.assertIn('<a class="xref equation-ref" href="chapter.html#cost-model">式2-1</a>', rendered)
+
+    def test_numbered_items_can_reset_by_document(self) -> None:
+        sources = [
+            '<figure id="first" data-numbered="figure"><figcaption>First</figcaption></figure>',
+            '<figure id="second" data-numbered="figure"><figcaption>Second</figcaption></figure>',
+        ]
+        chapters = [
+            {"href": "one.html", "source": "one.html", "number": "1"},
+            {"href": "two.html", "source": "two.html", "number": "2"},
+        ]
+        numbering = {
+            "figures": {"enabled": True, "format": "図{index}", "reset": "document"},
+            "tables": {"enabled": False, "format": "表{index}", "reset": "chapter"},
+            "equations": {"enabled": False, "format": "式{index}", "reset": "chapter"},
+        }
+
+        registry = collect_numbered_items(sources, chapters, numbering)
+
+        self.assertEqual(registry["first"]["label"], "図1")
+        self.assertEqual(registry["second"]["label"], "図2")
+
+    def test_unknown_numbered_refs_raise(self) -> None:
+        with self.assertRaisesRegex(ValueError, 'unknown data-ref target "missing"'):
+            apply_numbered_items(
+                '<p><span data-ref="missing"></span></p>',
+                {},
+                Path("/tmp/project/chapters/chapter.html"),
+                Path("/tmp/project/chapters"),
+            )
+
+    def test_numbered_shorthand_does_not_corrupt_raw_text_blocks(self) -> None:
+        source = """<div data-python-runner>
+  <pre><code class="language-python">if x < 3:
+    print("ok")
+</code></pre>
+</div>"""
+
+        rendered = apply_numbered_items(
+            source,
+            {},
+            Path("/tmp/project/chapters/chapter.html"),
+            Path("/tmp/project/chapters"),
+        )
+
+        self.assertEqual(rendered, source)
 
 
 if __name__ == "__main__":

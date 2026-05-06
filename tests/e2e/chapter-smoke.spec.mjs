@@ -31,6 +31,36 @@ test("chapter page initializes document enhancements", async ({ page }) => {
   await expect(page.locator(".site-contents-tree a", { hasText: "3.1. Inline Math" })).toBeVisible();
   await expect(page.locator(".site-contents-tree a", { hasText: "Mermaid Diagrams" })).toBeVisible();
   await expect(page.locator(".chapter-nav-link.next")).toContainText("Chapter 2: Minimal Page");
+  await expect(page.locator('a[href="01-introduction.html#normal-density"]')).toHaveText("Equation 1-1");
+  await expect(page.locator("#document-flow figcaption")).toContainText("Figure 1-1");
+  await expect(page.locator("#release-history caption")).toContainText("Table 1-1");
+  await expect(page.locator("#normal-density")).toHaveCSS("display", "grid");
+  await expect(page.locator("#release-history caption")).toHaveCSS("caption-side", "top");
+
+  const numberedLayout = await page.evaluate(() => {
+    const equation = document.querySelector("#normal-density mjx-container");
+    const equationLabel = document.querySelector("#normal-density .equation-label");
+    const figureBody = document.querySelector("#document-flow .mermaid-wrap");
+    const figureCaption = document.querySelector("#document-flow figcaption");
+    const table = document.querySelector("#release-history");
+    const tableCaption = document.querySelector("#release-history caption");
+    return {
+      equationLabelIsRight:
+        equation.getBoundingClientRect().right <= equationLabel.getBoundingClientRect().left,
+      figureCaptionIsBelow:
+        figureBody.getBoundingClientRect().bottom <= figureCaption.getBoundingClientRect().top,
+      figureCaptionAlignsLeft:
+        Math.abs(figureBody.getBoundingClientRect().left - figureCaption.getBoundingClientRect().left) < 1,
+      tableCaptionAlignsLeft:
+        Math.abs(table.getBoundingClientRect().left - tableCaption.getBoundingClientRect().left) < 1
+    };
+  });
+  expect(numberedLayout).toEqual({
+    equationLabelIsRight: true,
+    figureCaptionIsBelow: true,
+    figureCaptionAlignsLeft: true,
+    tableCaptionAlignsLeft: true
+  });
 
   await expect(page.locator(".code-block-wrap .copy-code-button").first()).toBeVisible();
   await expect(page.locator("[data-python-runner-panel]")).toHaveCount(1);

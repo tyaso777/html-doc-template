@@ -40,12 +40,21 @@ class SiteManifestTests(unittest.TestCase):
             },
         )
         self.assertEqual(
+            manifest.numbering,
+            {
+                "figures": {"enabled": False, "format": "{index}", "reset": "chapter"},
+                "tables": {"enabled": False, "format": "{index}", "reset": "chapter"},
+                "equations": {"enabled": False, "format": "{index}", "reset": "chapter"},
+            },
+        )
+        self.assertEqual(
             manifest.chapters,
             [
                 {
                     "title": "Intro",
                     "source": "01-introduction.html",
                     "href": "01-introduction.html",
+                    "number": "1",
                     "sidebarTitle": "Intro",
                     "subtitle": "",
                     "externalLinks": [],
@@ -109,6 +118,30 @@ class SiteManifestTests(unittest.TestCase):
         self.assertEqual(manifest.heading_numbering["levelFormats"]["2"], "第{local}章 {title}")
         self.assertEqual(manifest.heading_numbering["tocTitleMode"], "plain")
 
+    def test_normalize_manifest_keeps_numbering(self) -> None:
+        manifest = normalize_manifest(
+            {
+                "numbering": {
+                    "figures": {"enabled": True, "format": "図{chapter}-{index}", "reset": "chapter"},
+                    "tables": {"enabled": True, "format": "表{index}", "reset": "document"},
+                    "equations": {"enabled": False, "format": "式{chapter}-{index}", "reset": "chapter"},
+                },
+                "chapters": [
+                    {
+                        "title": "Intro",
+                        "source": "01-introduction.html",
+                        "href": "01-introduction.html",
+                        "number": "A",
+                    }
+                ],
+            }
+        )
+
+        self.assertEqual(manifest.chapters[0]["number"], "A")
+        self.assertTrue(manifest.numbering["figures"]["enabled"])
+        self.assertEqual(manifest.numbering["figures"]["format"], "図{chapter}-{index}")
+        self.assertEqual(manifest.numbering["tables"]["reset"], "document")
+
     def test_manifest_validation_reports_invalid_shapes(self) -> None:
         self.assertEqual(manifest_validation_errors([]), ["site manifest must be a JSON object"])
 
@@ -128,12 +161,18 @@ class SiteManifestTests(unittest.TestCase):
                     "levelFormats": {"1": "{title}", "2": "{number}"},
                     "tocTitleMode": "bad",
                 },
+                "numbering": {
+                    "figures": {"enabled": "yes", "format": "図{chapter}", "reset": "bad"},
+                    "tables": [],
+                    "equations": {"enabled": True, "format": 123, "reset": "chapter"},
+                },
                 "chapters": [
                     "not an object",
                     {
                         "title": "",
                         "source": "",
                         "href": "",
+                        "number": "",
                         "sidebarTitle": 123,
                         "subtitle": 456,
                         "externalLinks": {},
@@ -155,10 +194,16 @@ class SiteManifestTests(unittest.TestCase):
         self.assertIn("site manifest headingNumbering levelFormats keys must be heading levels 2 through 6", errors)
         self.assertIn('site manifest headingNumbering levelFormats 2 must be a string containing "{title}"', errors)
         self.assertIn('site manifest headingNumbering tocTitleMode must be "numbered" or "plain"', errors)
+        self.assertIn("site manifest numbering figures enabled must be a boolean", errors)
+        self.assertIn('site manifest numbering figures format must be a string containing "{index}"', errors)
+        self.assertIn('site manifest numbering figures reset must be "chapter" or "document"', errors)
+        self.assertIn("site manifest numbering tables must be an object when provided", errors)
+        self.assertIn('site manifest numbering equations format must be a string containing "{index}"', errors)
         self.assertIn("chapter 1 must be an object", errors)
         self.assertIn("chapter 2 must have a non-empty title", errors)
         self.assertIn("chapter 2 must have a non-empty source", errors)
         self.assertIn("chapter 2 must have a non-empty href", errors)
+        self.assertIn("chapter 2 number must be a non-empty string or integer", errors)
         self.assertIn("chapter 2 sidebarTitle must be a string", errors)
         self.assertIn("chapter 2 subtitle must be a string", errors)
         self.assertIn("chapter 2 externalLinks must be an array when provided", errors)

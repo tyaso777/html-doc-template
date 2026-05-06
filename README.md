@@ -139,11 +139,29 @@ AI agents should follow [QUICKSTART.md](QUICKSTART.md), edit `chapters-src/` ins
     "toc": true,
     "format": "{number}. {title}"
   },
+  "numbering": {
+    "figures": {
+      "enabled": false,
+      "format": "Figure {chapter}-{index}",
+      "reset": "chapter"
+    },
+    "tables": {
+      "enabled": false,
+      "format": "Table {chapter}-{index}",
+      "reset": "chapter"
+    },
+    "equations": {
+      "enabled": false,
+      "format": "Equation {chapter}-{index}",
+      "reset": "chapter"
+    }
+  },
   "chapters": [
     {
       "title": "Chapter 1: Introduction",
       "sidebarTitle": "Chapter 1\nIntroduction",
       "subtitle": "Multi-page example",
+      "number": 1,
       "source": "01-introduction.html",
       "href": "01-introduction.html"
     },
@@ -151,6 +169,7 @@ AI agents should follow [QUICKSTART.md](QUICKSTART.md), edit `chapters-src/` ins
       "title": "Chapter 2: Minimal Page",
       "sidebarTitle": "Chapter 2\nMinimal Page",
       "subtitle": "Multi-page example",
+      "number": 2,
       "source": "02-examples.html",
       "href": "02-examples.html",
       "externalLinks": [
@@ -166,6 +185,7 @@ AI agents should follow [QUICKSTART.md](QUICKSTART.md), edit `chapters-src/` ins
       "title": "Chapter 3: Reference Page",
       "sidebarTitle": "Chapter 3\nReference Page",
       "subtitle": "Multi-page example",
+      "number": 3,
       "source": "03-reference.html",
       "href": "03-reference.html"
     }
@@ -201,6 +221,8 @@ AI agents should follow [QUICKSTART.md](QUICKSTART.md), edit `chapters-src/` ins
 `materials` and `externalLinks` use the same recursive `items` structure. An item with `label` and `href` is rendered as a link. An item with `title` and `items` is rendered as a nested group. Top-level `externalLinks` are shown on every chapter. Optional `externalLinks` inside a chapter are appended after the shared links for that chapter only.
 
 `headingNumbering` is optional and disabled by default. When enabled, the build script can add generated numbers to body headings and Contents entries. With `levels` omitted or empty, only TOC targets are numbered: `section[data-toc]` numbers its first heading, and heading elements with `data-toc` number themselves. Set `levels` to an array such as `[2, 3]` to number all headings at those levels. Use `format` or `levelFormats` with `{number}`, `{local}`, and `{title}` to control display, for example `{number}. {title}`, `第{local}章 {title}`, or `第{local}節 {title}`. Set `body` or `toc` to `false` to disable numbering in that output. Contents entries still use `data-toc-title` when present; numbering is applied to that TOC title separately from the body heading text. Set `tocTitleMode` to `plain` to keep Contents entries unnumbered.
+
+`numbering` is optional and disabled by default. Enable `figures`, `tables`, or `equations` to number only elements explicitly marked with `data-numbered="figure"`, `data-numbered="table"`, or `data-numbered="equation"`. The `format` string supports `{chapter}` and `{index}`; omit `{chapter}` for document-local labels such as `Figure {index}`. Use `reset: "chapter"` to restart each chapter or `reset: "document"` for one sequence across the whole document. Captions receive a leading `<span class="numbered-label ...">`, and references such as `<span data-ref="mapreduce-flow"></span>` are replaced with links to the numbered item. Text shorthand like `図(mapreduce-flow)`, `表(log-sample)`, and `式(cost-model)` is also supported outside HTML tags and raw-text blocks, but `span[data-ref]` is the preferred explicit form. Unknown references fail the build.
 
 ## Common Components
 

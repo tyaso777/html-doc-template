@@ -404,9 +404,34 @@ th {
   overflow-wrap: anywhere;
 }
 
+.numbered-label {
+  font-weight: 700;
+}
+
+.equation-label {
+  margin-left: 1rem;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.xref {
+  font-weight: 700;
+}
+
 .math-block {
   overflow-x: auto;
   padding: 8px 0;
+}
+
+.math-block[data-numbered="equation"] {
+  align-items: center;
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.math-block[data-numbered="equation"] > mjx-container {
+  margin: 0 !important;
 }
 
 .code-block,
@@ -501,14 +526,24 @@ code[class*="language-"] {
 }
 
 .mermaid-figure {
+  display: flex;
+  flex-direction: column;
   margin: 1.25rem 0;
 }
 
 .mermaid-figure figcaption {
-  margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
+  order: 2;
   color: var(--muted);
   font-size: 0.9rem;
   font-weight: 700;
+  text-align: left;
+  width: 100%;
+}
+
+table[data-numbered] caption {
+  caption-side: top;
+  text-align: left;
 }
 
 .mermaid-wrap {

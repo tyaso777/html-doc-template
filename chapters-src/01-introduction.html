@@ -99,16 +99,17 @@
   <h3 id="display-formula-example" data-toc data-toc-level="3" data-toc-title="Display Math">Display Math</h3>
   <p>
     Use <code>\[...\]</code> for standalone formulas, optionally wrapped in <code>div.math-block</code>.
+    The density definition in <span data-ref="normal-density"></span> and the moment identities in <span data-ref="normal-moments"></span> are numbered examples.
   </p>
 
-  <div class="math-block">
+  <div id="normal-density" class="math-block" data-numbered="equation">
     \[
       f(x) = \frac{1}{\sigma\sqrt{2\pi}}
       \exp\left(-\frac{(x - \mu)^2}{2\sigma^2}\right)
     \]
   </div>
 
-  <div class="math-block">
+  <div id="normal-moments" class="math-block" data-numbered="equation">
     \[
       \mathbb{E}[X] = \mu, \qquad
       \mathrm{Var}(X) = \sigma^2, \qquad
@@ -319,6 +320,7 @@ ORDER BY updated_at DESC;
     Mermaid renders flowcharts and structural diagrams from text definitions.
     You can update a diagram by editing text in the HTML instead of recreating an image.
     Mermaid also supports sequence diagrams, class diagrams, state diagrams, and more.
+    The rendered result is referenced as <span data-ref="document-flow"></span>.
   </p>
 
   <div class="code-caption">mermaid</div>
@@ -332,7 +334,7 @@ ORDER BY updated_at DESC;
     F --> G
 </code></pre>
 
-  <figure class="mermaid-figure">
+  <figure id="document-flow" class="mermaid-figure" data-numbered="figure">
     <figcaption>Diagram rendered from the Mermaid definition above</figcaption>
     <div class="mermaid-wrap">
       <!-- Use div.mermaid as the Mermaid rendering hook; figure/figcaption provide the semantic structure. -->
@@ -371,8 +373,12 @@ flowchart LR
 
 <section id="changelog" data-toc data-toc-title="Changelog">
   <h2>Changelog</h2>
+  <p>
+    The release history is shown in <span data-ref="release-history"></span>.
+  </p>
   <div class="table-wrap">
-    <table>
+    <table id="release-history" data-numbered="table">
+      <caption>Template release history</caption>
       <thead>
         <tr>
           <th>Version</th>

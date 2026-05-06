@@ -17,6 +17,15 @@ Use top-level `externalLinks` in `chapters-src/site-manifest.json` for links tha
 
 If `headingNumbering.enabled` is `true` in `chapters-src/site-manifest.json`, write headings without hand-written numbers. The build script will add heading numbers to the generated `chapters/` files.
 
+If figure/table/equation numbering is enabled in `numbering`, mark only intentional targets with `data-numbered` and reference them with `span[data-ref]`:
+
+```html
+<figure id="example-flow" data-numbered="figure">
+  <figcaption>Example flow</figcaption>
+</figure>
+<p>See <span data-ref="example-flow"></span>.</p>
+```
+
 Do not include these in chapter fragments:
 
 - `<!doctype>`

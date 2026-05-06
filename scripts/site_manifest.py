@@ -38,9 +38,12 @@ class SiteManifest:
     materials: list[Any]
     external_links: list[Any]
     heading_numbering: dict[str, Any]
+    numbering: dict[str, Any]
 
 
 HEADING_NUMBERING_TITLE_MODES = {"numbered", "plain"}
+NUMBERING_SECTIONS = ("figures", "tables", "equations")
+NUMBERING_RESETS = {"chapter", "document"}
 
 
 def link_tree_validation_errors(items: Any, path: str) -> list[str]:
@@ -153,6 +156,58 @@ def normalize_heading_numbering(config: Any) -> dict[str, Any]:
     }
 
 
+def numbering_validation_errors(config: Any) -> list[str]:
+    errors: list[str] = []
+
+    if config is None:
+        return errors
+    if not isinstance(config, dict):
+        return ["site manifest numbering must be an object when provided"]
+
+    for section in NUMBERING_SECTIONS:
+        section_config = config.get(section, {})
+        if not isinstance(section_config, dict):
+            errors.append(f"site manifest numbering {section} must be an object when provided")
+            continue
+
+        enabled = section_config.get("enabled", False)
+        format_text = section_config.get("format", "{index}")
+        reset = section_config.get("reset", "chapter")
+
+        if not isinstance(enabled, bool):
+            errors.append(f"site manifest numbering {section} enabled must be a boolean")
+        if not isinstance(format_text, str) or "{index}" not in format_text:
+            errors.append(f'site manifest numbering {section} format must be a string containing "{{index}}"')
+        if reset not in NUMBERING_RESETS:
+            errors.append(f'site manifest numbering {section} reset must be "chapter" or "document"')
+
+    return errors
+
+
+def normalize_numbering(config: Any) -> dict[str, Any]:
+    if config is None:
+        config = {}
+
+    assert isinstance(config, dict)
+    normalized: dict[str, Any] = {}
+    for section in NUMBERING_SECTIONS:
+        section_config = config.get(section, {})
+        assert isinstance(section_config, dict)
+        enabled = section_config.get("enabled", False)
+        format_text = section_config.get("format", "{index}")
+        reset = section_config.get("reset", "chapter")
+        assert isinstance(enabled, bool)
+        assert isinstance(format_text, str)
+        assert isinstance(reset, str)
+        normalized[section] = {
+            "enabled": enabled,
+            "format": format_text,
+            "reset": reset,
+        }
+
+    return normalized
+
+
 def manifest_validation_errors(manifest: Any) -> list[str]:
     errors: list[str] = []
 
@@ -165,6 +220,7 @@ def manifest_validation_errors(manifest: Any) -> list[str]:
     materials = manifest.get("materials", [])
     external_links = manifest.get("externalLinks", [])
     heading_numbering = manifest.get("headingNumbering", {})
+    numbering = manifest.get("numbering", {})
     chapters = manifest.get("chapters")
 
     if not isinstance(shell, str) or not shell.strip():
@@ -176,6 +232,7 @@ def manifest_validation_errors(manifest: Any) -> list[str]:
     errors.extend(link_tree_validation_errors(materials, "site manifest materials"))
     errors.extend(link_tree_validation_errors(external_links, "site manifest externalLinks"))
     errors.extend(heading_numbering_validation_errors(heading_numbering))
+    errors.extend(numbering_validation_errors(numbering))
     if not isinstance(chapters, list):
         errors.append("site manifest must contain a chapters array")
         return errors
@@ -188,6 +245,7 @@ def manifest_validation_errors(manifest: Any) -> list[str]:
         title = chapter.get("title")
         href = chapter.get("href")
         source = chapter.get("source")
+        chapter_number = chapter.get("number", index)
         sidebar_title = chapter.get("sidebarTitle", title)
         subtitle = chapter.get("subtitle", "")
         chapter_external_links = chapter.get("externalLinks", [])
@@ -198,6 +256,8 @@ def manifest_validation_errors(manifest: Any) -> list[str]:
             errors.append(f"chapter {index} must have a non-empty href")
         if not isinstance(source, str) or not source.strip():
             errors.append(f"chapter {index} must have a non-empty source")
+        if not isinstance(chapter_number, (int, str)) or (isinstance(chapter_number, str) and not chapter_number.strip()):
+            errors.append(f"chapter {index} number must be a non-empty string or integer")
         if not isinstance(sidebar_title, str):
             errors.append(f"chapter {index} sidebarTitle must be a string")
         if not isinstance(subtitle, str):
@@ -219,6 +279,7 @@ def normalize_manifest(manifest: Any) -> SiteManifest:
     materials = manifest.get("materials", [])
     external_links = manifest.get("externalLinks", [])
     heading_numbering = normalize_heading_numbering(manifest.get("headingNumbering", {}))
+    numbering = normalize_numbering(manifest.get("numbering", {}))
     raw_chapters = manifest["chapters"]
 
     assert isinstance(shell, str)
@@ -234,12 +295,14 @@ def normalize_manifest(manifest: Any) -> SiteManifest:
         title = chapter["title"]
         href = chapter["href"]
         source = chapter["source"]
+        chapter_number = chapter.get("number", len(chapters) + 1)
         sidebar_title = chapter.get("sidebarTitle", title)
         subtitle = chapter.get("subtitle", "")
         chapter_external_links = chapter.get("externalLinks", [])
         assert isinstance(title, str)
         assert isinstance(href, str)
         assert isinstance(source, str)
+        assert isinstance(chapter_number, (int, str))
         assert isinstance(sidebar_title, str)
         assert isinstance(subtitle, str)
         assert isinstance(chapter_external_links, list)
@@ -248,6 +311,7 @@ def normalize_manifest(manifest: Any) -> SiteManifest:
                 "title": title,
                 "href": href,
                 "source": source,
+                "number": str(chapter_number),
                 "sidebarTitle": sidebar_title,
                 "subtitle": subtitle,
                 "externalLinks": chapter_external_links,
@@ -262,6 +326,7 @@ def normalize_manifest(manifest: Any) -> SiteManifest:
         materials=materials,
         external_links=external_links,
         heading_numbering=heading_numbering,
+        numbering=numbering,
     )
 
 

@@ -262,22 +262,27 @@
           <h3 id="display-formula-example" data-toc data-toc-level="3" data-toc-title="Display Math">3.2. Display Math</h3>
           <p>
             Use <code>\[...\]</code> for standalone formulas, optionally wrapped in <code>div.math-block</code>.
+            The density definition in <a class="xref equation-ref" href="01-introduction.html#normal-density">Equation 1-1</a> and the moment identities in <a class="xref equation-ref" href="01-introduction.html#normal-moments">Equation 1-2</a> are numbered examples.
           </p>
 
-          <div class="math-block">
+          <div id="normal-density" class="math-block" data-numbered="equation">
             \[
               f(x) = \frac{1}{\sigma\sqrt{2\pi}}
               \exp\left(-\frac{(x - \mu)^2}{2\sigma^2}\right)
             \]
-          </div>
+  
+          <div class="equation-label"><span class="numbered-label equation-number">Equation 1-1</span></div>
+        </div>
 
-          <div class="math-block">
+          <div id="normal-moments" class="math-block" data-numbered="equation">
             \[
               \mathbb{E}[X] = \mu, \qquad
               \mathrm{Var}(X) = \sigma^2, \qquad
               \int_{-\infty}^{\infty} f(x)\,dx = 1
             \]
-          </div>
+  
+          <div class="equation-label"><span class="numbered-label equation-number">Equation 1-2</span></div>
+        </div>
         </section>
 
         <section id="python-code-examples" data-toc data-toc-title="Python Code Display and Execution">
@@ -408,6 +413,7 @@ ORDER BY updated_at DESC;
             Mermaid renders flowcharts and structural diagrams from text definitions.
             You can update a diagram by editing text in the HTML instead of recreating an image.
             Mermaid also supports sequence diagrams, class diagrams, state diagrams, and more.
+            The rendered result is referenced as <a class="xref figure-ref" href="01-introduction.html#document-flow">Figure 1-1</a>.
           </p>
 
           <div class="code-caption">mermaid</div>
@@ -421,8 +427,8 @@ ORDER BY updated_at DESC;
     F --> G
 </code></pre>
 
-          <figure class="mermaid-figure">
-            <figcaption>Diagram rendered from the Mermaid definition above</figcaption>
+          <figure id="document-flow" class="mermaid-figure" data-numbered="figure">
+            <figcaption><span class="numbered-label figure-number">Figure 1-1</span> Diagram rendered from the Mermaid definition above</figcaption>
             <div class="mermaid-wrap">
               <!-- Use div.mermaid as the Mermaid rendering hook; figure/figcaption provide the semantic structure. -->
               <div class="mermaid">
@@ -460,8 +466,12 @@ ORDER BY updated_at DESC;
 
         <section id="changelog" data-toc data-toc-title="Changelog">
           <h2>8. Changelog</h2>
+          <p>
+            The release history is shown in <a class="xref table-ref" href="01-introduction.html#release-history">Table 1-1</a>.
+          </p>
           <div class="table-wrap">
-            <table>
+            <table id="release-history" data-numbered="table">
+              <caption><span class="numbered-label table-number">Table 1-1</span> Template release history</caption>
               <thead>
                 <tr>
                   <th>Version</th>

@@ -67,6 +67,10 @@ def sidebar_title_html(title: str) -> str:
 RAW_TEXT_INDENT_TAGS = {"pre", "code", "script", "style", "textarea"}
 HEADING_TAG_PATTERN = re.compile(r"h[2-6]")
 HEADING_NUMBER_TOKENS = re.compile(r"(\{title\}|\{number\}|\{local\})")
+NUMBERED_KIND_TO_SECTION = {"figure": "figures", "table": "tables", "equation": "equations"}
+NUMBERED_KIND_TO_CLASS = {"figure": "figure-number", "table": "table-number", "equation": "equation-number"}
+NUMBERED_SHORTHAND_PREFIX = {"図": "figure", "表": "table", "式": "equation"}
+NUMBERED_REF_PATTERN = re.compile(r"(?<![\w.-])(?P<prefix>図|表|式)\((?P<id>[A-Za-z][A-Za-z0-9_.:-]*)\)")
 
 
 def indent_content_preserving_raw_text(content: str, indent: str) -> str:
@@ -124,6 +128,187 @@ def render_chapter_nav(chapters: list[dict[str, Any]], index: int, output_path: 
         return '<nav class="chapter-nav" data-chapter-nav aria-label="Chapter navigation"></nav>'
 
     return '<nav class="chapter-nav" data-chapter-nav aria-label="Chapter navigation">\n' + "\n".join(links) + f"\n{indent}</nav>"
+
+
+def numbered_kind_config(numbering: dict[str, Any], kind: str) -> dict[str, Any]:
+    section = NUMBERED_KIND_TO_SECTION[kind]
+    config = numbering.get(section, {})
+    return config if isinstance(config, dict) else {}
+
+
+def numbered_kind_enabled(numbering: dict[str, Any], kind: str) -> bool:
+    return bool(numbered_kind_config(numbering, kind).get("enabled", False))
+
+
+def format_numbered_item_label(format_text: str, chapter: str, index: int) -> str:
+    return format_text.replace("{chapter}", chapter).replace("{index}", str(index))
+
+
+def collect_numbered_items(
+    chapter_sources: list[str],
+    chapters: list[dict[str, Any]],
+    numbering: dict[str, Any],
+) -> dict[str, dict[str, str]]:
+    registry: dict[str, dict[str, str]] = {}
+    document_counters = {kind: 0 for kind in NUMBERED_KIND_TO_SECTION}
+
+    for chapter_index, source in enumerate(chapter_sources):
+        chapter = chapters[chapter_index]
+        chapter_counters = {kind: 0 for kind in NUMBERED_KIND_TO_SECTION}
+        chapter_number = str(chapter.get("number", chapter_index + 1))
+
+        for node in iter_nodes(parse_fragment(source)):
+            kind = node.attrs.get("data-numbered")
+            if kind not in NUMBERED_KIND_TO_SECTION or not numbered_kind_enabled(numbering, kind):
+                continue
+
+            element_id = node.attrs.get("id")
+            if not element_id:
+                raise ValueError(f'{chapter["source"]} data-numbered="{kind}" element must have an id')
+            if element_id in registry:
+                raise ValueError(f'duplicate numbered reference id "{element_id}"')
+
+            config = numbered_kind_config(numbering, kind)
+            if config.get("reset", "chapter") == "document":
+                document_counters[kind] += 1
+                item_index = document_counters[kind]
+            else:
+                chapter_counters[kind] += 1
+                item_index = chapter_counters[kind]
+
+            label = format_numbered_item_label(str(config.get("format", "{index}")), chapter_number, item_index)
+            registry[element_id] = {
+                "id": element_id,
+                "kind": kind,
+                "label": label,
+                "chapterHref": str(chapter["href"]),
+                "source": str(chapter["source"]),
+            }
+
+    return registry
+
+
+def numbered_label_html(item: dict[str, str]) -> str:
+    class_name = NUMBERED_KIND_TO_CLASS[item["kind"]]
+    return f'<span class="numbered-label {class_name}">{html.escape(item["label"])}</span>'
+
+
+def first_child_by_tag(node: FragmentNode, tag: str) -> FragmentNode | None:
+    return next((child for child in node.children if child.tag == tag), None)
+
+
+def numbered_caption_replacement(source: str, node: FragmentNode, item: dict[str, str]) -> tuple[int, int, str] | None:
+    label = numbered_label_html(item)
+    kind = item["kind"]
+
+    if kind == "figure":
+        caption = first_child_by_tag(node, "figcaption")
+        if caption is not None:
+            return (caption.start_tag_end, caption.start_tag_end, f"{label} ")
+        if node.end_tag_start is not None:
+            return (node.end_tag_start, node.end_tag_start, f"\n  <figcaption>{label}</figcaption>\n")
+        return None
+
+    if kind == "table":
+        caption = first_child_by_tag(node, "caption")
+        if caption is not None:
+            return (caption.start_tag_end, caption.start_tag_end, f"{label} ")
+        return (node.start_tag_end, node.start_tag_end, f"\n  <caption>{label}</caption>")
+
+    if kind == "equation":
+        if node.end_tag_start is not None:
+            return (node.end_tag_start, node.end_tag_start, f'\n  <div class="equation-label">{label}</div>\n')
+        return None
+
+    return None
+
+
+def numbered_ref_href(item: dict[str, str], output_path: Path, output_dir: Path) -> str:
+    target_path = output_dir / item["chapterHref"]
+    return f"{relative_path(output_path, target_path)}#{item['id']}"
+
+
+def numbered_ref_link(item: dict[str, str], output_path: Path, output_dir: Path) -> str:
+    href = html.escape(numbered_ref_href(item, output_path, output_dir), quote=True)
+    label = html.escape(item["label"])
+    return f'<a class="xref {item["kind"]}-ref" href="{href}">{label}</a>'
+
+
+def replace_explicit_numbered_refs(source: str, registry: dict[str, dict[str, str]], output_path: Path, output_dir: Path) -> str:
+    replacements: list[tuple[int, int, str]] = []
+    for node in iter_nodes(parse_fragment(source)):
+        ref_id = node.attrs.get("data-ref")
+        if ref_id is None:
+            continue
+        if node.end is None:
+            raise ValueError(f'data-ref="{ref_id}" element is missing its closing tag')
+        if ref_id not in registry:
+            raise ValueError(f'unknown data-ref target "{ref_id}"')
+        replacements.append((node.start, node.end, numbered_ref_link(registry[ref_id], output_path, output_dir)))
+
+    return replace_ranges(source, replacements)
+
+
+def protected_text_ranges(source: str) -> list[tuple[int, int]]:
+    ranges = [(match.start(), match.end()) for match in re.finditer(r"<[^>]+>", source)]
+    for node in iter_nodes(parse_fragment(source)):
+        if node.tag in RAW_TEXT_INDENT_TAGS and node.end_tag_start is not None:
+            ranges.append((node.start_tag_end, node.end_tag_start))
+
+    merged: list[tuple[int, int]] = []
+    for start, end in sorted(ranges):
+        if not merged or start > merged[-1][1]:
+            merged.append((start, end))
+        else:
+            previous_start, previous_end = merged[-1]
+            merged[-1] = (previous_start, max(previous_end, end))
+    return merged
+
+
+def replace_numbered_shorthand_refs(source: str, registry: dict[str, dict[str, str]], output_path: Path, output_dir: Path) -> str:
+    ranges = protected_text_ranges(source)
+    rendered: list[str] = []
+    position = 0
+
+    def replace_match(match: re.Match[str]) -> str:
+        ref_id = match.group("id")
+        expected_kind = NUMBERED_SHORTHAND_PREFIX[match.group("prefix")]
+        if ref_id not in registry:
+            raise ValueError(f'unknown numbered shorthand reference target "{ref_id}"')
+        item = registry[ref_id]
+        if item["kind"] != expected_kind:
+            raise ValueError(f'numbered shorthand reference "{match.group(0)}" points to {item["kind"]}, not {expected_kind}')
+        return numbered_ref_link(item, output_path, output_dir)
+
+    for start, end in ranges:
+        if position < start:
+            rendered.append(NUMBERED_REF_PATTERN.sub(replace_match, source[position:start]))
+        rendered.append(source[start:end])
+        position = end
+
+    rendered.append(NUMBERED_REF_PATTERN.sub(replace_match, source[position:]))
+    return "".join(rendered)
+
+
+def apply_numbered_items(
+    source: str,
+    registry: dict[str, dict[str, str]],
+    output_path: Path,
+    output_dir: Path,
+) -> str:
+    replacements: list[tuple[int, int, str]] = []
+
+    for node in iter_nodes(parse_fragment(source)):
+        element_id = node.attrs.get("id")
+        if not element_id or element_id not in registry:
+            continue
+        replacement = numbered_caption_replacement(source, node, registry[element_id])
+        if replacement is not None:
+            replacements.append(replacement)
+
+    source = replace_ranges(source, replacements)
+    source = replace_explicit_numbered_refs(source, registry, output_path, output_dir)
+    return replace_numbered_shorthand_refs(source, registry, output_path, output_dir)
 
 
 def heading_level(node: FragmentNode) -> int:
@@ -630,19 +815,22 @@ def build_chapter(
     output_dir: Path,
     shell: str,
     chapters: list[dict[str, Any]],
+    chapter_sources: list[str],
     index: int,
     toc_entries_by_chapter: list[list[dict[str, str | int]]],
     document_lang: str,
     materials: list[Any],
     external_links: list[Any],
     heading_numbering: dict[str, Any],
+    numbered_items: dict[str, dict[str, str]],
 ) -> Path:
     chapter = chapters[index]
     source_path = manifest_dir / chapter["source"]
     output_path = output_dir / chapter["href"]
 
-    source = source_path.read_text(encoding="utf-8")
+    source = chapter_sources[index]
     validate_source_fragment(source_path, source)
+    source = apply_numbered_items(source, numbered_items, output_path, output_dir)
     source, _ = apply_heading_numbering(source, heading_numbering)
     source = expand_python_runners(source)
     content = inject_chapter_nav(source, chapters, index, output_path, output_dir)
@@ -691,13 +879,18 @@ def main() -> int:
     output_dir = (manifest_dir / manifest.output_dir).resolve()
     shell = shell_path.read_text(encoding="utf-8")
     validate_shell(shell, shell_path)
+    chapter_sources = [
+        (manifest_dir / chapter["source"]).read_text(encoding="utf-8")
+        for chapter in manifest.chapters
+    ]
+    numbered_items = collect_numbered_items(chapter_sources, manifest.chapters, manifest.numbering)
 
     toc_entries_by_chapter = [
         extract_toc_entries(
-            *apply_heading_numbering((manifest_dir / chapter["source"]).read_text(encoding="utf-8"), manifest.heading_numbering),
+            *apply_heading_numbering(chapter_sources[index], manifest.heading_numbering),
             manifest.heading_numbering,
         )
-        for chapter in manifest.chapters
+        for index, chapter in enumerate(manifest.chapters)
     ]
 
     for index in range(len(manifest.chapters)):
@@ -707,12 +900,14 @@ def main() -> int:
             output_dir,
             shell,
             manifest.chapters,
+            chapter_sources,
             index,
             toc_entries_by_chapter,
             manifest.document_lang,
             manifest.materials,
             manifest.external_links,
             manifest.heading_numbering,
+            numbered_items,
         )
         print(f"built {output_path.relative_to(root)}")
 
