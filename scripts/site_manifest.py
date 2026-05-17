@@ -99,6 +99,7 @@ def heading_numbering_validation_errors(config: Any) -> list[str]:
     default_format = config.get("format", "{number}. {title}")
     level_formats = config.get("levelFormats", {})
     toc_title_mode = config.get("tocTitleMode", "numbered")
+    reference_format = config.get("referenceFormat", "{number}")
 
     if not isinstance(enabled, bool):
         errors.append("site manifest headingNumbering enabled must be a boolean")
@@ -108,6 +109,8 @@ def heading_numbering_validation_errors(config: Any) -> list[str]:
         errors.append("site manifest headingNumbering toc must be a boolean")
     if not isinstance(default_format, str) or "{title}" not in default_format:
         errors.append('site manifest headingNumbering format must be a string containing "{title}"')
+    if not isinstance(reference_format, str) or "{number}" not in reference_format:
+        errors.append('site manifest headingNumbering referenceFormat must be a string containing "{number}"')
     if not isinstance(levels, list) or not all(isinstance(level, int) and 2 <= level <= 6 for level in levels):
         errors.append("site manifest headingNumbering levels must be an array of integers from 2 to 6")
     if not isinstance(level_formats, dict):
@@ -136,6 +139,7 @@ def normalize_heading_numbering(config: Any) -> dict[str, Any]:
     default_format = config.get("format", "{number}. {title}")
     level_formats = config.get("levelFormats", {})
     toc_title_mode = config.get("tocTitleMode", "numbered")
+    reference_format = config.get("referenceFormat", "{number}")
 
     assert isinstance(enabled, bool)
     assert isinstance(levels, list)
@@ -144,6 +148,7 @@ def normalize_heading_numbering(config: Any) -> dict[str, Any]:
     assert isinstance(default_format, str)
     assert isinstance(level_formats, dict)
     assert isinstance(toc_title_mode, str)
+    assert isinstance(reference_format, str)
 
     return {
         "enabled": enabled,
@@ -153,6 +158,7 @@ def normalize_heading_numbering(config: Any) -> dict[str, Any]:
         "format": default_format,
         "levelFormats": level_formats,
         "tocTitleMode": toc_title_mode,
+        "referenceFormat": reference_format,
     }
 
 

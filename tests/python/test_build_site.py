@@ -3,9 +3,11 @@ from pathlib import Path
 
 from scripts.build_site import (
     apply_numbered_items,
+    apply_section_refs,
     apply_heading_numbering,
     chapter_external_links,
     collect_numbered_items,
+    collect_section_refs,
     extract_toc_entries,
     indent_content_preserving_raw_text,
     render_shell,
@@ -133,6 +135,70 @@ for log in logs:
         self.assertIn("<h2>1. Untoced Heading</h2>", rendered)
         self.assertIn("<h3>1.1. Untoced Detail</h3>", rendered)
         self.assertEqual(numbering_by_id, {})
+
+    def test_section_refs_use_heading_numbering_registry(self) -> None:
+        sources = [
+            """<p>See <a data-section-ref="plan"></a> and 節(detail).</p>
+<section id="plan" data-toc data-toc-title="Plan">
+  <h2>DAG Plan</h2>
+  <h3 id="detail" data-toc data-toc-level="3" data-toc-title="Detail">Execution Detail</h3>
+</section>"""
+        ]
+        chapters = [{"href": "chapter.html", "source": "chapter.html", "number": "4"}]
+        config = {
+            "enabled": True,
+            "body": True,
+            "toc": True,
+            "format": "{number}. {title}",
+            "levels": [],
+            "referenceFormat": "{number} {title}",
+        }
+
+        registry = collect_section_refs(sources, chapters, config)
+        numbered_source, _ = apply_heading_numbering(sources[0], config)
+        rendered = apply_section_refs(
+            numbered_source,
+            registry,
+            Path("/tmp/project/chapters/chapter.html"),
+            Path("/tmp/project/chapters"),
+            config,
+        )
+
+        self.assertIn('<a class="xref section-ref" href="chapter.html#plan">1 DAG Plan</a>', rendered)
+        self.assertIn('<a class="xref section-ref" href="chapter.html#detail">1.1 Execution Detail</a>', rendered)
+
+    def test_section_refs_support_custom_reference_format(self) -> None:
+        sources = ['<section id="plan" data-toc><h2>Plan</h2></section><p><span data-section-ref="plan"></span></p>']
+        chapters = [{"href": "chapter.html", "source": "chapter.html", "number": "1"}]
+        config = {
+            "enabled": True,
+            "body": True,
+            "toc": True,
+            "format": "{number}. {title}",
+            "levels": [],
+            "referenceFormat": "第{number}節",
+        }
+
+        registry = collect_section_refs(sources, chapters, config)
+        rendered = apply_section_refs(
+            sources[0],
+            registry,
+            Path("/tmp/project/chapters/chapter.html"),
+            Path("/tmp/project/chapters"),
+            config,
+        )
+
+        self.assertIn('<a class="xref section-ref" href="chapter.html#plan">第1節</a>', rendered)
+
+    def test_unknown_section_refs_raise(self) -> None:
+        with self.assertRaisesRegex(ValueError, 'unknown data-section-ref target "missing"'):
+            apply_section_refs(
+                '<p><a data-section-ref="missing"></a></p>',
+                {},
+                Path("/tmp/project/chapters/chapter.html"),
+                Path("/tmp/project/chapters"),
+                {"enabled": True, "referenceFormat": "{number}"},
+            )
 
     def test_render_shell_includes_common_and_chapter_external_links(self) -> None:
         shell = (

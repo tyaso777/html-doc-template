@@ -71,6 +71,7 @@ NUMBERED_KIND_TO_SECTION = {"figure": "figures", "table": "tables", "equation": 
 NUMBERED_KIND_TO_CLASS = {"figure": "figure-number", "table": "table-number", "equation": "equation-number"}
 NUMBERED_SHORTHAND_PREFIX = {"図": "figure", "表": "table", "式": "equation"}
 NUMBERED_REF_PATTERN = re.compile(r"(?<![\w.-])(?P<prefix>図|表|式)\((?P<id>[A-Za-z][A-Za-z0-9_.:-]*)\)")
+SECTION_REF_PATTERN = re.compile(r"(?<![\w.-])節\((?P<id>[A-Za-z][A-Za-z0-9_.:-]*)\)")
 
 
 def indent_content_preserving_raw_text(content: str, indent: str) -> str:
@@ -439,6 +440,137 @@ def apply_heading_numbering(source: str, config: dict[str, Any]) -> tuple[str, d
             )
 
     return replace_ranges(source, replacements), numbering_by_id
+
+
+def collect_section_refs(
+    chapter_sources: list[str],
+    chapters: list[dict[str, Any]],
+    heading_numbering: dict[str, Any],
+) -> dict[str, list[dict[str, str]]]:
+    if not heading_numbering.get("enabled", False):
+        return {}
+
+    registry: dict[str, list[dict[str, str]]] = {}
+    for index, source in enumerate(chapter_sources):
+        _, numbering_by_id = apply_heading_numbering(source, heading_numbering)
+        chapter = chapters[index]
+        for element_id, numbering in numbering_by_id.items():
+            registry.setdefault(element_id, []).append({
+                "id": element_id,
+                "number": numbering["number"],
+                "local": numbering["local"],
+                "title": numbering["title"],
+                "chapterHref": str(chapter["href"]),
+                "source": str(chapter["source"]),
+            })
+    return registry
+
+
+def section_ref_label(item: dict[str, str], heading_numbering: dict[str, Any]) -> str:
+    format_text = heading_numbering.get("referenceFormat", "{number}")
+    if not isinstance(format_text, str):
+        format_text = "{number}"
+    return (
+        format_text
+        .replace("{number}", item["number"])
+        .replace("{local}", item["local"])
+        .replace("{title}", item["title"])
+    )
+
+
+def section_ref_href(item: dict[str, str], output_path: Path, output_dir: Path) -> str:
+    target_path = output_dir / item["chapterHref"]
+    return f"{relative_path(output_path, target_path)}#{item['id']}"
+
+
+def section_ref_link(
+    item: dict[str, str],
+    output_path: Path,
+    output_dir: Path,
+    heading_numbering: dict[str, Any],
+) -> str:
+    href = html.escape(section_ref_href(item, output_path, output_dir), quote=True)
+    label = html.escape(section_ref_label(item, heading_numbering))
+    return f'<a class="xref section-ref" href="{href}">{label}</a>'
+
+
+def resolve_section_ref(
+    registry: dict[str, list[dict[str, str]]],
+    ref_id: str,
+    output_path: Path,
+    output_dir: Path,
+    source_label: str,
+) -> dict[str, str]:
+    matches = registry.get(ref_id, [])
+    if not matches:
+        raise ValueError(f'unknown {source_label} target "{ref_id}"')
+    if len(matches) == 1:
+        return matches[0]
+
+    current_href = Path(os.path.relpath(output_path.resolve(), output_dir.resolve())).as_posix()
+    current_matches = [item for item in matches if item["chapterHref"] == current_href]
+    if len(current_matches) == 1:
+        return current_matches[0]
+
+    targets = ", ".join(f'{item["chapterHref"]}#{item["id"]}' for item in matches)
+    raise ValueError(f'ambiguous {source_label} target "{ref_id}" matches {targets}')
+
+
+def replace_explicit_section_refs(
+    source: str,
+    registry: dict[str, list[dict[str, str]]],
+    output_path: Path,
+    output_dir: Path,
+    heading_numbering: dict[str, Any],
+) -> str:
+    replacements: list[tuple[int, int, str]] = []
+    for node in iter_nodes(parse_fragment(source)):
+        ref_id = node.attrs.get("data-section-ref")
+        if ref_id is None:
+            continue
+        if node.end is None:
+            raise ValueError(f'data-section-ref="{ref_id}" element is missing its closing tag')
+        item = resolve_section_ref(registry, ref_id, output_path, output_dir, "data-section-ref")
+        replacements.append((node.start, node.end, section_ref_link(item, output_path, output_dir, heading_numbering)))
+
+    return replace_ranges(source, replacements)
+
+
+def replace_section_shorthand_refs(
+    source: str,
+    registry: dict[str, list[dict[str, str]]],
+    output_path: Path,
+    output_dir: Path,
+    heading_numbering: dict[str, Any],
+) -> str:
+    ranges = protected_text_ranges(source)
+    rendered: list[str] = []
+    position = 0
+
+    def replace_match(match: re.Match[str]) -> str:
+        ref_id = match.group("id")
+        item = resolve_section_ref(registry, ref_id, output_path, output_dir, "section shorthand reference")
+        return section_ref_link(item, output_path, output_dir, heading_numbering)
+
+    for start, end in ranges:
+        if position < start:
+            rendered.append(SECTION_REF_PATTERN.sub(replace_match, source[position:start]))
+        rendered.append(source[start:end])
+        position = end
+
+    rendered.append(SECTION_REF_PATTERN.sub(replace_match, source[position:]))
+    return "".join(rendered)
+
+
+def apply_section_refs(
+    source: str,
+    registry: dict[str, list[dict[str, str]]],
+    output_path: Path,
+    output_dir: Path,
+    heading_numbering: dict[str, Any],
+) -> str:
+    source = replace_explicit_section_refs(source, registry, output_path, output_dir, heading_numbering)
+    return replace_section_shorthand_refs(source, registry, output_path, output_dir, heading_numbering)
 
 
 def extract_toc_entries(
@@ -823,6 +955,7 @@ def build_chapter(
     external_links: list[Any],
     heading_numbering: dict[str, Any],
     numbered_items: dict[str, dict[str, str]],
+    section_refs: dict[str, list[dict[str, str]]],
 ) -> Path:
     chapter = chapters[index]
     source_path = manifest_dir / chapter["source"]
@@ -832,6 +965,7 @@ def build_chapter(
     validate_source_fragment(source_path, source)
     source = apply_numbered_items(source, numbered_items, output_path, output_dir)
     source, _ = apply_heading_numbering(source, heading_numbering)
+    source = apply_section_refs(source, section_refs, output_path, output_dir, heading_numbering)
     source = expand_python_runners(source)
     content = inject_chapter_nav(source, chapters, index, output_path, output_dir)
     text = render_shell(
@@ -884,6 +1018,7 @@ def main() -> int:
         for chapter in manifest.chapters
     ]
     numbered_items = collect_numbered_items(chapter_sources, manifest.chapters, manifest.numbering)
+    section_refs = collect_section_refs(chapter_sources, manifest.chapters, manifest.heading_numbering)
 
     toc_entries_by_chapter = [
         extract_toc_entries(
@@ -908,6 +1043,7 @@ def main() -> int:
             manifest.external_links,
             manifest.heading_numbering,
             numbered_items,
+            section_refs,
         )
         print(f"built {output_path.relative_to(root)}")
 
