@@ -100,6 +100,7 @@ def heading_numbering_validation_errors(config: Any) -> list[str]:
     level_formats = config.get("levelFormats", {})
     toc_title_mode = config.get("tocTitleMode", "numbered")
     reference_format = config.get("referenceFormat", "{number}")
+    reference_level_formats = config.get("referenceLevelFormats", {})
 
     if not isinstance(enabled, bool):
         errors.append("site manifest headingNumbering enabled must be a boolean")
@@ -121,6 +122,14 @@ def heading_numbering_validation_errors(config: Any) -> list[str]:
                 errors.append("site manifest headingNumbering levelFormats keys must be heading levels 2 through 6")
             if not isinstance(format_text, str) or "{title}" not in format_text:
                 errors.append(f'site manifest headingNumbering levelFormats {raw_level} must be a string containing "{{title}}"')
+    if not isinstance(reference_level_formats, dict):
+        errors.append("site manifest headingNumbering referenceLevelFormats must be an object")
+    else:
+        for raw_level, format_text in reference_level_formats.items():
+            if str(raw_level) not in {"2", "3", "4", "5", "6"}:
+                errors.append("site manifest headingNumbering referenceLevelFormats keys must be heading levels 2 through 6")
+            if not isinstance(format_text, str) or "{number}" not in format_text:
+                errors.append(f'site manifest headingNumbering referenceLevelFormats {raw_level} must be a string containing "{{number}}"')
     if toc_title_mode not in HEADING_NUMBERING_TITLE_MODES:
         errors.append('site manifest headingNumbering tocTitleMode must be "numbered" or "plain"')
 
@@ -140,6 +149,7 @@ def normalize_heading_numbering(config: Any) -> dict[str, Any]:
     level_formats = config.get("levelFormats", {})
     toc_title_mode = config.get("tocTitleMode", "numbered")
     reference_format = config.get("referenceFormat", "{number}")
+    reference_level_formats = config.get("referenceLevelFormats", {})
 
     assert isinstance(enabled, bool)
     assert isinstance(levels, list)
@@ -149,6 +159,7 @@ def normalize_heading_numbering(config: Any) -> dict[str, Any]:
     assert isinstance(level_formats, dict)
     assert isinstance(toc_title_mode, str)
     assert isinstance(reference_format, str)
+    assert isinstance(reference_level_formats, dict)
 
     return {
         "enabled": enabled,
@@ -159,6 +170,7 @@ def normalize_heading_numbering(config: Any) -> dict[str, Any]:
         "levelFormats": level_formats,
         "tocTitleMode": toc_title_mode,
         "referenceFormat": reference_format,
+        "referenceLevelFormats": reference_level_formats,
     }
 
 

@@ -38,6 +38,7 @@ class SiteManifestTests(unittest.TestCase):
                 "levelFormats": {},
                 "tocTitleMode": "numbered",
                 "referenceFormat": "{number}",
+                "referenceLevelFormats": {},
             },
         )
         self.assertEqual(
@@ -101,6 +102,7 @@ class SiteManifestTests(unittest.TestCase):
                     "toc": True,
                     "format": "{number}. {title}",
                     "referenceFormat": "第{number}節",
+                    "referenceLevelFormats": {"2": "第{number}章", "3": "第{number}節"},
                     "levelFormats": {"2": "第{local}章 {title}", "3": "{number} {title}"},
                     "tocTitleMode": "plain",
                 },
@@ -120,6 +122,7 @@ class SiteManifestTests(unittest.TestCase):
         self.assertEqual(manifest.heading_numbering["levelFormats"]["2"], "第{local}章 {title}")
         self.assertEqual(manifest.heading_numbering["tocTitleMode"], "plain")
         self.assertEqual(manifest.heading_numbering["referenceFormat"], "第{number}節")
+        self.assertEqual(manifest.heading_numbering["referenceLevelFormats"]["2"], "第{number}章")
 
     def test_normalize_manifest_keeps_numbering(self) -> None:
         manifest = normalize_manifest(
@@ -162,6 +165,7 @@ class SiteManifestTests(unittest.TestCase):
                     "toc": "yes",
                     "format": "{number}",
                     "referenceFormat": "{title}",
+                    "referenceLevelFormats": {"1": "{number}", "3": "{title}"},
                     "levelFormats": {"1": "{title}", "2": "{number}"},
                     "tocTitleMode": "bad",
                 },
@@ -196,6 +200,8 @@ class SiteManifestTests(unittest.TestCase):
         self.assertIn("site manifest headingNumbering levels must be an array of integers from 2 to 6", errors)
         self.assertIn('site manifest headingNumbering format must be a string containing "{title}"', errors)
         self.assertIn('site manifest headingNumbering referenceFormat must be a string containing "{number}"', errors)
+        self.assertIn("site manifest headingNumbering referenceLevelFormats keys must be heading levels 2 through 6", errors)
+        self.assertIn('site manifest headingNumbering referenceLevelFormats 3 must be a string containing "{number}"', errors)
         self.assertIn("site manifest headingNumbering levelFormats keys must be heading levels 2 through 6", errors)
         self.assertIn('site manifest headingNumbering levelFormats 2 must be a string containing "{title}"', errors)
         self.assertIn('site manifest headingNumbering tocTitleMode must be "numbered" or "plain"', errors)

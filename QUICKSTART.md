@@ -17,14 +17,14 @@ Use top-level `externalLinks` in `chapters-src/site-manifest.json` for links tha
 
 If `headingNumbering.enabled` is `true` in `chapters-src/site-manifest.json`, write headings without hand-written numbers. The build script will add heading numbers to the generated `chapters/` files.
 
-To reference a numbered section or heading, point to a `data-toc` target with `data-section-ref` or the `節(id)` shorthand:
+To reference a numbered section or heading, point to a `data-toc` target with `data-heading-ref`. Existing `data-section-ref` references and the `参照(id)` / `節(id)` shorthands are also supported:
 
 ```html
-<p>See <a data-section-ref="example-detail"></a>.</p>
-<p>See 節(example-detail).</p>
+<p>See <a data-heading-ref="example-detail"></a>.</p>
+<p>See 参照(example-detail).</p>
 ```
 
-Set `headingNumbering.referenceFormat` to choose the label, for example `{number}`, `{number} {title}`, or `第{number}節`.
+Set `headingNumbering.referenceFormat` to choose the default label, for example `{number}`, `{number} {title}`, or `第{number}節`. Set `headingNumbering.referenceLevelFormats` to override labels by target heading level.
 
 If figure/table/equation numbering is enabled in `numbering`, mark only intentional targets with `data-numbered` and reference them with `span[data-ref]`:
 

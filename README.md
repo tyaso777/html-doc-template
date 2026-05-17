@@ -138,7 +138,12 @@ AI agents should follow [QUICKSTART.md](QUICKSTART.md), edit `chapters-src/` ins
     "body": true,
     "toc": true,
     "format": "{number}. {title}",
-    "referenceFormat": "{number}"
+    "referenceFormat": "{number}",
+    "referenceLevelFormats": {
+      "2": "Chapter {number}",
+      "3": "Section {number}",
+      "4": "Section {number}"
+    }
   },
   "numbering": {
     "figures": {
@@ -223,7 +228,7 @@ AI agents should follow [QUICKSTART.md](QUICKSTART.md), edit `chapters-src/` ins
 
 `headingNumbering` is optional and disabled by default. When enabled, the build script can add generated numbers to body headings and Contents entries. With `levels` omitted or empty, only TOC targets are numbered: `section[data-toc]` numbers its first heading, and heading elements with `data-toc` number themselves. Set `levels` to an array such as `[2, 3]` to number all headings at those levels. Use `format` or `levelFormats` with `{number}`, `{local}`, and `{title}` to control display, for example `{number}. {title}`, `第{local}章 {title}`, or `第{local}節 {title}`. Set `body` or `toc` to `false` to disable numbering in that output. Contents entries still use `data-toc-title` when present; numbering is applied to that TOC title separately from the body heading text. Set `tocTitleMode` to `plain` to keep Contents entries unnumbered.
 
-Heading references are also resolved at build time from the same `headingNumbering` registry. Use `<a data-section-ref="template-guide"></a>` or the text shorthand `節(template-guide)` to link to a numbered `section[data-toc]` or heading with `data-toc`. The default `referenceFormat` is `{number}`; set it to `{number} {title}` for labels such as `4.2 DAG Plan`, or `第{number}節` for labels such as `第4.2節`. Unknown section reference IDs fail the build.
+Heading references are also resolved at build time from the same `headingNumbering` registry. Use `<a data-heading-ref="template-guide"></a>` to link to a numbered `section[data-toc]` or heading with `data-toc`; `<a data-section-ref="template-guide"></a>` remains supported for existing documents. Text shorthand `参照(template-guide)` and `節(template-guide)` are also supported outside HTML tags and raw-text blocks. The default `referenceFormat` is `{number}`; set it to `{number} {title}` for labels such as `4.2 DAG Plan`, or `第{number}節` for labels such as `第4.2節`. Use `referenceLevelFormats` to override reference labels by target heading level, for example `{ "2": "第{number}章", "3": "第{number}節", "4": "第{number}項" }`. Unspecified levels fall back to `referenceFormat`. Unknown heading reference IDs fail the build.
 
 `numbering` is optional and disabled by default. Enable `figures`, `tables`, or `equations` to number only elements explicitly marked with `data-numbered="figure"`, `data-numbered="table"`, or `data-numbered="equation"`. The `format` string supports `{chapter}` and `{index}`; omit `{chapter}` for document-local labels such as `Figure {index}`. Use `reset: "chapter"` to restart each chapter or `reset: "document"` for one sequence across the whole document. Captions receive a leading `<span class="numbered-label ...">`, and references such as `<span data-ref="mapreduce-flow"></span>` are replaced with links to the numbered item. Text shorthand like `図(mapreduce-flow)`, `表(log-sample)`, and `式(cost-model)` is also supported outside HTML tags and raw-text blocks, but `span[data-ref]` is the preferred explicit form. Unknown references fail the build.
 

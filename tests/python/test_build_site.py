@@ -138,10 +138,11 @@ for log in logs:
 
     def test_section_refs_use_heading_numbering_registry(self) -> None:
         sources = [
-            """<p>See <a data-section-ref="plan"></a> and 節(detail).</p>
+            """<p>See <a data-heading-ref="plan"></a>, <a data-section-ref="detail"></a>, 節(detail), and 参照(deeper).</p>
 <section id="plan" data-toc data-toc-title="Plan">
   <h2>DAG Plan</h2>
   <h3 id="detail" data-toc data-toc-level="3" data-toc-title="Detail">Execution Detail</h3>
+  <h4 id="deeper" data-toc data-toc-level="4" data-toc-title="Deeper">Execution Detail Item</h4>
 </section>"""
         ]
         chapters = [{"href": "chapter.html", "source": "chapter.html", "number": "4"}]
@@ -152,6 +153,11 @@ for log in logs:
             "format": "{number}. {title}",
             "levels": [],
             "referenceFormat": "{number} {title}",
+            "referenceLevelFormats": {
+                "2": "第{number}章",
+                "3": "第{number}節",
+                "4": "第{number}項",
+            },
         }
 
         registry = collect_section_refs(sources, chapters, config)
@@ -164,11 +170,12 @@ for log in logs:
             config,
         )
 
-        self.assertIn('<a class="xref section-ref" href="chapter.html#plan">1 DAG Plan</a>', rendered)
-        self.assertIn('<a class="xref section-ref" href="chapter.html#detail">1.1 Execution Detail</a>', rendered)
+        self.assertIn('<a class="xref section-ref" href="chapter.html#plan">第1章</a>', rendered)
+        self.assertIn('<a class="xref section-ref" href="chapter.html#detail">第1.1節</a>', rendered)
+        self.assertIn('<a class="xref section-ref" href="chapter.html#deeper">第1.1.1項</a>', rendered)
 
-    def test_section_refs_support_custom_reference_format(self) -> None:
-        sources = ['<section id="plan" data-toc><h2>Plan</h2></section><p><span data-section-ref="plan"></span></p>']
+    def test_section_refs_fall_back_to_default_reference_format(self) -> None:
+        sources = ['<section id="plan" data-toc><h2>Plan</h2></section><p><span data-heading-ref="plan"></span></p>']
         chapters = [{"href": "chapter.html", "source": "chapter.html", "number": "1"}]
         config = {
             "enabled": True,
@@ -176,7 +183,8 @@ for log in logs:
             "toc": True,
             "format": "{number}. {title}",
             "levels": [],
-            "referenceFormat": "第{number}節",
+            "referenceFormat": "{number} {title}",
+            "referenceLevelFormats": {"3": "第{number}節"},
         }
 
         registry = collect_section_refs(sources, chapters, config)
@@ -188,7 +196,7 @@ for log in logs:
             config,
         )
 
-        self.assertIn('<a class="xref section-ref" href="chapter.html#plan">第1節</a>', rendered)
+        self.assertIn('<a class="xref section-ref" href="chapter.html#plan">1 Plan</a>', rendered)
 
     def test_unknown_section_refs_raise(self) -> None:
         with self.assertRaisesRegex(ValueError, 'unknown data-section-ref target "missing"'):

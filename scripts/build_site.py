@@ -71,7 +71,7 @@ NUMBERED_KIND_TO_SECTION = {"figure": "figures", "table": "tables", "equation": 
 NUMBERED_KIND_TO_CLASS = {"figure": "figure-number", "table": "table-number", "equation": "equation-number"}
 NUMBERED_SHORTHAND_PREFIX = {"図": "figure", "表": "table", "式": "equation"}
 NUMBERED_REF_PATTERN = re.compile(r"(?<![\w.-])(?P<prefix>図|表|式)\((?P<id>[A-Za-z][A-Za-z0-9_.:-]*)\)")
-SECTION_REF_PATTERN = re.compile(r"(?<![\w.-])節\((?P<id>[A-Za-z][A-Za-z0-9_.:-]*)\)")
+SECTION_REF_PATTERN = re.compile(r"(?<![\w.-])(?:節|参照)\((?P<id>[A-Za-z][A-Za-z0-9_.:-]*)\)")
 
 
 def indent_content_preserving_raw_text(content: str, indent: str) -> str:
@@ -428,7 +428,13 @@ def apply_heading_numbering(source: str, config: dict[str, Any]) -> tuple[str, d
 
         target_id = target.get("id")
         if isinstance(target_id, str):
-            numbering_by_id[target_id] = {"format": format_text, "number": number, "local": local, "title": title_text}
+            numbering_by_id[target_id] = {
+                "format": format_text,
+                "number": number,
+                "local": local,
+                "title": title_text,
+                "level": str(level),
+            }
 
         if config.get("body", True) and node.end_tag_start is not None:
             replacements.append(
@@ -460,6 +466,7 @@ def collect_section_refs(
                 "number": numbering["number"],
                 "local": numbering["local"],
                 "title": numbering["title"],
+                "level": numbering["level"],
                 "chapterHref": str(chapter["href"]),
                 "source": str(chapter["source"]),
             })
@@ -468,6 +475,11 @@ def collect_section_refs(
 
 def section_ref_label(item: dict[str, str], heading_numbering: dict[str, Any]) -> str:
     format_text = heading_numbering.get("referenceFormat", "{number}")
+    reference_level_formats = heading_numbering.get("referenceLevelFormats", {})
+    if isinstance(reference_level_formats, dict):
+        level_format = reference_level_formats.get(item["level"])
+        if isinstance(level_format, str):
+            format_text = level_format
     if not isinstance(format_text, str):
         format_text = "{number}"
     return (
@@ -525,13 +537,15 @@ def replace_explicit_section_refs(
 ) -> str:
     replacements: list[tuple[int, int, str]] = []
     for node in iter_nodes(parse_fragment(source)):
-        ref_id = node.attrs.get("data-section-ref")
-        if ref_id is None:
-            continue
-        if node.end is None:
-            raise ValueError(f'data-section-ref="{ref_id}" element is missing its closing tag')
-        item = resolve_section_ref(registry, ref_id, output_path, output_dir, "data-section-ref")
-        replacements.append((node.start, node.end, section_ref_link(item, output_path, output_dir, heading_numbering)))
+        for attr_name in ("data-heading-ref", "data-section-ref"):
+            ref_id = node.attrs.get(attr_name)
+            if ref_id is None:
+                continue
+            if node.end is None:
+                raise ValueError(f'{attr_name}="{ref_id}" element is missing its closing tag')
+            item = resolve_section_ref(registry, ref_id, output_path, output_dir, attr_name)
+            replacements.append((node.start, node.end, section_ref_link(item, output_path, output_dir, heading_numbering)))
+            break
 
     return replace_ranges(source, replacements)
 

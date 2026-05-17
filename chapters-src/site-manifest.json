@@ -8,7 +8,12 @@
     "body": true,
     "toc": true,
     "format": "{number}. {title}",
-    "referenceFormat": "{number}"
+    "referenceFormat": "{number}",
+    "referenceLevelFormats": {
+      "2": "Chapter {number}",
+      "3": "Section {number}",
+      "4": "Section {number}"
+    }
   },
   "numbering": {
     "figures": {
