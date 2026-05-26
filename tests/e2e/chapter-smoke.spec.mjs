@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 
+const CHAPTER_BASE = "/tests/fixtures/basic-site/chapters";
 const consoleErrorsByPage = new WeakMap();
 
 test.beforeEach(async ({ page }) => {
@@ -20,7 +21,7 @@ test.afterEach(async ({ page }) => {
 });
 
 test("chapter page initializes document enhancements", async ({ page }) => {
-  await page.goto("/chapters/01-introduction.html");
+  await page.goto(`${CHAPTER_BASE}/01-introduction.html`);
 
   await expect(page).toHaveTitle("Chapter 1: Introduction");
   await expect(page.locator("h1")).toHaveText("Chapter 1: Introduction");
@@ -74,36 +75,36 @@ test("chapter page initializes document enhancements", async ({ page }) => {
 });
 
 test("generated chapter navigation works", async ({ page }) => {
-  await page.goto("/chapters/02-examples.html");
+  await page.goto(`${CHAPTER_BASE}/02-examples.html`);
 
   await expect(page.locator("h1")).toHaveText("Chapter 2: Minimal Page");
   await expect(page.locator(".chapter-nav-link.previous")).toContainText("Chapter 1: Introduction");
   await expect(page.locator(".chapter-nav-link.next")).toContainText("Chapter 3: Reference Page");
 
   await page.locator(".chapter-nav-link.next").click();
-  await expect(page).toHaveURL(/\/chapters\/03-reference\.html$/);
+  await expect(page).toHaveURL(/\/tests\/fixtures\/basic-site\/chapters\/03-reference\.html$/);
   await expect(page.locator("h1")).toHaveText("Chapter 3: Reference Page");
 });
 
 test("first and last generated chapters expose the correct edge navigation", async ({ page }) => {
-  await page.goto("/chapters/01-introduction.html");
+  await page.goto(`${CHAPTER_BASE}/01-introduction.html`);
 
   await expect(page.locator(".chapter-nav-link.previous")).toHaveCount(0);
   await expect(page.locator(".chapter-nav-link.next")).toContainText("Chapter 2: Minimal Page");
 
-  await page.goto("/chapters/03-reference.html");
+  await page.goto(`${CHAPTER_BASE}/03-reference.html`);
 
   await expect(page.locator(".chapter-nav-link.previous")).toContainText("Chapter 2: Minimal Page");
   await expect(page.locator(".chapter-nav-link.next")).toHaveCount(0);
 });
 
 test("chapter-specific external links are appended to shared links", async ({ page }) => {
-  await page.goto("/chapters/01-introduction.html");
+  await page.goto(`${CHAPTER_BASE}/01-introduction.html`);
 
   await expect(page.locator(".nav-section", { hasText: "External Links" })).toContainText("Prism.js");
   await expect(page.locator(".nav-section", { hasText: "External Links" })).not.toContainText("MDN HTML");
 
-  await page.goto("/chapters/02-examples.html");
+  await page.goto(`${CHAPTER_BASE}/02-examples.html`);
 
   const externalLinks = page.locator(".nav-section", { hasText: "External Links" });
   await expect(externalLinks).toContainText("Prism.js");
@@ -117,7 +118,7 @@ test("chapter-specific external links are appended to shared links", async ({ pa
 
 test("mobile layout remains readable without page-level horizontal overflow", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/chapters/01-introduction.html");
+  await page.goto(`${CHAPTER_BASE}/01-introduction.html`);
 
   await expect(page.locator(".sidebar")).toBeVisible();
   await expect(page.locator(".content")).toBeVisible();
@@ -137,7 +138,7 @@ test("mobile layout remains readable without page-level horizontal overflow", as
 test("print layout fits wide content to the printable page width", async ({ page }) => {
   await page.setViewportSize({ width: 794, height: 1123 });
   await page.emulateMedia({ media: "print" });
-  await page.goto("/chapters/01-introduction.html");
+  await page.goto(`${CHAPTER_BASE}/01-introduction.html`);
 
   await expect(page.locator(".sidebar")).toBeHidden();
   await expect(page.locator(".copy-code-button").first()).toBeHidden();
@@ -168,7 +169,7 @@ test("static code copy button writes the code text", async ({ page }) => {
     });
   });
 
-  await page.goto("/chapters/01-introduction.html");
+  await page.goto(`${CHAPTER_BASE}/01-introduction.html`);
 
   const copyButton = page.locator(".code-block-wrap .copy-code-button").first();
   await copyButton.click();
@@ -178,7 +179,7 @@ test("static code copy button writes the code text", async ({ page }) => {
 });
 
 test("python runner reset and print snapshots stay in sync without loading Pyodide", async ({ page }) => {
-  await page.goto("/chapters/01-introduction.html");
+  await page.goto(`${CHAPTER_BASE}/01-introduction.html`);
 
   const runner = page.locator("[data-python-runner-panel]");
   const editor = runner.locator(".CodeMirror");
@@ -208,7 +209,7 @@ test("python runner can load Pyodide and execute code @pyodide", async ({ page }
   test.skip(process.env.PYODIDE_SMOKE !== "1", "Set PYODIDE_SMOKE=1 to run the slow CDN-backed Pyodide smoke test.");
   test.setTimeout(180_000);
 
-  await page.goto("/chapters/01-introduction.html");
+  await page.goto(`${CHAPTER_BASE}/01-introduction.html`);
   await page.locator("[data-python-load-button]").click();
   await expect(page.locator("[data-python-output]")).toContainText("Python runtime loaded", {
     timeout: 120_000

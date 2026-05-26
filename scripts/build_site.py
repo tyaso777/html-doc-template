@@ -1010,21 +1010,18 @@ def validate_shell(shell: str, shell_path: Path) -> None:
         raise ValueError(f"{shell_path} is missing required token(s): {', '.join(missing)}")
 
 
-def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Build generated chapter HTML from source fragments and chapters-src/site-manifest.json.")
-    parser.add_argument("--root", default=".", help="Project root.")
-    parser.add_argument("--manifest", default="chapters-src/site-manifest.json", help="Manifest path relative to root.")
-    return parser.parse_args()
+def display_path(path: Path, root: Path) -> str:
+    try:
+        return path.relative_to(root).as_posix()
+    except ValueError:
+        return path.as_posix()
 
 
-def main() -> int:
-    args = parse_args()
-    root = Path(args.root).resolve()
-    manifest_path = (root / args.manifest).resolve()
+def build_site(root: Path, manifest_path: Path, output_dir_override: Path | None = None) -> list[Path]:
     manifest_dir = manifest_path.parent
     manifest = normalize_manifest(load_manifest(manifest_path))
     shell_path = (manifest_dir / manifest.shell).resolve()
-    output_dir = (manifest_dir / manifest.output_dir).resolve()
+    output_dir = output_dir_override.resolve() if output_dir_override is not None else (manifest_dir / manifest.output_dir).resolve()
     shell = shell_path.read_text(encoding="utf-8")
     validate_shell(shell, shell_path)
     chapter_sources = [
@@ -1042,24 +1039,50 @@ def main() -> int:
         for index, chapter in enumerate(manifest.chapters)
     ]
 
+    output_paths: list[Path] = []
     for index in range(len(manifest.chapters)):
-        output_path = build_chapter(
-            root,
-            manifest_dir,
-            output_dir,
-            shell,
-            manifest.chapters,
-            chapter_sources,
-            index,
-            toc_entries_by_chapter,
-            manifest.document_lang,
-            manifest.materials,
-            manifest.external_links,
-            manifest.heading_numbering,
-            numbered_items,
-            section_refs,
+        output_paths.append(
+            build_chapter(
+                root,
+                manifest_dir,
+                output_dir,
+                shell,
+                manifest.chapters,
+                chapter_sources,
+                index,
+                toc_entries_by_chapter,
+                manifest.document_lang,
+                manifest.materials,
+                manifest.external_links,
+                manifest.heading_numbering,
+                numbered_items,
+                section_refs,
+            )
         )
-        print(f"built {output_path.relative_to(root)}")
+
+    return output_paths
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Build generated chapter HTML from source fragments and chapters-src/site-manifest.json.")
+    parser.add_argument("--root", default=".", help="Project root.")
+    parser.add_argument("--manifest", default="chapters-src/site-manifest.json", help="Manifest path relative to root.")
+    parser.add_argument(
+        "--output-dir",
+        default=None,
+        help="Override the manifest outputDir. Relative paths are resolved from root.",
+    )
+    return parser.parse_args()
+
+
+def main() -> int:
+    args = parse_args()
+    root = Path(args.root).resolve()
+    manifest_path = (root / args.manifest).resolve()
+    output_dir_override = (root / args.output_dir).resolve() if args.output_dir else None
+
+    for output_path in build_site(root, manifest_path, output_dir_override):
+        print(f"built {display_path(output_path, root)}")
 
     return 0
 

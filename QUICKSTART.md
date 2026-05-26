@@ -13,6 +13,8 @@ Edit the source files under `chapters-src/`:
 
 Files under `chapters-src/` are article fragments. They are inserted into `<article class="content">` by `scripts/build_site.py`.
 
+The root `chapters-src/` directory is the user-facing document input. The similarly named `tests/fixtures/basic-site/chapters-src/` directory is fixed template test data; do not edit the fixture when you are only writing document content.
+
 Use top-level `externalLinks` in `chapters-src/site-manifest.json` for links that should appear on every chapter. Use optional chapter-level `externalLinks` for links that should appear only on that chapter.
 
 If `headingNumbering.enabled` is `true` in `chapters-src/site-manifest.json`, write headings without hand-written numbers. The build script will add heading numbers to the generated `chapters/` files.
@@ -130,6 +132,8 @@ For a multi-page document, keep these together:
 - `chapters-src/`
 - `chapters/`
 - `scripts/`
+
+The `tests/fixtures/basic-site/` tree is only needed when developing the template itself. It is not part of the normal document-authoring workflow.
 
 ## AI Agent Rules
 

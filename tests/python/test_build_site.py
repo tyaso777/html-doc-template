@@ -1,10 +1,12 @@
 import unittest
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
 from scripts.build_site import (
     apply_numbered_items,
     apply_section_refs,
     apply_heading_numbering,
+    build_site,
     chapter_external_links,
     collect_numbered_items,
     collect_section_refs,
@@ -15,6 +17,22 @@ from scripts.build_site import (
 
 
 class BuildSiteTests(unittest.TestCase):
+    def test_build_site_can_build_basic_fixture_to_temp_output(self) -> None:
+        root = Path(__file__).resolve().parents[2]
+        manifest_path = root / "tests/fixtures/basic-site/chapters-src/site-manifest.json"
+
+        with TemporaryDirectory() as temp_dir:
+            output_dir = Path(temp_dir) / "chapters"
+            output_paths = build_site(root, manifest_path, output_dir)
+
+            self.assertEqual(
+                [path.name for path in output_paths],
+                ["01-introduction.html", "02-examples.html", "03-reference.html"],
+            )
+            introduction = (output_dir / "01-introduction.html").read_text(encoding="utf-8")
+            self.assertIn('href="01-introduction.html#python-runner-example">Section 4.2</a>', introduction)
+            self.assertIn('href="02-examples.html"', introduction)
+
     def test_indent_content_preserves_pre_code_text(self) -> None:
         content = """<section>
   <p>Before</p>

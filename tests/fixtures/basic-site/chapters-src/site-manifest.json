@@ -1,0 +1,115 @@
+{
+  "title": "html-doc-template chapter examples",
+  "lang": "en",
+  "shell": "../layouts/chapter-shell.html",
+  "outputDir": "../chapters",
+  "headingNumbering": {
+    "enabled": true,
+    "body": true,
+    "toc": true,
+    "format": "{number}. {title}",
+    "referenceFormat": "{number}",
+    "referenceLevelFormats": {
+      "2": "Chapter {number}",
+      "3": "Section {number}",
+      "4": "Section {number}"
+    }
+  },
+  "numbering": {
+    "figures": {
+      "enabled": true,
+      "format": "Figure {chapter}-{index}",
+      "reset": "chapter"
+    },
+    "tables": {
+      "enabled": true,
+      "format": "Table {chapter}-{index}",
+      "reset": "chapter"
+    },
+    "equations": {
+      "enabled": true,
+      "format": "Equation {chapter}-{index}",
+      "reset": "chapter"
+    }
+  },
+  "chapters": [
+    {
+      "title": "Chapter 1: Introduction",
+      "sidebarTitle": "Chapter 1\nIntroduction",
+      "subtitle": "Multi-page example",
+      "number": 1,
+      "source": "01-introduction.html",
+      "href": "01-introduction.html"
+    },
+    {
+      "title": "Chapter 2: Minimal Page",
+      "sidebarTitle": "Chapter 2\nMinimal Page",
+      "subtitle": "Multi-page example",
+      "number": 2,
+      "source": "02-examples.html",
+      "href": "02-examples.html",
+      "externalLinks": [
+        {
+          "title": "Chapter-specific links",
+          "items": [
+            {
+              "label": "MDN HTML",
+              "href": "https://developer.mozilla.org/en-US/docs/Web/HTML"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Chapter 3: Reference Page",
+      "sidebarTitle": "Chapter 3\nReference Page",
+      "subtitle": "Multi-page example",
+      "number": 3,
+      "source": "03-reference.html",
+      "href": "03-reference.html"
+    }
+  ],
+  "materials": [
+    {
+      "title": "Project",
+      "items": [
+        {
+          "label": "Project index",
+          "href": "../../../../index.html"
+        },
+        {
+          "label": "Repository README",
+          "href": "../../../../README.md"
+        }
+      ]
+    }
+  ],
+  "externalLinks": [
+    {
+      "title": "Rendering",
+      "items": [
+        {
+          "label": "Prism.js",
+          "href": "https://prismjs.com/"
+        },
+        {
+          "label": "MathJax",
+          "href": "https://www.mathjax.org/"
+        },
+        {
+          "label": "Mermaid",
+          "href": "https://mermaid.js.org/"
+        }
+      ]
+    },
+    {
+      "title": "Python runtime",
+      "items": [
+        {
+          "label": "Pyodide",
+          "href": "https://pyodide.org/"
+        }
+      ]
+    }
+  ]
+}

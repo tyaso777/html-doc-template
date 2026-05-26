@@ -79,11 +79,20 @@ html-doc-template/
     03-reference.html
   layouts/
     chapter-shell.html
+  tests/
+    fixtures/
+      basic-site/
+        chapters-src/
+        layouts/
 ```
 
 ## Folder Roles
 
+Use `chapters-src/` as the editable source for the real document in this repository. The default `scripts/build_site.py` command reads `chapters-src/site-manifest.json` and writes generated public pages to `chapters/`.
+
 Use `layouts/chapter-shell.html` as the shared wrapper for generated multi-page chapters. It contains the document shell: `<html>`, `<head>`, CDN assets, sidebar, shared CSS, and shared JavaScript.
+
+Use `tests/fixtures/basic-site/` only for template tests. It mirrors the same `chapters-src/` and `layouts/` structure, but it is fixed test input so Python unit tests and browser smoke tests do not break when the user-facing document changes.
 
 ## Requirements
 
@@ -111,7 +120,7 @@ The short version:
 
 On Windows, use `py -3` instead of `python3`. Node.js is not required for document authoring.
 
-This template can be used for multi-page documents by sharing one shell template and the same `assets/` directory across generated HTML files. In this workflow, edit `chapters-src/` and treat `chapters/` as generated output. See `chapters/01-introduction.html`, `chapters/02-examples.html`, and `chapters/03-reference.html` for a minimal three-page example.
+This template can be used for multi-page documents by sharing one shell template and the same `assets/` directory across generated HTML files. In this workflow, edit the user-facing `chapters-src/` and treat `chapters/` as generated output. See `chapters/01-introduction.html`, `chapters/02-examples.html`, and `chapters/03-reference.html` for a minimal three-page example.
 
 Each file under `chapters-src/` is an article fragment, not a complete HTML document. It should contain only the content that belongs inside `<article class="content">`. Keep CDN assets, `<head>`, sidebar markup, shared CSS, and shared JavaScript in `layouts/chapter-shell.html`.
 
@@ -121,9 +130,10 @@ Each source chapter should include a chapter navigation placeholder near the end
 <nav class="chapter-nav" data-chapter-nav aria-label="Chapter navigation"></nav>
 ```
 
-`scripts/build_site.py` reads `chapters-src/site-manifest.json`, combines each source fragment with `layouts/chapter-shell.html`, writes the left-side nested Contents tree from all chapter TOC entries, renders manifest-managed Materials and External Links sections, and writes the generated Previous and Next links into each output file. It uses Python's standard-library HTML parser for chapter TOC extraction, Python runner expansion, and chapter navigation replacement. This keeps chapter order, document language, shell metadata, and shared link lists in one place while keeping the generated HTML usable through GitHub Pages or direct `file://` previews.
+`scripts/build_site.py` reads `chapters-src/site-manifest.json`, combines each source fragment with `layouts/chapter-shell.html`, writes the left-side nested Contents tree from all chapter TOC entries, renders manifest-managed Materials and External Links sections, and writes the generated Previous and Next links into each output file. It uses Python's standard-library HTML parser for chapter TOC extraction, Python runner expansion, and chapter navigation replacement. This keeps chapter order, document language, shell metadata, and shared link lists in one place while keeping the generated HTML usable through GitHub Pages or direct `file://` previews. For custom builds, pass `--manifest` and optionally `--output-dir`, for example `python3 scripts/build_site.py --manifest tests/fixtures/basic-site/chapters-src/site-manifest.json --output-dir /tmp/basic-site/chapters`.
 
 CI runs the build and checks that the generated `chapters/` files have no uncommitted diff, so updates to `chapters-src/` should be committed together with the rebuilt public chapter files.
+Template unit and browser smoke tests use `tests/fixtures/basic-site/` as stable input, not the user-facing `chapters-src/`.
 
 AI agents should follow [QUICKSTART.md](QUICKSTART.md), edit `chapters-src/` instead of generated `chapters/`, and avoid requiring Node.js, npm, Playwright, or browser tests unless explicitly requested.
 
