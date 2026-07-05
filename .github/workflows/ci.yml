@@ -38,10 +38,10 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Build generated chapters
-        run: npm run build
+        run: npm run build:all
 
       - name: Check generated chapters are committed
-        run: git diff --exit-code chapters
+        run: git diff --exit-code chapters template-docs/chapters
 
       - name: Check HTML
         run: npm run check:html
@@ -85,7 +85,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Build generated chapters
-        run: npm run build
+        run: npm run build:all
 
       - name: Run Pyodide browser smoke test
         run: npm run test:e2e:pyodide
