@@ -1,0 +1,1066 @@
+<header class="hero">
+  <!-- Keep exactly one h1 in the document: the main document title. -->
+  <h1>Chapter 1: Introduction</h1>
+  <p>
+    An example chapter page using the technical document template.
+  </p>
+</header>
+
+<section class="document-info" aria-labelledby="document-info-title">
+  <h2 id="document-info-title">Document Information</h2>
+  <dl class="metadata" aria-label="Document metadata">
+    <div>
+      <dt>Version</dt>
+      <dd>0.1.0</dd>
+    </div>
+    <div>
+      <dt>Last updated</dt>
+      <dd>2026-04-25</dd>
+    </div>
+    <div>
+      <dt>Author</dt>
+      <dd>Atsushi Suzuki</dd>
+    </div>
+  </dl>
+</section>
+
+<!--
+  TOC convention:
+  Mark only structural TOC targets with data-toc.
+  For top-level sections, prefer <section id="..." data-toc data-toc-title="...">.
+  For optional lower-level entries, use headings such as <h3 id="..." data-toc data-toc-level="3">.
+  Headings without data-toc are intentionally excluded from the left-side TOC.
+-->
+
+<section id="overview" data-toc data-toc-title="Overview">
+  <h2>Overview</h2>
+  <p>
+    This page can run Python in the browser with Pyodide.
+    A server-side Python environment is not required, but the first runtime load can take some time because Pyodide is downloaded on demand.
+  </p>
+
+  <aside class="callout callout-note">
+    <div class="callout-label">Note</div>
+    <div class="callout-title">Supplemental context</div>
+    <p>
+      Use a supplemental note (<code>aside.callout-note</code>) for helpful context, prerequisites, and recommendations.
+      Example: This template is designed to remain readable on narrow screens.
+    </p>
+  </aside>
+
+  <aside class="callout callout-success">
+    <div class="callout-label">Success</div>
+    <div class="callout-title">Completed or verified state</div>
+    <p>
+      Use a success callout (<code>aside.callout-success</code>) for completed checks, verified outcomes, and successful states.
+      Example: The generated chapter passed the HTML validation step.
+    </p>
+  </aside>
+
+  <aside class="callout callout-warning">
+    <div class="callout-label">Warning</div>
+    <div class="callout-title">JavaScript-dependent enhancements</div>
+    <p>
+      Use a warning note (<code>aside.callout-warning</code>) for constraints, environment-specific behavior, and exceptions readers should know in advance.
+      Example: Python execution, Mermaid, MathJax, Vega-Lite, and Prism depend on JavaScript; the chapter contents and navigation are generated at build time.
+    </p>
+  </aside>
+</section>
+
+<section id="template-guide" data-toc data-toc-title="Template Usage">
+  <h2>Template Usage</h2>
+  <p>
+    This section is a minimal editing guide for creating a new HTML document from the template.
+    It shows the main writing patterns so both human editors and generation models can extend the document consistently.
+    For an interactive code example, see <a data-heading-ref="python-runner-example"></a>.
+  </p>
+
+  <aside class="callout callout-note">
+    <div class="callout-label">Note</div>
+    <p>
+      Use <code>&lt;section id="..." data-toc data-toc-title="..."&gt;</code> for top-level sections that should appear in the table of contents.
+      For optional subsection entries, add <code>id</code>, <code>data-toc</code>, and <code>data-toc-level="3"</code> to the heading.
+    </p>
+  </aside>
+
+  <div class="card">
+    <h3>Common Components</h3>
+    <ul>
+      <li>Supplemental notes and recommendations: <code>&lt;aside class="callout callout-note"&gt;</code> with <code>&lt;div class="callout-label"&gt;Note&lt;/div&gt;</code></li>
+      <li>Completed checks and verified outcomes: <code>&lt;aside class="callout callout-success"&gt;</code> with <code>&lt;div class="callout-label"&gt;Success&lt;/div&gt;</code></li>
+      <li>Warnings and constraints: <code>&lt;aside class="callout callout-warning"&gt;</code> with <code>&lt;div class="callout-label"&gt;Warning&lt;/div&gt;</code></li>
+      <li>Optional callout subtitle: <code>&lt;div class="callout-title"&gt;...&lt;/div&gt;</code></li>
+      <li>Standard body card: <code>&lt;div class="card"&gt;</code></li>
+      <li>Muted card: <code>&lt;div class="card card-muted"&gt;</code></li>
+      <li>Compact card: <code>&lt;div class="card card-compact"&gt;</code></li>
+      <li>Code display: <code>&lt;pre class="code-block language-python"&gt;&lt;code class="language-python"&gt;</code></li>
+      <li>Math: use <code>\(...\)</code> for inline math and <code>\[...\]</code> for display math</li>
+      <li>Mermaid diagrams: write the diagram definition inside <code>&lt;div class="mermaid"&gt;</code>.</li>
+    </ul>
+  </div>
+
+  <aside class="callout callout-warning">
+    <div class="callout-label">Warning</div>
+    <div class="callout-title">Progressive enhancement</div>
+    <p>
+      The Python runner, Mermaid, MathJax, Vega-Lite, Prism, and copy buttons are JavaScript enhancements.
+      The sidebar contents, heading references, and previous/next chapter navigation are generated at build time.
+      The sidebar Layout control can switch the page between the standard width and a wide layout; the initial mode is set by <code>layout.defaultMode</code> in the site manifest, and the viewer's last choice is remembered by the browser.
+      This is separate from <code>table-wide</code>, which controls an individual table.
+      Keep important explanations in normal HTML body text so the document remains readable if JavaScript is unavailable.
+    </p>
+  </aside>
+</section>
+
+<section id="formula-examples" data-toc data-toc-title="Math Examples">
+  <h2>Math Examples</h2>
+  <p>
+    These examples show inline and display math rendered by MathJax.
+    When creating a new document, copy this section and replace the content while preserving the display patterns.
+  </p>
+
+  <h3 id="inline-formula-example" data-toc data-toc-level="3" data-toc-title="Inline Math">Inline Math</h3>
+  <p>
+    Use <code>\(...\)</code> for short formulas inside a paragraph.
+    For example, a normal distribution can be written as \(X \sim \mathcal{N}(\mu, \sigma^2)\) using mean \(\mu\) and variance \(\sigma^2\).
+    The standardized value is \(z = (x - \mu) / \sigma\).
+  </p>
+
+  <h3 id="display-formula-example" data-toc data-toc-level="3" data-toc-title="Display Math">Display Math</h3>
+  <p>
+    Use <code>\[...\]</code> for standalone formulas, optionally wrapped in <code>div.math-block</code>.
+    The density definition in <span data-ref="normal-density"></span> and the moment identities in <span data-ref="normal-moments"></span> are numbered examples.
+  </p>
+
+  <div id="normal-density" class="math-block" data-numbered="equation">
+    \[
+      f(x) = \frac{1}{\sigma\sqrt{2\pi}}
+      \exp\left(-\frac{(x - \mu)^2}{2\sigma^2}\right)
+    \]
+  </div>
+
+  <div id="normal-moments" class="math-block" data-numbered="equation">
+    \[
+      \mathbb{E}[X] = \mu, \qquad
+      \mathrm{Var}(X) = \sigma^2, \qquad
+      \int_{-\infty}^{\infty} f(x)\,dx = 1
+    \]
+  </div>
+</section>
+
+<section id="python-code-examples" data-toc data-toc-title="Python Code Display and Execution">
+  <h2>Python Code Display and Execution</h2>
+  <p>
+    Use static code blocks for code that readers only need to inspect, and use the browser runner for code readers should edit and execute.
+    This keeps explanatory snippets separate from interactive examples.
+  </p>
+
+  <h3 id="python-code-display-example" data-toc data-toc-level="3" data-toc-title="Python Code Block">Python Code Block</h3>
+  <p>
+    For code that does not need to run in the browser, combine <code>pre.code-block</code> with <code>code.language-python</code>.
+    Place <code>div.code-caption</code> above the block to show the language name or file name.
+  </p>
+
+  <div class="code-caption">python</div>
+  <pre class="code-block language-python"><code class="language-python">def summarize_scores(scores: list[int]) -> dict[str, float]:
+    """Returns simple summary statistics for a score list."""
+    total = sum(scores)
+    count = len(scores)
+
+    return {
+        "count": count,
+        "average": total / count,
+        "maximum": max(scores),
+    }
+
+
+scores = [82, 90, 76, 88]
+summary = summarize_scores(scores)
+print(summary)
+</code></pre>
+
+  <h3 id="python-runner-example" data-toc data-toc-level="3" data-toc-title="Executable Code Example">Executable Code Example</h3>
+  <p>
+    Use the runner source block for code that readers should edit and execute.
+    The build script expands <code>div[data-python-runner]</code> into the full browser runner UI.
+  </p>
+
+  <aside class="callout callout-warning">
+    <div class="callout-label">Warning</div>
+    <div class="callout-title">Pyodide CDN loading</div>
+    <p>
+      The Python runner loads Pyodide from a CDN only after the reader presses <strong>Load Python Runtime</strong>.
+      Pyodide is loaded with <code>importScripts()</code> inside a Web Worker, so normal script-tag SRI with <code>integrity</code> cannot be used there.
+      For documents that require strict supply-chain control, host a reviewed Pyodide distribution locally.
+    </p>
+  </aside>
+
+<div class="python-runner-source" data-python-runner>
+  <p class="runner-caption">Try changing the input sizes and run the code.</p>
+  <pre><code class="language-python">from time import perf_counter
+
+
+def linear_search_with_count(values: list[int], target: int) -> tuple[int, int]:
+    """Finds the target by scanning values and counts comparisons.
+
+    Args:
+        values: Sorted integer values.
+        target: Value to find.
+
+    Returns:
+        A pair of the target index and the number of comparisons.
+    """
+    comparisons = 0
+
+    for index, value in enumerate(values):
+        comparisons += 1
+        if value == target:
+            return index, comparisons
+
+    return -1, comparisons
+
+
+def binary_search_with_count(values: list[int], target: int) -> tuple[int, int]:
+    """Finds the target using binary search and counts comparisons.
+
+    Args:
+        values: Sorted integer values.
+        target: Value to find.
+
+    Returns:
+        A pair of the target index and the number of comparisons.
+    """
+    left = 0
+    right = len(values) - 1
+    comparisons = 0
+
+    while left <= right:
+        middle = (left + right) // 2
+        comparisons += 1
+
+        if values[middle] == target:
+            return middle, comparisons
+
+        if values[middle] < target:
+            left = middle + 1
+        else:
+            right = middle - 1
+
+    return -1, comparisons
+
+
+def measure_once(n: int, repeats: int) -> tuple[int, int, float, float]:
+    """Measures comparison counts and average execution times.
+
+    Args:
+        n: Number of elements.
+        repeats: Number of repeated searches.
+
+    Returns:
+        Linear-search comparisons, binary-search comparisons, average linear-search
+        time, and average binary-search time.
+    """
+    values = list(range(n))
+    target = n - 1
+
+    _, linear_comparisons = linear_search_with_count(values, target)
+    _, binary_comparisons = binary_search_with_count(values, target)
+
+    start = perf_counter()
+    for _ in range(repeats):
+        linear_search_with_count(values, target)
+    linear_ms = (perf_counter() - start) * 1000 / repeats
+
+    start = perf_counter()
+    for _ in range(repeats):
+        binary_search_with_count(values, target)
+    binary_ms = (perf_counter() - start) * 1000 / repeats
+
+    return linear_comparisons, binary_comparisons, linear_ms, binary_ms
+
+
+def main() -> None:
+    """Runs a simple growth-rate experiment."""
+    sizes = [1_000, 10_000, 100_000, 500_000, 1_000_000]
+    repeats_by_size = {
+        1_000: 200,
+        10_000: 100,
+        100_000: 20,
+        500_000: 5,
+        1_000_000: 3,
+    }
+
+    print("n          linear_cmp   binary_cmp   cmp_ratio   linear_ms   binary_ms")
+    print("-" * 78)
+
+    for n in sizes:
+        linear_cmp, binary_cmp, linear_ms, binary_ms = measure_once(n, repeats_by_size[n])
+        ratio = linear_cmp / binary_cmp if binary_cmp > 0 else float("inf")
+        print(
+            f"{n:>9}  "
+            f"{linear_cmp:>10}  "
+            f"{binary_cmp:>10}  "
+            f"{ratio:>9.1f}x  "
+            f"{linear_ms:>9.4f}  "
+            f"{binary_ms:>9.4f}"
+        )
+
+    print()
+    print("Interpretation:")
+    print("- Comparison counts are the cleanest signal here.")
+    print("- Linear search comparisons grow almost directly with n.")
+    print("- Binary search comparisons grow slowly because the search range is halved.")
+    print("- Timing numbers are useful but noisier than comparison counts.")
+
+
+main()</code></pre>
+</div>
+</section>
+
+<section id="other-language-examples" data-toc data-toc-title="Other Languages">
+  <h2>Other Languages</h2>
+  <p>
+    Code in other languages can use the same visual style by switching the Prism language class.
+    This template loads the PowerShell and SQL Prism components by default.
+  </p>
+
+  <h3 id="powershell-code-example" data-toc data-toc-level="3" data-toc-title="PowerShell Code Block">PowerShell Code Block</h3>
+  <div class="code-caption">powershell</div>
+  <pre class="code-block language-powershell"><code class="language-powershell">Get-ChildItem -Path . -Filter "*.html" |
+    Select-Object Name, Length, LastWriteTime |
+    Sort-Object LastWriteTime -Descending
+</code></pre>
+
+  <h3 id="sql-code-example" data-toc data-toc-level="3" data-toc-title="SQL Code Block">SQL Code Block</h3>
+  <div class="code-caption">sql</div>
+  <pre class="code-block language-sql"><code class="language-sql">SELECT
+    document_id,
+    title,
+    updated_at
+FROM documents
+WHERE status = "published"
+ORDER BY updated_at DESC;
+</code></pre>
+
+  <aside class="callout callout-warning">
+    <div class="callout-label">Warning</div>
+    <div class="callout-title">Additional Prism languages</div>
+    <p>
+      To add another language such as cmd, bash, or JSON, load the corresponding Prism language component and change the <code>language-...</code> class to match.
+      If you add files from a CDN, also add SRI metadata for those files.
+    </p>
+  </aside>
+</section>
+
+<section id="mermaid" data-toc data-toc-title="Mermaid Diagrams">
+  <h2>Mermaid Diagrams</h2>
+  <p>
+    Mermaid renders flowcharts and structural diagrams from text definitions.
+    You can update a diagram by editing text in the HTML instead of recreating an image.
+    Mermaid also supports sequence diagrams, class diagrams, state diagrams, and more.
+    The rendered result is referenced as <span data-ref="document-flow"></span>.
+  </p>
+
+  <div class="code-caption">mermaid</div>
+  <pre class="code-block language-mermaid"><code class="language-mermaid">flowchart LR
+    A[Define the document goal] --> B[Plan the section structure]
+    B --> C[Write the body text]
+    B --> D[Create exercises or code examples]
+    C --> E[Add diagrams and math]
+    D --> F[Check executable examples]
+    E --> G[Review the rendered document]
+    F --> G
+</code></pre>
+
+  <figure id="document-flow" class="mermaid-figure" data-numbered="figure">
+    <figcaption>Diagram rendered from the Mermaid definition above</figcaption>
+    <div class="mermaid-wrap">
+      <!-- Use div.mermaid as the Mermaid rendering hook; figure/figcaption provide the semantic structure. -->
+      <div class="mermaid">
+flowchart LR
+    A[Define the document goal] --> B[Plan the section structure]
+    B --> C[Write the body text]
+    B --> D[Create exercises or code examples]
+    C --> E[Add diagrams and math]
+    D --> F[Check executable examples]
+    E --> G[Review the rendered document]
+    F --> G
+      </div>
+    </div>
+  </figure>
+</section>
+
+<section id="vega-lite" data-toc data-toc-title="Vega-Lite Charts">
+  <h2>Vega-Lite Charts</h2>
+  <p>
+    Vega-Lite renders charts from a JSON specification.
+    When a chapter contains a Vega-Lite chart, the build injects pinned Vega, Vega-Lite, and vega-embed CDN assets so authors can add a chart by editing the JSON spec in the source HTML.
+    The example below combines a year selector, clickable stacked bars, tooltips, and a linked component breakdown without adding custom JavaScript.
+  </p>
+
+  <div class="code-caption">vega-lite json excerpt</div>
+  <pre class="code-block"><code>{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "params": [
+    {
+      "name": "selectedYear",
+      "value": 2026,
+      "bind": {
+        "input": "select",
+        "options": [2025, 2026],
+        "name": "Year "
+      }
+    }
+  ],
+  "vconcat": [
+    {
+      "params": [
+        {
+          "name": "selectedItem",
+          "value": [{"region": "East", "product": "Basic"}],
+          "select": {"type": "point", "fields": ["region", "product"]}
+        }
+      ],
+      "mark": "bar",
+      "transform": [{"fold": ["New", "Expansion", "Renewal", "Support"], "as": ["component", "amount"]}]
+    },
+    {
+      "transform": [
+        {"filter": {"param": "selectedItem"}},
+        {"fold": ["New", "Expansion", "Renewal", "Support"], "as": ["component", "amount"]}
+      ],
+      "mark": {"type": "line", "point": true}
+    }
+  ]
+}</code></pre>
+
+  <figure id="quarterly-results-chart" class="vega-lite-figure" data-numbered="figure">
+    <figcaption>Interactive Vega-Lite chart rendered from JSON</figcaption>
+    <div class="vega-lite-wrap">
+      <div class="vega-lite" data-vega-lite data-vega-lite-spec="quarterly-results-chart-spec" aria-label="Quarterly results by year, region, and product"></div>
+    </div>
+    <template type="application/json" id="quarterly-results-chart-spec">
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Linked component breakdown example with a year selector and click selection.",
+  "data": {
+    "values": [
+      {"year": 2025, "region": "East", "product": "Basic", "quarter": "Q1", "New": 42, "Expansion": 30, "Renewal": 34, "Support": 12},
+      {"year": 2025, "region": "East", "product": "Basic", "quarter": "Q2", "New": 45, "Expansion": 34, "Renewal": 35, "Support": 12},
+      {"year": 2025, "region": "East", "product": "Basic", "quarter": "Q3", "New": 46, "Expansion": 37, "Renewal": 36, "Support": 12},
+      {"year": 2025, "region": "East", "product": "Basic", "quarter": "Q4", "New": 49, "Expansion": 42, "Renewal": 38, "Support": 13},
+      {"year": 2025, "region": "East", "product": "Plus", "quarter": "Q1", "New": 29, "Expansion": 24, "Renewal": 28, "Support": 10},
+      {"year": 2025, "region": "East", "product": "Plus", "quarter": "Q2", "New": 31, "Expansion": 27, "Renewal": 29, "Support": 10},
+      {"year": 2025, "region": "East", "product": "Plus", "quarter": "Q3", "New": 33, "Expansion": 29, "Renewal": 30, "Support": 11},
+      {"year": 2025, "region": "East", "product": "Plus", "quarter": "Q4", "New": 35, "Expansion": 33, "Renewal": 32, "Support": 11},
+      {"year": 2025, "region": "West", "product": "Basic", "quarter": "Q1", "New": 35, "Expansion": 28, "Renewal": 31, "Support": 11},
+      {"year": 2025, "region": "West", "product": "Basic", "quarter": "Q2", "New": 38, "Expansion": 30, "Renewal": 33, "Support": 12},
+      {"year": 2025, "region": "West", "product": "Basic", "quarter": "Q3", "New": 40, "Expansion": 34, "Renewal": 35, "Support": 12},
+      {"year": 2025, "region": "West", "product": "Basic", "quarter": "Q4", "New": 42, "Expansion": 37, "Renewal": 37, "Support": 13},
+      {"year": 2025, "region": "West", "product": "Plus", "quarter": "Q1", "New": 25, "Expansion": 22, "Renewal": 27, "Support": 10},
+      {"year": 2025, "region": "West", "product": "Plus", "quarter": "Q2", "New": 27, "Expansion": 24, "Renewal": 29, "Support": 10},
+      {"year": 2025, "region": "West", "product": "Plus", "quarter": "Q3", "New": 28, "Expansion": 26, "Renewal": 31, "Support": 10},
+      {"year": 2025, "region": "West", "product": "Plus", "quarter": "Q4", "New": 30, "Expansion": 29, "Renewal": 32, "Support": 11},
+      {"year": 2026, "region": "East", "product": "Basic", "quarter": "Q1", "New": 46, "Expansion": 35, "Renewal": 38, "Support": 13},
+      {"year": 2026, "region": "East", "product": "Basic", "quarter": "Q2", "New": 51, "Expansion": 40, "Renewal": 40, "Support": 14},
+      {"year": 2026, "region": "East", "product": "Basic", "quarter": "Q3", "New": 53, "Expansion": 43, "Renewal": 42, "Support": 14},
+      {"year": 2026, "region": "East", "product": "Basic", "quarter": "Q4", "New": 57, "Expansion": 50, "Renewal": 44, "Support": 15},
+      {"year": 2026, "region": "East", "product": "Plus", "quarter": "Q1", "New": 34, "Expansion": 30, "Renewal": 32, "Support": 11},
+      {"year": 2026, "region": "East", "product": "Plus", "quarter": "Q2", "New": 37, "Expansion": 34, "Renewal": 34, "Support": 11},
+      {"year": 2026, "region": "East", "product": "Plus", "quarter": "Q3", "New": 39, "Expansion": 36, "Renewal": 35, "Support": 12},
+      {"year": 2026, "region": "East", "product": "Plus", "quarter": "Q4", "New": 42, "Expansion": 42, "Renewal": 38, "Support": 13},
+      {"year": 2026, "region": "West", "product": "Basic", "quarter": "Q1", "New": 39, "Expansion": 33, "Renewal": 34, "Support": 13},
+      {"year": 2026, "region": "West", "product": "Basic", "quarter": "Q2", "New": 42, "Expansion": 36, "Renewal": 37, "Support": 13},
+      {"year": 2026, "region": "West", "product": "Basic", "quarter": "Q3", "New": 45, "Expansion": 40, "Renewal": 40, "Support": 14},
+      {"year": 2026, "region": "West", "product": "Basic", "quarter": "Q4", "New": 48, "Expansion": 44, "Renewal": 42, "Support": 14},
+      {"year": 2026, "region": "West", "product": "Plus", "quarter": "Q1", "New": 29, "Expansion": 27, "Renewal": 31, "Support": 11},
+      {"year": 2026, "region": "West", "product": "Plus", "quarter": "Q2", "New": 32, "Expansion": 30, "Renewal": 33, "Support": 11},
+      {"year": 2026, "region": "West", "product": "Plus", "quarter": "Q3", "New": 35, "Expansion": 33, "Renewal": 35, "Support": 12},
+      {"year": 2026, "region": "West", "product": "Plus", "quarter": "Q4", "New": 37, "Expansion": 38, "Renewal": 36, "Support": 13}
+    ]
+  },
+  "params": [
+    {
+      "name": "selectedYear",
+      "value": 2026,
+      "bind": {
+        "input": "select",
+        "options": [2025, 2026],
+        "name": "Year "
+      }
+    }
+  ],
+  "vconcat": [
+    {
+      "title": "Annual total by region, product, and component",
+      "params": [
+        {
+          "name": "selectedItem",
+          "value": [{"region": "East", "product": "Basic"}],
+          "select": {
+            "type": "point",
+            "fields": ["region", "product"],
+            "on": "click",
+            "clear": "dblclick"
+          }
+        }
+      ],
+      "transform": [
+        {"filter": "datum.year == selectedYear"},
+        {
+          "fold": ["New", "Expansion", "Renewal", "Support"],
+          "as": ["component", "amount"]
+        },
+        {
+          "aggregate": [{"op": "sum", "field": "amount", "as": "total"}],
+          "groupby": ["region", "product", "component"]
+        }
+      ],
+      "mark": {"type": "bar", "cornerRadiusEnd": 2},
+      "encoding": {
+        "x": {"field": "region", "type": "nominal", "title": "Region"},
+        "xOffset": {"field": "product"},
+        "y": {"field": "total", "type": "quantitative", "title": "Annual total"},
+        "color": {
+          "field": "component",
+          "type": "nominal",
+          "title": "Component",
+          "scale": {"range": ["#1a73e8", "#34a853", "#fbbc04", "#9aa0a6"]}
+        },
+        "opacity": {
+          "condition": {"param": "selectedItem", "value": 1},
+          "value": 0.45
+        },
+        "tooltip": [
+          {"field": "region", "type": "nominal", "title": "Region"},
+          {"field": "product", "type": "nominal", "title": "Product"},
+          {"field": "component", "type": "nominal", "title": "Component"},
+          {"field": "total", "type": "quantitative", "title": "Annual total"}
+        ]
+      },
+      "width": 560,
+      "height": 180
+    },
+    {
+      "title": "Quarterly component trend for the clicked bar",
+      "transform": [
+        {"filter": "datum.year == selectedYear"},
+        {"filter": {"param": "selectedItem"}},
+        {
+          "fold": ["New", "Expansion", "Renewal", "Support"],
+          "as": ["component", "amount"]
+        }
+      ],
+      "mark": {"type": "line", "point": true, "strokeWidth": 2},
+      "encoding": {
+        "x": {"field": "quarter", "type": "ordinal", "title": "Quarter"},
+        "y": {"field": "amount", "type": "quantitative", "title": "Quarterly amount"},
+        "color": {
+          "field": "component",
+          "type": "nominal",
+          "title": "Component",
+          "scale": {"range": ["#1a73e8", "#34a853", "#fbbc04", "#9aa0a6"]}
+        },
+        "tooltip": [
+          {"field": "year", "type": "ordinal", "title": "Year"},
+          {"field": "region", "type": "nominal", "title": "Region"},
+          {"field": "product", "type": "nominal", "title": "Product"},
+          {"field": "quarter", "type": "ordinal", "title": "Quarter"},
+          {"field": "component", "type": "nominal", "title": "Component"},
+          {"field": "amount", "type": "quantitative", "title": "Amount"}
+        ]
+      },
+      "width": 560,
+      "height": 180
+    }
+  ],
+  "resolve": {
+    "scale": {
+      "color": "shared"
+    }
+  },
+  "config": {
+    "view": {"stroke": "transparent"},
+    "axis": {"labelFont": "system-ui", "titleFont": "system-ui"},
+    "legend": {"labelFont": "system-ui", "titleFont": "system-ui"},
+    "header": {"labelFont": "system-ui", "titleFont": "system-ui"}
+  }
+}
+    </template>
+  </figure>
+</section>
+
+<section id="table-examples" data-toc data-toc-title="Table Examples">
+  <h2>Table Examples</h2>
+  <p>
+    Tables are managed as a single block by applying classes and attributes to <code>div.table-wrap</code>.
+    Choose the horizontal behavior first: use the standard table when columns should fit the content width and wrap, or add <code>table-wide</code> when the table should keep its natural width and scroll horizontally.
+    Then choose whether the table also needs a fixed vertical height: add <code>table-fixed-height</code> when many records should scroll under a sticky header.
+    Add <code>table-compact</code> only when shorter row spacing is useful.
+    Use <code>table-grid</code> when full cell borders help matrix-style reading, and <code>data-index-columns</code> to mark leading record-index columns.
+    Numbered table captions are generated for tables such as <span data-ref="standard-table-many-columns"></span> and <span data-ref="wide-table-many-columns"></span>.
+  </p>
+  <ul>
+    <li><strong>Horizontal width:</strong> standard table by default, or <code>table-wide</code> for horizontal scrolling.</li>
+    <li><strong>Vertical height:</strong> unrestricted by default, or <code>table-fixed-height</code> for a height-limited table with a sticky header.</li>
+    <li><strong>Row density:</strong> regular spacing by default, or <code>table-compact</code> when narrower row spacing is preferred.</li>
+  </ul>
+
+  <h3 id="standard-table-example" data-toc data-toc-level="3" data-toc-title="Standard Table">Standard Table</h3>
+  <p>
+    A standard table fills the content width and wraps cell text so it usually fits without horizontal scrolling.
+    This example keeps many columns so the default width, wrapping behavior, and numeric alignment can be inspected without switching to the wide-table mode.
+    The records are placeholder values for inspecting table presentation; they are not intended as technical guidance.
+  </p>
+
+  <div class="table-wrap">
+    <table id="standard-table-many-columns" data-numbered="table">
+      <caption>Standard table example with many columns</caption>
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>Input</th>
+          <th>Output</th>
+          <th>Mobile</th>
+          <th>Print</th>
+          <th>JavaScript</th>
+          <th>Accessibility</th>
+          <th class="numeric">Examples</th>
+          <th class="numeric">Avg ms</th>
+          <th class="numeric">Pass rate</th>
+          <th>Numbering</th>
+          <th>Copy support</th>
+          <th>Review note</th>
+          <th>Recommended use</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Callout</td>
+          <td>Short prose</td>
+          <td>Highlighted note</td>
+          <td>Wraps</td>
+          <td>Fits</td>
+          <td>Not required</td>
+          <td>Screen-reader friendly</td>
+          <td class="numeric">1,234,567</td>
+          <td class="numeric">0.312345</td>
+          <td class="numeric">100%</td>
+          <td>No</td>
+          <td>No</td>
+          <td>Keep notes concise.</td>
+          <td>Use for warnings, tips, and prerequisites.</td>
+        </tr>
+        <tr>
+          <td>Math</td>
+          <td>TeX source</td>
+          <td>Rendered formula</td>
+          <td>May scroll</td>
+          <td>Review</td>
+          <td>Required</td>
+          <td>Needs surrounding prose</td>
+          <td class="numeric">98,765,432</td>
+          <td class="numeric">38.765432</td>
+          <td class="numeric">98.5%</td>
+          <td>Yes</td>
+          <td>No</td>
+          <td>Check narrow screens.</td>
+          <td>Use for equations that need mathematical notation.</td>
+        </tr>
+        <tr>
+          <td>Table</td>
+          <td>Rows and columns</td>
+          <td>Structured grid</td>
+          <td>Wraps</td>
+          <td>Fits</td>
+          <td>Not required</td>
+          <td>Use header cells</td>
+          <td class="numeric">987,654,321</td>
+          <td class="numeric">0.654321</td>
+          <td class="numeric">100%</td>
+          <td>Optional</td>
+          <td>No</td>
+          <td>Choose normal or wide mode.</td>
+          <td>Use for dense comparisons and result summaries.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 id="wide-table-example" data-toc data-toc-level="3" data-toc-title="Wide Table">Wide Table</h3>
+  <p>
+    Add <code>table-wide</code> when preserving the table's natural width is more important than forcing every column to wrap.
+    The wrapper keeps horizontal scrolling available on narrow screens.
+  </p>
+  <div class="table-wrap table-wide" style="--table-min-width: 58rem;">
+    <table id="wide-table-many-columns" data-numbered="table">
+      <caption>Wide table example with many columns</caption>
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>Input</th>
+          <th>Output</th>
+          <th>Mobile</th>
+          <th>Print</th>
+          <th>JavaScript</th>
+          <th>Accessibility</th>
+          <th class="numeric">Examples</th>
+          <th class="numeric">Avg ms</th>
+          <th class="numeric">Pass rate</th>
+          <th>Numbering</th>
+          <th>Copy support</th>
+          <th>Review note</th>
+          <th>Recommended use</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Callout</td>
+          <td>Short prose</td>
+          <td>Highlighted note</td>
+          <td>Wraps</td>
+          <td>Fits</td>
+          <td>Not required</td>
+          <td>Screen-reader friendly</td>
+          <td class="numeric">1,234,567</td>
+          <td class="numeric">0.312345</td>
+          <td class="numeric">100%</td>
+          <td>No</td>
+          <td>No</td>
+          <td>Keep notes concise.</td>
+          <td>Use for warnings, tips, and prerequisites.</td>
+        </tr>
+        <tr>
+          <td>Math</td>
+          <td>TeX source</td>
+          <td>Rendered formula</td>
+          <td>May scroll</td>
+          <td>Review</td>
+          <td>Required</td>
+          <td>Needs surrounding prose</td>
+          <td class="numeric">98,765,432</td>
+          <td class="numeric">38.765432</td>
+          <td class="numeric">98.5%</td>
+          <td>Yes</td>
+          <td>No</td>
+          <td>Check narrow screens.</td>
+          <td>Use for equations that need mathematical notation.</td>
+        </tr>
+        <tr>
+          <td>Table</td>
+          <td>Rows and columns</td>
+          <td>Structured grid</td>
+          <td>Wraps</td>
+          <td>Fits</td>
+          <td>Not required</td>
+          <td>Use header cells</td>
+          <td class="numeric">987,654,321</td>
+          <td class="numeric">0.654321</td>
+          <td class="numeric">100%</td>
+          <td>Optional</td>
+          <td>No</td>
+          <td>Choose normal or wide mode.</td>
+          <td>Use for dense comparisons and result summaries.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 id="scrollable-table-example" data-toc data-toc-level="3" data-toc-title="Fixed-Height Table">Fixed-Height Table</h3>
+  <p>
+    Add <code>table-fixed-height</code> when a table has many records and should keep a viewport-aware maximum height.
+    The default height is based on the window size; set <code>--table-max-height</code> on an individual table wrapper when a specific height is needed.
+    The header row stays visible while the body scrolls vertically.
+    This is separate from <code>table-wide</code>; combine both classes only when a table needs horizontal and vertical scrolling.
+  </p>
+  <div class="table-wrap table-fixed-height table-compact">
+    <table id="scrollable-job-results" data-numbered="table">
+      <caption>Fixed-height table example with many records</caption>
+      <thead>
+        <tr>
+          <th>Run</th>
+          <th>Dataset</th>
+          <th>Status</th>
+          <th class="numeric">Rows</th>
+          <th class="numeric">Duration</th>
+          <th class="numeric">Memory</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>R-001</td>
+          <td>events-alpha</td>
+          <td>Pass</td>
+          <td class="numeric">12,480</td>
+          <td class="numeric">4.2s</td>
+          <td class="numeric">220 MB</td>
+          <td>Baseline import.</td>
+        </tr>
+        <tr>
+          <td>R-002</td>
+          <td>events-beta</td>
+          <td>Pass</td>
+          <td class="numeric">18,920</td>
+          <td class="numeric">5.1s</td>
+          <td class="numeric">248 MB</td>
+          <td>Schema matched.</td>
+        </tr>
+        <tr>
+          <td>R-003</td>
+          <td>events-gamma</td>
+          <td>Warn</td>
+          <td class="numeric">21,440</td>
+          <td class="numeric">6.8s</td>
+          <td class="numeric">310 MB</td>
+          <td>Optional field missing.</td>
+        </tr>
+        <tr>
+          <td>R-004</td>
+          <td>metrics-alpha</td>
+          <td>Pass</td>
+          <td class="numeric">7,260</td>
+          <td class="numeric">2.9s</td>
+          <td class="numeric">180 MB</td>
+          <td>Aggregates verified.</td>
+        </tr>
+        <tr>
+          <td>R-005</td>
+          <td>metrics-beta</td>
+          <td>Pass</td>
+          <td class="numeric">8,104</td>
+          <td class="numeric">3.3s</td>
+          <td class="numeric">192 MB</td>
+          <td>Indexes reused.</td>
+        </tr>
+        <tr>
+          <td>R-006</td>
+          <td>metrics-gamma</td>
+          <td>Pass</td>
+          <td class="numeric">8,912</td>
+          <td class="numeric">3.7s</td>
+          <td class="numeric">205 MB</td>
+          <td>Cache warmed.</td>
+        </tr>
+        <tr>
+          <td>R-007</td>
+          <td>logs-alpha</td>
+          <td>Warn</td>
+          <td class="numeric">31,506</td>
+          <td class="numeric">8.9s</td>
+          <td class="numeric">402 MB</td>
+          <td>Late records detected.</td>
+        </tr>
+        <tr>
+          <td>R-008</td>
+          <td>logs-beta</td>
+          <td>Pass</td>
+          <td class="numeric">29,880</td>
+          <td class="numeric">8.1s</td>
+          <td class="numeric">388 MB</td>
+          <td>Partition counts match.</td>
+        </tr>
+        <tr>
+          <td>R-009</td>
+          <td>logs-gamma</td>
+          <td>Pass</td>
+          <td class="numeric">34,220</td>
+          <td class="numeric">9.4s</td>
+          <td class="numeric">430 MB</td>
+          <td>Compressed source.</td>
+        </tr>
+        <tr>
+          <td>R-010</td>
+          <td>audit-alpha</td>
+          <td>Pass</td>
+          <td class="numeric">4,820</td>
+          <td class="numeric">1.8s</td>
+          <td class="numeric">144 MB</td>
+          <td>Small reference set.</td>
+        </tr>
+        <tr>
+          <td>R-011</td>
+          <td>audit-beta</td>
+          <td>Pass</td>
+          <td class="numeric">5,016</td>
+          <td class="numeric">2.0s</td>
+          <td class="numeric">150 MB</td>
+          <td>Checksum verified.</td>
+        </tr>
+        <tr>
+          <td>R-012</td>
+          <td>audit-gamma</td>
+          <td>Warn</td>
+          <td class="numeric">5,208</td>
+          <td class="numeric">2.4s</td>
+          <td class="numeric">162 MB</td>
+          <td>Manual review queued.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 id="indexed-table-example" data-toc data-toc-level="3" data-toc-title="Indexed Table">Indexed Table</h3>
+  <p>
+    Use <code>data-index-columns="2"</code> when the first two columns identify each record, similar to a DataFrame with a multi-column index.
+    Header rows can also be grouped with <code>rowspan</code> and <code>colspan</code> when the data columns have multiple levels.
+    This example also uses <code>table-grid</code> to show the full grid style with vertical rules, which can help when the table is read as a matrix.
+  </p>
+  <div class="table-wrap table-wide table-grid" data-index-columns="2">
+    <table id="indexed-table-two-columns" data-numbered="table">
+      <caption>Wide indexed table example with grouped columns</caption>
+      <thead>
+        <tr>
+          <th rowspan="2">Region</th>
+          <th rowspan="2">Product</th>
+          <th colspan="4">2025 result</th>
+          <th colspan="4">2026 result</th>
+        </tr>
+        <tr>
+          <th class="numeric">Q1</th>
+          <th class="numeric">Q2</th>
+          <th class="numeric">Q3</th>
+          <th class="numeric">Q4</th>
+          <th class="numeric">Q1</th>
+          <th class="numeric">Q2</th>
+          <th class="numeric">Q3</th>
+          <th class="numeric">Q4</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">East</th>
+          <th scope="row">Basic</th>
+          <td class="numeric">104</td>
+          <td class="numeric">111</td>
+          <td class="numeric">118</td>
+          <td class="numeric">126</td>
+          <td class="numeric">120</td>
+          <td class="numeric">132</td>
+          <td class="numeric">141</td>
+          <td class="numeric">150</td>
+        </tr>
+        <tr>
+          <th scope="row">East</th>
+          <th scope="row">Pro</th>
+          <td class="numeric">72</td>
+          <td class="numeric">79</td>
+          <td class="numeric">83</td>
+          <td class="numeric">90</td>
+          <td class="numeric">88</td>
+          <td class="numeric">94</td>
+          <td class="numeric">101</td>
+          <td class="numeric">117</td>
+        </tr>
+        <tr>
+          <th scope="row">West</th>
+          <th scope="row">Basic</th>
+          <td class="numeric">84</td>
+          <td class="numeric">91</td>
+          <td class="numeric">96</td>
+          <td class="numeric">103</td>
+          <td class="numeric">99</td>
+          <td class="numeric">105</td>
+          <td class="numeric">110</td>
+          <td class="numeric">124</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 id="compact-table-example" data-toc data-toc-level="3" data-toc-title="Compact Table">Compact Table</h3>
+  <p>
+    Add <code>table-compact</code> when a table has many short rows and needs a denser layout.
+  </p>
+  <div class="table-wrap table-compact">
+    <table id="compact-quality-checks" data-numbered="table">
+      <caption>Compact table example</caption>
+      <thead>
+        <tr>
+          <th>Check</th>
+          <th>Status</th>
+          <th>Duration</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>HTML validation</td>
+          <td>Pass</td>
+          <td>0.8s</td>
+          <td>No structural issues.</td>
+        </tr>
+        <tr>
+          <td>Link check</td>
+          <td>Pass</td>
+          <td>1.4s</td>
+          <td>Internal links resolved.</td>
+        </tr>
+        <tr>
+          <td>Print smoke</td>
+          <td>Warn</td>
+          <td>2.1s</td>
+          <td>Review wide tables manually.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="notes" data-toc data-toc-title="Operational Notes">
+  <h2>Operational Notes</h2>
+  <div class="card card-muted">
+    <h3>Interpreting Runtime Results</h3>
+    <p>
+      Browser execution time is affected by device performance, battery state, browser optimization, and other running processes.
+      Treat timing output as a rough signal for behavior and trends, not as a strict benchmark.
+    </p>
+  </div>
+
+  <div class="card card-muted">
+    <h3>Progressive Reading Design</h3>
+    <p>
+      Body text, links, and code content remain readable as normal HTML.
+      Sidebar contents, heading references, and chapter navigation are present in the generated HTML.
+      Python execution, Mermaid, MathJax, Vega-Lite, Prism, and copy buttons are convenience enhancements added by JavaScript.
+    </p>
+  </div>
+</section>
+
+<section id="changelog" data-toc data-toc-title="Changelog">
+  <h2>Changelog</h2>
+  <p>
+    The release history is shown in <span data-ref="release-history"></span>.
+  </p>
+  <p>
+    For table layout patterns, see <a href="#table-examples">Table Examples</a>.
+    When <code>data-numbered="table"</code> is present and table numbering is enabled, the caption receives the generated table number.
+  </p>
+  <div class="table-wrap">
+    <table id="release-history" data-numbered="table">
+      <caption>Template release history</caption>
+      <thead>
+        <tr>
+          <th>Version</th>
+          <th>Date</th>
+          <th>Changes</th>
+          <th>Author</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>0.1.0</td>
+          <td>2026-04-25</td>
+          <td>Initial technical HTML document template draft.</td>
+          <td>Atsushi Suzuki</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<nav class="chapter-nav" data-chapter-nav aria-label="Chapter navigation"></nav>
+
+<footer class="footer">
+  Prototype template with robust navigation and Pyodide runner.
+</footer>

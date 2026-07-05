@@ -9,12 +9,12 @@
 -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="A starter multi-page technical document built with html-doc-template.">
-  <meta property="og:title" content="Chapter 2: Example Page">
-  <meta property="og:description" content="A starter multi-page technical document built with html-doc-template.">
+  <meta name="description" content="A technical HTML document template for multi-page documents with code, math, diagrams, tables, and optional Python examples.">
+  <meta property="og:title" content="Chapter 2: Minimal Page">
+  <meta property="og:description" content="A technical HTML document template for multi-page documents with code, math, diagrams, tables, and optional Python examples.">
   <meta property="og:type" content="article">
-  <meta property="og:site_name" content="Starter document">
-  <title>Chapter 2: Example Page</title>
+  <meta property="og:site_name" content="html-doc-template guide">
+  <title>Chapter 2: Minimal Page</title>
 
   <!-- Library config -->
   <script>
@@ -61,7 +61,7 @@
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js" integrity="sha512-Vs2GKxnxnTQBRW7o2xXZ9A28njjmu5RToS42efiKNEWmikov0inZY522EtGVK5CcVo0M/FQwmXsTfl9skgRnvw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 
-  <link rel="stylesheet" href="../assets/css/technical-doc.css">
+  <link rel="stylesheet" href="../../assets/css/technical-doc.css">
 </head>
 
 <body class="line-numbers document-page">
@@ -70,8 +70,8 @@
   <div class="layout">
     <aside class="sidebar" aria-label="Document navigation">
       <header class="sidebar-header" aria-labelledby="sidebar-title">
-        <h2 id="sidebar-title" class="sidebar-title">Chapter 2<br>Example Page</h2>
-        <p class="sidebar-subtitle">Starter document</p>
+        <h2 id="sidebar-title" class="sidebar-title">Chapter 2<br>Minimal Page</h2>
+        <p class="sidebar-subtitle">Multi-page example</p>
       </header>
 
       <details class="nav-section" open>
@@ -80,20 +80,53 @@
           <ol class="nav-list site-contents-tree">
             <li class="site-contents-chapter">
               <details>
-                <summary><a href="01-introduction.html">Chapter 1: Getting Started</a></summary>
+                <summary><a href="01-introduction.html">Chapter 1: Introduction</a></summary>
                 <ol class="toc-tree toc-tree-numbered">
                   <li><a href="01-introduction.html#overview">1. Overview</a>
                   </li>
-                  <li><a href="01-introduction.html#first-section">2. First Section</a>
+                  <li><a href="01-introduction.html#template-guide">2. Template Usage</a>
                   </li>
-                  <li><a href="01-introduction.html#small-table">3. Small Table</a>
+                  <li><a href="01-introduction.html#formula-examples">3. Math Examples</a>
+                    <ol>
+                      <li><a href="01-introduction.html#inline-formula-example">3.1. Inline Math</a></li>
+                      <li><a href="01-introduction.html#display-formula-example">3.2. Display Math</a></li>
+                    </ol>
+                  </li>
+                  <li><a href="01-introduction.html#python-code-examples">4. Python Code Display and Execution</a>
+                    <ol>
+                      <li><a href="01-introduction.html#python-code-display-example">4.1. Python Code Block</a></li>
+                      <li><a href="01-introduction.html#python-runner-example">4.2. Executable Code Example</a></li>
+                    </ol>
+                  </li>
+                  <li><a href="01-introduction.html#other-language-examples">5. Other Languages</a>
+                    <ol>
+                      <li><a href="01-introduction.html#powershell-code-example">5.1. PowerShell Code Block</a></li>
+                      <li><a href="01-introduction.html#sql-code-example">5.2. SQL Code Block</a></li>
+                    </ol>
+                  </li>
+                  <li><a href="01-introduction.html#mermaid">6. Mermaid Diagrams</a>
+                  </li>
+                  <li><a href="01-introduction.html#vega-lite">7. Vega-Lite Charts</a>
+                  </li>
+                  <li><a href="01-introduction.html#table-examples">8. Table Examples</a>
+                    <ol>
+                      <li><a href="01-introduction.html#standard-table-example">8.1. Standard Table</a></li>
+                      <li><a href="01-introduction.html#wide-table-example">8.2. Wide Table</a></li>
+                      <li><a href="01-introduction.html#scrollable-table-example">8.3. Fixed-Height Table</a></li>
+                      <li><a href="01-introduction.html#indexed-table-example">8.4. Indexed Table</a></li>
+                      <li><a href="01-introduction.html#compact-table-example">8.5. Compact Table</a></li>
+                    </ol>
+                  </li>
+                  <li><a href="01-introduction.html#notes">9. Operational Notes</a>
+                  </li>
+                  <li><a href="01-introduction.html#changelog">10. Changelog</a>
                   </li>
                 </ol>
               </details>
             </li>
             <li class="site-contents-chapter">
               <details open>
-                <summary><a href="02-examples.html" aria-current="page">Chapter 2: Example Page</a></summary>
+                <summary><a href="02-examples.html" aria-current="page">Chapter 2: Minimal Page</a></summary>
                 <ol class="toc-tree toc-tree-numbered">
                   <li><a href="02-examples.html#purpose">1. Purpose</a>
                   </li>
@@ -104,7 +137,7 @@
             </li>
             <li class="site-contents-chapter">
               <details>
-                <summary><a href="03-reference.html">Chapter 3: Notes</a></summary>
+                <summary><a href="03-reference.html">Chapter 3: Reference Page</a></summary>
                 <ol class="toc-tree toc-tree-numbered">
                   <li><a href="03-reference.html#purpose">1. Purpose</a>
                   </li>
@@ -140,9 +173,8 @@
               <li>
                 <span class="nav-list-category">Project</span>
                 <ol>
-                  <li><a href="../template-docs/chapters/01-introduction.html">Template guide</a></li>
-                  <li><a href="../index.html">Project index</a></li>
-                  <li><a href="../README.md">Repository README</a></li>
+                  <li><a href="../../index.html">Project index</a></li>
+                  <li><a href="../../README.md">Repository README</a></li>
                 </ol>
               </li>
           </ol>
@@ -181,9 +213,9 @@
     <main id="main" tabindex="-1">
       <article class="content">
         <header class="hero">
-          <h1>Chapter 2: Example Page</h1>
+          <h1>Chapter 2: Minimal Page</h1>
           <p>
-            A compact second chapter for checking multi-page navigation and shared layout behavior.
+            A compact second chapter used to verify multi-page navigation and shared layout behavior.
           </p>
         </header>
 
@@ -208,14 +240,14 @@
         <section id="purpose" data-toc data-toc-title="Purpose">
           <h2>1. Purpose</h2>
           <p>
-            This intentionally small chapter gives the starter document a second page.
-            Replace it with project-specific content or remove it from <code>chapters-src/site-manifest.json</code>.
+            This intentionally small chapter keeps the repository from maintaining two copies of the same demonstration content.
+            Use Chapter 1 as the main component reference, and use this page as a second generated chapter for navigation checks.
           </p>
 
           <aside class="callout callout-note">
             <div class="callout-label">Note</div>
             <p>
-              The full component guide lives under <code>template-docs/chapters/</code>; this starter page is safe to rewrite.
+              This page is generated from a short fragment in <code>chapters-src/02-examples.html</code> and shares the same shell, CSS, and JavaScript as Chapter 1.
             </p>
           </aside>
         </section>
@@ -225,7 +257,7 @@
           <div class="card card-compact">
             <h3>Generated Page Check</h3>
             <p>
-              The table of contents, sidebar links, and Previous navigation are generated from the chapter manifest.
+              The table of contents, sidebar links, and Previous navigation are generated or enhanced without duplicating the full template content.
             </p>
           </div>
 
@@ -236,11 +268,11 @@
         <nav class="chapter-nav" data-chapter-nav aria-label="Chapter navigation">
           <a class="chapter-nav-link previous" href="01-introduction.html">
             <span>Previous</span>
-            <strong>Chapter 1: Getting Started</strong>
+            <strong>Chapter 1: Introduction</strong>
           </a>
           <a class="chapter-nav-link next" href="03-reference.html">
             <span>Next</span>
-            <strong>Chapter 3: Notes</strong>
+            <strong>Chapter 3: Reference Page</strong>
           </a>
         </nav>
 
@@ -251,6 +283,6 @@
     </main>
   </div>
 
-  <script defer src="../assets/js/technical-doc.js"></script>
+  <script defer src="../../assets/js/technical-doc.js"></script>
 </body>
 </html>

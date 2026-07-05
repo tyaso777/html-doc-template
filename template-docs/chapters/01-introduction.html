@@ -1,0 +1,1219 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!--
+  Security note:
+  Browser-loaded CDN script and stylesheet assets are pinned with SRI and
+  crossorigin="anonymous". Pyodide is loaded separately inside a Web Worker;
+  see README.md for the importScripts() SRI limitation.
+-->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A technical HTML document template for multi-page documents with code, math, diagrams, tables, and optional Python examples.">
+  <meta property="og:title" content="Chapter 1: Introduction">
+  <meta property="og:description" content="A technical HTML document template for multi-page documents with code, math, diagrams, tables, and optional Python examples.">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="html-doc-template guide">
+  <title>Chapter 1: Introduction</title>
+
+  <!-- Library config -->
+  <script>
+    window.technicalDocDefaultLayoutMode = "standard";
+
+    try {
+      const savedLayoutMode = window.localStorage ? window.localStorage.getItem("technicalDocLayoutMode") : null;
+      const initialLayoutMode = savedLayoutMode || window.technicalDocDefaultLayoutMode;
+      if (initialLayoutMode === "wide") {
+        document.documentElement.classList.add("layout-wide");
+      }
+    } catch (error) {
+      document.documentElement.classList.remove("layout-wide");
+    }
+
+    window.Prism = window.Prism || {};
+    window.Prism.manual = true;
+
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        processEscapes: true
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+
+  <!-- External libraries -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/plugins/line-numbers/prism-line-numbers.min.css" integrity="sha512-cbQXwDFK7lj2Fqfkuxbo5iD1dSbLlJGXGpfTDqbggqjHJeyzx88I3rfwjS38WJag/ihH7lzuGlGHpDBymLirZQ==" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" integrity="sha512-uf06llspW44/LZpHzHT6qBOIVODjWtv4MxCricRxkzvopAlSWnTf6hpZTFxuuZcuNE9CBQhqE0Seu1CoRk84nQ==" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/prism.min.js" integrity="sha512-HiD3V4nv8fcjtouznjT9TqDNDm1EXngV331YGbfVGeKUoH+OLkRTCMzA34ecjlgSQZpdHZupdSrqHY+Hz3l6uQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/components/prism-python.min.js" integrity="sha512-AKaNmg8COK0zEbjTdMHJAPJ0z6VeNqvRvH4/d5M4sHJbQQUToMBtodq4HaV4fa+WV2UTfoperElm66c9/8cKmQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/components/prism-powershell.min.js" integrity="sha512-mNRS5mGSidY0juPNlXC17z6atUusuE8Fdbu5+zK6drBDbroYeaEfudGKSRoFvRpzseJq2v3bNOwpEFHi6L82Aw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/components/prism-java.min.js" integrity="sha512-xKcnbsdT0KMoA4yrozkqZM1XJVTrPsjdQwvigxlAlxEDu8YDvC/jl+LfVqn0fY3Vs6m2y4a89JCHEIA/Z9zpmQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/components/prism-sql.min.js" integrity="sha512-sijCOJblSCXYYmXdwvqV0tak8QJW5iy2yLB1wAbbLc3OOIueqymizRFWUS/mwKctnzPKpNdPJV3aK1zlDMJmXQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/components/prism-mermaid.min.js" integrity="sha512-TWvtkke2tZtIQOA5/sjGM0S2RCMLTxhLKh0zYvhHdhVQizOaPcF9uYa+szt+kun01TCUVALUcVxlta8fjwt1jQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha512-BttltKXFyWnGZQcRWj6osIg7lbizJchuAMotOkdLxHxwt/Hyo+cl47bZU0QADg+Qt5DJwni3SbYGXeGMB5cBcw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js" integrity="sha256-1CldwzdEg2k1wTmf7s5RWVd7NMXI/7nxxjJM2C4DqII=" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js" integrity="sha512-OeZ4Yrb/W7d2W4rAMOO0HQ9Ro/aWLtpW9BUSR2UOWnSV2hprXLkkYnnCGc9NeLUxxE4ZG7zN16UuT1Elqq8Opg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js" integrity="sha512-Vs2GKxnxnTQBRW7o2xXZ9A28njjmu5RToS42efiKNEWmikov0inZY522EtGVK5CcVo0M/FQwmXsTfl9skgRnvw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mermaid@11.14.0/dist/mermaid.min.js" integrity="sha512-1CZj4aGbVA13DvizpBtnnUCPqBMDokst010DHdNrd7E79k2BoZqRaU0xybAKlsWERxKlLoAqvHpuKE1mBuveUQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/vega@5.33.0/build/vega.min.js" integrity="sha384-Kpi0LDGE2Pg6N3+B3LiVIugYJ3rGL3AAqlnkRLfFxZtmejptl+TJ3iKY54HF5U3l" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/vega-lite@5.23.0/build/vega-lite.min.js" integrity="sha384-D9LYH0esGjcxQJsBuxOuXtCDJGXRWW1+KhluzWPqi0rLJmiR/ygPChefaD+rFFDQ" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/vega-embed@6.29.0/build/vega-embed.min.js" integrity="sha384-M+Ax7e/WFJpxSOF09HzI+Sj4wg9ottVd/uxmV2ItGGh02fLH28t2FAOJx3TJBap5" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <link rel="stylesheet" href="../../assets/css/technical-doc.css">
+</head>
+
+<body class="line-numbers document-page">
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <div class="layout">
+    <aside class="sidebar" aria-label="Document navigation">
+      <header class="sidebar-header" aria-labelledby="sidebar-title">
+        <h2 id="sidebar-title" class="sidebar-title">Chapter 1<br>Introduction</h2>
+        <p class="sidebar-subtitle">Multi-page example</p>
+      </header>
+
+      <details class="nav-section" open>
+        <summary>Contents</summary>
+        <div class="nav-body">
+          <ol class="nav-list site-contents-tree">
+            <li class="site-contents-chapter">
+              <details open>
+                <summary><a href="01-introduction.html" aria-current="page">Chapter 1: Introduction</a></summary>
+                <ol class="toc-tree toc-tree-numbered">
+                  <li><a href="01-introduction.html#overview">1. Overview</a>
+                  </li>
+                  <li><a href="01-introduction.html#template-guide">2. Template Usage</a>
+                  </li>
+                  <li><a href="01-introduction.html#formula-examples">3. Math Examples</a>
+                    <ol>
+                      <li><a href="01-introduction.html#inline-formula-example">3.1. Inline Math</a></li>
+                      <li><a href="01-introduction.html#display-formula-example">3.2. Display Math</a></li>
+                    </ol>
+                  </li>
+                  <li><a href="01-introduction.html#python-code-examples">4. Python Code Display and Execution</a>
+                    <ol>
+                      <li><a href="01-introduction.html#python-code-display-example">4.1. Python Code Block</a></li>
+                      <li><a href="01-introduction.html#python-runner-example">4.2. Executable Code Example</a></li>
+                    </ol>
+                  </li>
+                  <li><a href="01-introduction.html#other-language-examples">5. Other Languages</a>
+                    <ol>
+                      <li><a href="01-introduction.html#powershell-code-example">5.1. PowerShell Code Block</a></li>
+                      <li><a href="01-introduction.html#sql-code-example">5.2. SQL Code Block</a></li>
+                    </ol>
+                  </li>
+                  <li><a href="01-introduction.html#mermaid">6. Mermaid Diagrams</a>
+                  </li>
+                  <li><a href="01-introduction.html#vega-lite">7. Vega-Lite Charts</a>
+                  </li>
+                  <li><a href="01-introduction.html#table-examples">8. Table Examples</a>
+                    <ol>
+                      <li><a href="01-introduction.html#standard-table-example">8.1. Standard Table</a></li>
+                      <li><a href="01-introduction.html#wide-table-example">8.2. Wide Table</a></li>
+                      <li><a href="01-introduction.html#scrollable-table-example">8.3. Fixed-Height Table</a></li>
+                      <li><a href="01-introduction.html#indexed-table-example">8.4. Indexed Table</a></li>
+                      <li><a href="01-introduction.html#compact-table-example">8.5. Compact Table</a></li>
+                    </ol>
+                  </li>
+                  <li><a href="01-introduction.html#notes">9. Operational Notes</a>
+                  </li>
+                  <li><a href="01-introduction.html#changelog">10. Changelog</a>
+                  </li>
+                </ol>
+              </details>
+            </li>
+            <li class="site-contents-chapter">
+              <details>
+                <summary><a href="02-examples.html">Chapter 2: Minimal Page</a></summary>
+                <ol class="toc-tree toc-tree-numbered">
+                  <li><a href="02-examples.html#purpose">1. Purpose</a>
+                  </li>
+                  <li><a href="02-examples.html#minimal-components">2. Minimal Components</a>
+                  </li>
+                </ol>
+              </details>
+            </li>
+            <li class="site-contents-chapter">
+              <details>
+                <summary><a href="03-reference.html">Chapter 3: Reference Page</a></summary>
+                <ol class="toc-tree toc-tree-numbered">
+                  <li><a href="03-reference.html#purpose">1. Purpose</a>
+                  </li>
+                  <li><a href="03-reference.html#reference-note">2. Reference Note</a>
+                  </li>
+                </ol>
+              </details>
+            </li>
+          </ol>
+        </div>
+      </details>
+
+      <details class="nav-section layout-mode-section" open>
+        <summary>Layout</summary>
+        <div class="nav-body">
+          <fieldset class="layout-mode-control" aria-label="Layout width">
+            <label>
+              <input type="radio" name="layout-mode" value="standard" checked>
+              <span>Standard</span>
+            </label>
+            <label>
+              <input type="radio" name="layout-mode" value="wide">
+              <span>Wide</span>
+            </label>
+          </fieldset>
+        </div>
+      </details>
+
+      <details class="nav-section">
+        <summary>Materials</summary>
+        <div class="nav-body">
+          <ol class="nav-list">
+              <li>
+                <span class="nav-list-category">Project</span>
+                <ol>
+                  <li><a href="../../index.html">Project index</a></li>
+                  <li><a href="../../README.md">Repository README</a></li>
+                </ol>
+              </li>
+          </ol>
+        </div>
+      </details>
+      <details class="nav-section">
+        <summary>External Links</summary>
+        <div class="nav-body">
+          <ol class="nav-list">
+              <li>
+                <span class="nav-list-category">Rendering</span>
+                <ol>
+                  <li><a href="https://prismjs.com/" target="_blank" rel="noopener">Prism.js</a></li>
+                  <li><a href="https://www.mathjax.org/" target="_blank" rel="noopener">MathJax</a></li>
+                  <li><a href="https://mermaid.js.org/" target="_blank" rel="noopener">Mermaid</a></li>
+                  <li><a href="https://vega.github.io/vega-lite/" target="_blank" rel="noopener">Vega-Lite</a></li>
+                </ol>
+              </li>
+              <li>
+                <span class="nav-list-category">Python runtime</span>
+                <ol>
+                  <li><a href="https://pyodide.org/" target="_blank" rel="noopener">Pyodide</a></li>
+                </ol>
+              </li>
+          </ol>
+        </div>
+      </details>
+    </aside>
+
+    <main id="main" tabindex="-1">
+      <article class="content">
+        <header class="hero">
+          <!-- Keep exactly one h1 in the document: the main document title. -->
+          <h1>Chapter 1: Introduction</h1>
+          <p>
+            An example chapter page using the technical document template.
+          </p>
+        </header>
+
+        <section class="document-info" aria-labelledby="document-info-title">
+          <h2 id="document-info-title">Document Information</h2>
+          <dl class="metadata" aria-label="Document metadata">
+            <div>
+              <dt>Version</dt>
+              <dd>0.1.0</dd>
+            </div>
+            <div>
+              <dt>Last updated</dt>
+              <dd>2026-04-25</dd>
+            </div>
+            <div>
+              <dt>Author</dt>
+              <dd>Atsushi Suzuki</dd>
+            </div>
+          </dl>
+        </section>
+
+        <!--
+          TOC convention:
+          Mark only structural TOC targets with data-toc.
+          For top-level sections, prefer <section id="..." data-toc data-toc-title="...">.
+          For optional lower-level entries, use headings such as <h3 id="..." data-toc data-toc-level="3">.
+          Headings without data-toc are intentionally excluded from the left-side TOC.
+        -->
+
+        <section id="overview" data-toc data-toc-title="Overview">
+          <h2>1. Overview</h2>
+          <p>
+            This page can run Python in the browser with Pyodide.
+            A server-side Python environment is not required, but the first runtime load can take some time because Pyodide is downloaded on demand.
+          </p>
+
+          <aside class="callout callout-note">
+            <div class="callout-label">Note</div>
+            <div class="callout-title">Supplemental context</div>
+            <p>
+              Use a supplemental note (<code>aside.callout-note</code>) for helpful context, prerequisites, and recommendations.
+              Example: This template is designed to remain readable on narrow screens.
+            </p>
+          </aside>
+
+          <aside class="callout callout-success">
+            <div class="callout-label">Success</div>
+            <div class="callout-title">Completed or verified state</div>
+            <p>
+              Use a success callout (<code>aside.callout-success</code>) for completed checks, verified outcomes, and successful states.
+              Example: The generated chapter passed the HTML validation step.
+            </p>
+          </aside>
+
+          <aside class="callout callout-warning">
+            <div class="callout-label">Warning</div>
+            <div class="callout-title">JavaScript-dependent enhancements</div>
+            <p>
+              Use a warning note (<code>aside.callout-warning</code>) for constraints, environment-specific behavior, and exceptions readers should know in advance.
+              Example: Python execution, Mermaid, MathJax, Vega-Lite, and Prism depend on JavaScript; the chapter contents and navigation are generated at build time.
+            </p>
+          </aside>
+        </section>
+
+        <section id="template-guide" data-toc data-toc-title="Template Usage">
+          <h2>2. Template Usage</h2>
+          <p>
+            This section is a minimal editing guide for creating a new HTML document from the template.
+            It shows the main writing patterns so both human editors and generation models can extend the document consistently.
+            For an interactive code example, see <a class="xref section-ref" href="01-introduction.html#python-runner-example">Section 4.2</a>.
+          </p>
+
+          <aside class="callout callout-note">
+            <div class="callout-label">Note</div>
+            <p>
+              Use <code>&lt;section id="..." data-toc data-toc-title="..."&gt;</code> for top-level sections that should appear in the table of contents.
+              For optional subsection entries, add <code>id</code>, <code>data-toc</code>, and <code>data-toc-level="3"</code> to the heading.
+            </p>
+          </aside>
+
+          <div class="card">
+            <h3>Common Components</h3>
+            <ul>
+              <li>Supplemental notes and recommendations: <code>&lt;aside class="callout callout-note"&gt;</code> with <code>&lt;div class="callout-label"&gt;Note&lt;/div&gt;</code></li>
+              <li>Completed checks and verified outcomes: <code>&lt;aside class="callout callout-success"&gt;</code> with <code>&lt;div class="callout-label"&gt;Success&lt;/div&gt;</code></li>
+              <li>Warnings and constraints: <code>&lt;aside class="callout callout-warning"&gt;</code> with <code>&lt;div class="callout-label"&gt;Warning&lt;/div&gt;</code></li>
+              <li>Optional callout subtitle: <code>&lt;div class="callout-title"&gt;...&lt;/div&gt;</code></li>
+              <li>Standard body card: <code>&lt;div class="card"&gt;</code></li>
+              <li>Muted card: <code>&lt;div class="card card-muted"&gt;</code></li>
+              <li>Compact card: <code>&lt;div class="card card-compact"&gt;</code></li>
+              <li>Code display: <code>&lt;pre class="code-block language-python"&gt;&lt;code class="language-python"&gt;</code></li>
+              <li>Math: use <code>\(...\)</code> for inline math and <code>\[...\]</code> for display math</li>
+              <li>Mermaid diagrams: write the diagram definition inside <code>&lt;div class="mermaid"&gt;</code>.</li>
+            </ul>
+          </div>
+
+          <aside class="callout callout-warning">
+            <div class="callout-label">Warning</div>
+            <div class="callout-title">Progressive enhancement</div>
+            <p>
+              The Python runner, Mermaid, MathJax, Vega-Lite, Prism, and copy buttons are JavaScript enhancements.
+              The sidebar contents, heading references, and previous/next chapter navigation are generated at build time.
+              The sidebar Layout control can switch the page between the standard width and a wide layout; the initial mode is set by <code>layout.defaultMode</code> in the site manifest, and the viewer's last choice is remembered by the browser.
+              This is separate from <code>table-wide</code>, which controls an individual table.
+              Keep important explanations in normal HTML body text so the document remains readable if JavaScript is unavailable.
+            </p>
+          </aside>
+        </section>
+
+        <section id="formula-examples" data-toc data-toc-title="Math Examples">
+          <h2>3. Math Examples</h2>
+          <p>
+            These examples show inline and display math rendered by MathJax.
+            When creating a new document, copy this section and replace the content while preserving the display patterns.
+          </p>
+
+          <h3 id="inline-formula-example" data-toc data-toc-level="3" data-toc-title="Inline Math">3.1. Inline Math</h3>
+          <p>
+            Use <code>\(...\)</code> for short formulas inside a paragraph.
+            For example, a normal distribution can be written as \(X \sim \mathcal{N}(\mu, \sigma^2)\) using mean \(\mu\) and variance \(\sigma^2\).
+            The standardized value is \(z = (x - \mu) / \sigma\).
+          </p>
+
+          <h3 id="display-formula-example" data-toc data-toc-level="3" data-toc-title="Display Math">3.2. Display Math</h3>
+          <p>
+            Use <code>\[...\]</code> for standalone formulas, optionally wrapped in <code>div.math-block</code>.
+            The density definition in <a class="xref equation-ref" href="01-introduction.html#normal-density">Equation 1-1</a> and the moment identities in <a class="xref equation-ref" href="01-introduction.html#normal-moments">Equation 1-2</a> are numbered examples.
+          </p>
+
+          <div id="normal-density" class="math-block" data-numbered="equation">
+            \[
+              f(x) = \frac{1}{\sigma\sqrt{2\pi}}
+              \exp\left(-\frac{(x - \mu)^2}{2\sigma^2}\right)
+            \]
+  
+          <div class="equation-label"><span class="numbered-label equation-number">Equation 1-1</span></div>
+        </div>
+
+          <div id="normal-moments" class="math-block" data-numbered="equation">
+            \[
+              \mathbb{E}[X] = \mu, \qquad
+              \mathrm{Var}(X) = \sigma^2, \qquad
+              \int_{-\infty}^{\infty} f(x)\,dx = 1
+            \]
+  
+          <div class="equation-label"><span class="numbered-label equation-number">Equation 1-2</span></div>
+        </div>
+        </section>
+
+        <section id="python-code-examples" data-toc data-toc-title="Python Code Display and Execution">
+          <h2>4. Python Code Display and Execution</h2>
+          <p>
+            Use static code blocks for code that readers only need to inspect, and use the browser runner for code readers should edit and execute.
+            This keeps explanatory snippets separate from interactive examples.
+          </p>
+
+          <h3 id="python-code-display-example" data-toc data-toc-level="3" data-toc-title="Python Code Block">4.1. Python Code Block</h3>
+          <p>
+            For code that does not need to run in the browser, combine <code>pre.code-block</code> with <code>code.language-python</code>.
+            Place <code>div.code-caption</code> above the block to show the language name or file name.
+          </p>
+
+          <div class="code-caption">python</div>
+          <pre class="code-block language-python"><code class="language-python">def summarize_scores(scores: list[int]) -> dict[str, float]:
+    """Returns simple summary statistics for a score list."""
+    total = sum(scores)
+    count = len(scores)
+
+    return {
+        "count": count,
+        "average": total / count,
+        "maximum": max(scores),
+    }
+
+
+scores = [82, 90, 76, 88]
+summary = summarize_scores(scores)
+print(summary)
+</code></pre>
+
+          <h3 id="python-runner-example" data-toc data-toc-level="3" data-toc-title="Executable Code Example">4.2. Executable Code Example</h3>
+          <p>
+            Use the runner source block for code that readers should edit and execute.
+            The build script expands <code>div[data-python-runner]</code> into the full browser runner UI.
+          </p>
+
+          <aside class="callout callout-warning">
+            <div class="callout-label">Warning</div>
+            <div class="callout-title">Pyodide CDN loading</div>
+            <p>
+              The Python runner loads Pyodide from a CDN only after the reader presses <strong>Load Python Runtime</strong>.
+              Pyodide is loaded with <code>importScripts()</code> inside a Web Worker, so normal script-tag SRI with <code>integrity</code> cannot be used there.
+              For documents that require strict supply-chain control, host a reviewed Pyodide distribution locally.
+            </p>
+          </aside>
+
+        <div class="runner-panel" data-python-runner-panel>
+          <p id="python-runner-1-help" data-python-runner-help>
+            Try changing the input sizes and run the code.
+            On slow connections or constrained devices, the first Python runtime load can take some time.
+          </p>
+
+          <div class="runner-toolbar">
+            <button class="button secondary" type="button" data-python-load-button>Load Python Runtime</button>
+            <button class="button" type="button" data-python-run-button disabled>Run Python</button>
+            <button class="button secondary" type="button" data-python-reset-button>Reset Code Text</button>
+            <button class="button secondary" type="button" data-python-restart-button disabled>Restart Python Runtime</button>
+          </div>
+
+          <label for="python-runner-1-code" class="visually-hidden">Python code editor</label>
+          <div class="python-editor-wrap">
+            <textarea
+              id="python-runner-1-code"
+              spellcheck="false"
+              aria-describedby="python-runner-1-help python-runner-1-output"
+              autocomplete="off"
+              autocorrect="off"
+              autocapitalize="off"
+              data-initial-code-base64="ZnJvbSB0aW1lIGltcG9ydCBwZXJmX2NvdW50ZXIKCgpkZWYgbGluZWFyX3NlYXJjaF93aXRoX2NvdW50KHZhbHVlczogbGlzdFtpbnRdLCB0YXJnZXQ6IGludCkgLT4gdHVwbGVbaW50LCBpbnRdOgogICAgIiIiRmluZHMgdGhlIHRhcmdldCBieSBzY2FubmluZyB2YWx1ZXMgYW5kIGNvdW50cyBjb21wYXJpc29ucy4KCiAgICBBcmdzOgogICAgICAgIHZhbHVlczogU29ydGVkIGludGVnZXIgdmFsdWVzLgogICAgICAgIHRhcmdldDogVmFsdWUgdG8gZmluZC4KCiAgICBSZXR1cm5zOgogICAgICAgIEEgcGFpciBvZiB0aGUgdGFyZ2V0IGluZGV4IGFuZCB0aGUgbnVtYmVyIG9mIGNvbXBhcmlzb25zLgogICAgIiIiCiAgICBjb21wYXJpc29ucyA9IDAKCiAgICBmb3IgaW5kZXgsIHZhbHVlIGluIGVudW1lcmF0ZSh2YWx1ZXMpOgogICAgICAgIGNvbXBhcmlzb25zICs9IDEKICAgICAgICBpZiB2YWx1ZSA9PSB0YXJnZXQ6CiAgICAgICAgICAgIHJldHVybiBpbmRleCwgY29tcGFyaXNvbnMKCiAgICByZXR1cm4gLTEsIGNvbXBhcmlzb25zCgoKZGVmIGJpbmFyeV9zZWFyY2hfd2l0aF9jb3VudCh2YWx1ZXM6IGxpc3RbaW50XSwgdGFyZ2V0OiBpbnQpIC0+IHR1cGxlW2ludCwgaW50XToKICAgICIiIkZpbmRzIHRoZSB0YXJnZXQgdXNpbmcgYmluYXJ5IHNlYXJjaCBhbmQgY291bnRzIGNvbXBhcmlzb25zLgoKICAgIEFyZ3M6CiAgICAgICAgdmFsdWVzOiBTb3J0ZWQgaW50ZWdlciB2YWx1ZXMuCiAgICAgICAgdGFyZ2V0OiBWYWx1ZSB0byBmaW5kLgoKICAgIFJldHVybnM6CiAgICAgICAgQSBwYWlyIG9mIHRoZSB0YXJnZXQgaW5kZXggYW5kIHRoZSBudW1iZXIgb2YgY29tcGFyaXNvbnMuCiAgICAiIiIKICAgIGxlZnQgPSAwCiAgICByaWdodCA9IGxlbih2YWx1ZXMpIC0gMQogICAgY29tcGFyaXNvbnMgPSAwCgogICAgd2hpbGUgbGVmdCA8PSByaWdodDoKICAgICAgICBtaWRkbGUgPSAobGVmdCArIHJpZ2h0KSAvLyAyCiAgICAgICAgY29tcGFyaXNvbnMgKz0gMQoKICAgICAgICBpZiB2YWx1ZXNbbWlkZGxlXSA9PSB0YXJnZXQ6CiAgICAgICAgICAgIHJldHVybiBtaWRkbGUsIGNvbXBhcmlzb25zCgogICAgICAgIGlmIHZhbHVlc1ttaWRkbGVdIDwgdGFyZ2V0OgogICAgICAgICAgICBsZWZ0ID0gbWlkZGxlICsgMQogICAgICAgIGVsc2U6CiAgICAgICAgICAgIHJpZ2h0ID0gbWlkZGxlIC0gMQoKICAgIHJldHVybiAtMSwgY29tcGFyaXNvbnMKCgpkZWYgbWVhc3VyZV9vbmNlKG46IGludCwgcmVwZWF0czogaW50KSAtPiB0dXBsZVtpbnQsIGludCwgZmxvYXQsIGZsb2F0XToKICAgICIiIk1lYXN1cmVzIGNvbXBhcmlzb24gY291bnRzIGFuZCBhdmVyYWdlIGV4ZWN1dGlvbiB0aW1lcy4KCiAgICBBcmdzOgogICAgICAgIG46IE51bWJlciBvZiBlbGVtZW50cy4KICAgICAgICByZXBlYXRzOiBOdW1iZXIgb2YgcmVwZWF0ZWQgc2VhcmNoZXMuCgogICAgUmV0dXJuczoKICAgICAgICBMaW5lYXItc2VhcmNoIGNvbXBhcmlzb25zLCBiaW5hcnktc2VhcmNoIGNvbXBhcmlzb25zLCBhdmVyYWdlIGxpbmVhci1zZWFyY2gKICAgICAgICB0aW1lLCBhbmQgYXZlcmFnZSBiaW5hcnktc2VhcmNoIHRpbWUuCiAgICAiIiIKICAgIHZhbHVlcyA9IGxpc3QocmFuZ2UobikpCiAgICB0YXJnZXQgPSBuIC0gMQoKICAgIF8sIGxpbmVhcl9jb21wYXJpc29ucyA9IGxpbmVhcl9zZWFyY2hfd2l0aF9jb3VudCh2YWx1ZXMsIHRhcmdldCkKICAgIF8sIGJpbmFyeV9jb21wYXJpc29ucyA9IGJpbmFyeV9zZWFyY2hfd2l0aF9jb3VudCh2YWx1ZXMsIHRhcmdldCkKCiAgICBzdGFydCA9IHBlcmZfY291bnRlcigpCiAgICBmb3IgXyBpbiByYW5nZShyZXBlYXRzKToKICAgICAgICBsaW5lYXJfc2VhcmNoX3dpdGhfY291bnQodmFsdWVzLCB0YXJnZXQpCiAgICBsaW5lYXJfbXMgPSAocGVyZl9jb3VudGVyKCkgLSBzdGFydCkgKiAxMDAwIC8gcmVwZWF0cwoKICAgIHN0YXJ0ID0gcGVyZl9jb3VudGVyKCkKICAgIGZvciBfIGluIHJhbmdlKHJlcGVhdHMpOgogICAgICAgIGJpbmFyeV9zZWFyY2hfd2l0aF9jb3VudCh2YWx1ZXMsIHRhcmdldCkKICAgIGJpbmFyeV9tcyA9IChwZXJmX2NvdW50ZXIoKSAtIHN0YXJ0KSAqIDEwMDAgLyByZXBlYXRzCgogICAgcmV0dXJuIGxpbmVhcl9jb21wYXJpc29ucywgYmluYXJ5X2NvbXBhcmlzb25zLCBsaW5lYXJfbXMsIGJpbmFyeV9tcwoKCmRlZiBtYWluKCkgLT4gTm9uZToKICAgICIiIlJ1bnMgYSBzaW1wbGUgZ3Jvd3RoLXJhdGUgZXhwZXJpbWVudC4iIiIKICAgIHNpemVzID0gWzFfMDAwLCAxMF8wMDAsIDEwMF8wMDAsIDUwMF8wMDAsIDFfMDAwXzAwMF0KICAgIHJlcGVhdHNfYnlfc2l6ZSA9IHsKICAgICAgICAxXzAwMDogMjAwLAogICAgICAgIDEwXzAwMDogMTAwLAogICAgICAgIDEwMF8wMDA6IDIwLAogICAgICAgIDUwMF8wMDA6IDUsCiAgICAgICAgMV8wMDBfMDAwOiAzLAogICAgfQoKICAgIHByaW50KCJuICAgICAgICAgIGxpbmVhcl9jbXAgICBiaW5hcnlfY21wICAgY21wX3JhdGlvICAgbGluZWFyX21zICAgYmluYXJ5X21zIikKICAgIHByaW50KCItIiAqIDc4KQoKICAgIGZvciBuIGluIHNpemVzOgogICAgICAgIGxpbmVhcl9jbXAsIGJpbmFyeV9jbXAsIGxpbmVhcl9tcywgYmluYXJ5X21zID0gbWVhc3VyZV9vbmNlKG4sIHJlcGVhdHNfYnlfc2l6ZVtuXSkKICAgICAgICByYXRpbyA9IGxpbmVhcl9jbXAgLyBiaW5hcnlfY21wIGlmIGJpbmFyeV9jbXAgPiAwIGVsc2UgZmxvYXQoImluZiIpCiAgICAgICAgcHJpbnQoCiAgICAgICAgICAgIGYie246Pjl9ICAiCiAgICAgICAgICAgIGYie2xpbmVhcl9jbXA6PjEwfSAgIgogICAgICAgICAgICBmIntiaW5hcnlfY21wOj4xMH0gICIKICAgICAgICAgICAgZiJ7cmF0aW86PjkuMWZ9eCAgIgogICAgICAgICAgICBmIntsaW5lYXJfbXM6PjkuNGZ9ICAiCiAgICAgICAgICAgIGYie2JpbmFyeV9tczo+OS40Zn0iCiAgICAgICAgKQoKICAgIHByaW50KCkKICAgIHByaW50KCJJbnRlcnByZXRhdGlvbjoiKQogICAgcHJpbnQoIi0gQ29tcGFyaXNvbiBjb3VudHMgYXJlIHRoZSBjbGVhbmVzdCBzaWduYWwgaGVyZS4iKQogICAgcHJpbnQoIi0gTGluZWFyIHNlYXJjaCBjb21wYXJpc29ucyBncm93IGFsbW9zdCBkaXJlY3RseSB3aXRoIG4uIikKICAgIHByaW50KCItIEJpbmFyeSBzZWFyY2ggY29tcGFyaXNvbnMgZ3JvdyBzbG93bHkgYmVjYXVzZSB0aGUgc2VhcmNoIHJhbmdlIGlzIGhhbHZlZC4iKQogICAgcHJpbnQoIi0gVGltaW5nIG51bWJlcnMgYXJlIHVzZWZ1bCBidXQgbm9pc2llciB0aGFuIGNvbXBhcmlzb24gY291bnRzLiIpCgoKbWFpbigp"
+              data-python-code
+            ></textarea>
+            <button class="copy-code-button python-editor-copy-button" type="button" aria-label="Copy Python code" data-python-copy-button>Copy</button>
+          </div>
+
+          <h3>Output</h3>
+          <div
+            id="python-runner-1-output"
+            class="output"
+            role="log"
+            aria-live="polite"
+            aria-atomic="true"
+            data-python-output
+          >Press "Load Python Runtime" first. Python will run in a Web Worker.</div>
+
+          <section class="print-only print-runner-snapshot" aria-label="Printed Python runner snapshot">
+            <h3>Printed Python Code</h3>
+            <pre id="python-runner-1-print-code" class="print-code-block" data-python-print-code></pre>
+
+            <h3>Printed Python Output</h3>
+            <pre id="python-runner-1-print-output" class="print-output-block" data-python-print-output></pre>
+          </section>
+        </div>
+        </section>
+
+        <section id="other-language-examples" data-toc data-toc-title="Other Languages">
+          <h2>5. Other Languages</h2>
+          <p>
+            Code in other languages can use the same visual style by switching the Prism language class.
+            This template loads the PowerShell and SQL Prism components by default.
+          </p>
+
+          <h3 id="powershell-code-example" data-toc data-toc-level="3" data-toc-title="PowerShell Code Block">5.1. PowerShell Code Block</h3>
+          <div class="code-caption">powershell</div>
+          <pre class="code-block language-powershell"><code class="language-powershell">Get-ChildItem -Path . -Filter "*.html" |
+    Select-Object Name, Length, LastWriteTime |
+    Sort-Object LastWriteTime -Descending
+</code></pre>
+
+          <h3 id="sql-code-example" data-toc data-toc-level="3" data-toc-title="SQL Code Block">5.2. SQL Code Block</h3>
+          <div class="code-caption">sql</div>
+          <pre class="code-block language-sql"><code class="language-sql">SELECT
+    document_id,
+    title,
+    updated_at
+FROM documents
+WHERE status = "published"
+ORDER BY updated_at DESC;
+</code></pre>
+
+          <aside class="callout callout-warning">
+            <div class="callout-label">Warning</div>
+            <div class="callout-title">Additional Prism languages</div>
+            <p>
+              To add another language such as cmd, bash, or JSON, load the corresponding Prism language component and change the <code>language-...</code> class to match.
+              If you add files from a CDN, also add SRI metadata for those files.
+            </p>
+          </aside>
+        </section>
+
+        <section id="mermaid" data-toc data-toc-title="Mermaid Diagrams">
+          <h2>6. Mermaid Diagrams</h2>
+          <p>
+            Mermaid renders flowcharts and structural diagrams from text definitions.
+            You can update a diagram by editing text in the HTML instead of recreating an image.
+            Mermaid also supports sequence diagrams, class diagrams, state diagrams, and more.
+            The rendered result is referenced as <a class="xref figure-ref" href="01-introduction.html#document-flow">Figure 1-1</a>.
+          </p>
+
+          <div class="code-caption">mermaid</div>
+          <pre class="code-block language-mermaid"><code class="language-mermaid">flowchart LR
+    A[Define the document goal] --> B[Plan the section structure]
+    B --> C[Write the body text]
+    B --> D[Create exercises or code examples]
+    C --> E[Add diagrams and math]
+    D --> F[Check executable examples]
+    E --> G[Review the rendered document]
+    F --> G
+</code></pre>
+
+          <figure id="document-flow" class="mermaid-figure" data-numbered="figure">
+            <figcaption><span class="numbered-label figure-number">Figure 1-1</span> Diagram rendered from the Mermaid definition above</figcaption>
+            <div class="mermaid-wrap">
+              <!-- Use div.mermaid as the Mermaid rendering hook; figure/figcaption provide the semantic structure. -->
+              <div class="mermaid">
+        flowchart LR
+            A[Define the document goal] --> B[Plan the section structure]
+            B --> C[Write the body text]
+            B --> D[Create exercises or code examples]
+            C --> E[Add diagrams and math]
+            D --> F[Check executable examples]
+            E --> G[Review the rendered document]
+            F --> G
+              </div>
+            </div>
+          </figure>
+        </section>
+
+        <section id="vega-lite" data-toc data-toc-title="Vega-Lite Charts">
+          <h2>7. Vega-Lite Charts</h2>
+          <p>
+            Vega-Lite renders charts from a JSON specification.
+            When a chapter contains a Vega-Lite chart, the build injects pinned Vega, Vega-Lite, and vega-embed CDN assets so authors can add a chart by editing the JSON spec in the source HTML.
+            The example below combines a year selector, clickable stacked bars, tooltips, and a linked component breakdown without adding custom JavaScript.
+          </p>
+
+          <div class="code-caption">vega-lite json excerpt</div>
+          <pre class="code-block"><code>{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "params": [
+    {
+      "name": "selectedYear",
+      "value": 2026,
+      "bind": {
+        "input": "select",
+        "options": [2025, 2026],
+        "name": "Year "
+      }
+    }
+  ],
+  "vconcat": [
+    {
+      "params": [
+        {
+          "name": "selectedItem",
+          "value": [{"region": "East", "product": "Basic"}],
+          "select": {"type": "point", "fields": ["region", "product"]}
+        }
+      ],
+      "mark": "bar",
+      "transform": [{"fold": ["New", "Expansion", "Renewal", "Support"], "as": ["component", "amount"]}]
+    },
+    {
+      "transform": [
+        {"filter": {"param": "selectedItem"}},
+        {"fold": ["New", "Expansion", "Renewal", "Support"], "as": ["component", "amount"]}
+      ],
+      "mark": {"type": "line", "point": true}
+    }
+  ]
+}</code></pre>
+
+          <figure id="quarterly-results-chart" class="vega-lite-figure" data-numbered="figure">
+            <figcaption><span class="numbered-label figure-number">Figure 1-2</span> Interactive Vega-Lite chart rendered from JSON</figcaption>
+            <div class="vega-lite-wrap">
+              <div class="vega-lite" data-vega-lite data-vega-lite-spec="quarterly-results-chart-spec" aria-label="Quarterly results by year, region, and product"></div>
+            </div>
+            <template type="application/json" id="quarterly-results-chart-spec">
+        {
+          "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+          "description": "Linked component breakdown example with a year selector and click selection.",
+          "data": {
+            "values": [
+              {"year": 2025, "region": "East", "product": "Basic", "quarter": "Q1", "New": 42, "Expansion": 30, "Renewal": 34, "Support": 12},
+              {"year": 2025, "region": "East", "product": "Basic", "quarter": "Q2", "New": 45, "Expansion": 34, "Renewal": 35, "Support": 12},
+              {"year": 2025, "region": "East", "product": "Basic", "quarter": "Q3", "New": 46, "Expansion": 37, "Renewal": 36, "Support": 12},
+              {"year": 2025, "region": "East", "product": "Basic", "quarter": "Q4", "New": 49, "Expansion": 42, "Renewal": 38, "Support": 13},
+              {"year": 2025, "region": "East", "product": "Plus", "quarter": "Q1", "New": 29, "Expansion": 24, "Renewal": 28, "Support": 10},
+              {"year": 2025, "region": "East", "product": "Plus", "quarter": "Q2", "New": 31, "Expansion": 27, "Renewal": 29, "Support": 10},
+              {"year": 2025, "region": "East", "product": "Plus", "quarter": "Q3", "New": 33, "Expansion": 29, "Renewal": 30, "Support": 11},
+              {"year": 2025, "region": "East", "product": "Plus", "quarter": "Q4", "New": 35, "Expansion": 33, "Renewal": 32, "Support": 11},
+              {"year": 2025, "region": "West", "product": "Basic", "quarter": "Q1", "New": 35, "Expansion": 28, "Renewal": 31, "Support": 11},
+              {"year": 2025, "region": "West", "product": "Basic", "quarter": "Q2", "New": 38, "Expansion": 30, "Renewal": 33, "Support": 12},
+              {"year": 2025, "region": "West", "product": "Basic", "quarter": "Q3", "New": 40, "Expansion": 34, "Renewal": 35, "Support": 12},
+              {"year": 2025, "region": "West", "product": "Basic", "quarter": "Q4", "New": 42, "Expansion": 37, "Renewal": 37, "Support": 13},
+              {"year": 2025, "region": "West", "product": "Plus", "quarter": "Q1", "New": 25, "Expansion": 22, "Renewal": 27, "Support": 10},
+              {"year": 2025, "region": "West", "product": "Plus", "quarter": "Q2", "New": 27, "Expansion": 24, "Renewal": 29, "Support": 10},
+              {"year": 2025, "region": "West", "product": "Plus", "quarter": "Q3", "New": 28, "Expansion": 26, "Renewal": 31, "Support": 10},
+              {"year": 2025, "region": "West", "product": "Plus", "quarter": "Q4", "New": 30, "Expansion": 29, "Renewal": 32, "Support": 11},
+              {"year": 2026, "region": "East", "product": "Basic", "quarter": "Q1", "New": 46, "Expansion": 35, "Renewal": 38, "Support": 13},
+              {"year": 2026, "region": "East", "product": "Basic", "quarter": "Q2", "New": 51, "Expansion": 40, "Renewal": 40, "Support": 14},
+              {"year": 2026, "region": "East", "product": "Basic", "quarter": "Q3", "New": 53, "Expansion": 43, "Renewal": 42, "Support": 14},
+              {"year": 2026, "region": "East", "product": "Basic", "quarter": "Q4", "New": 57, "Expansion": 50, "Renewal": 44, "Support": 15},
+              {"year": 2026, "region": "East", "product": "Plus", "quarter": "Q1", "New": 34, "Expansion": 30, "Renewal": 32, "Support": 11},
+              {"year": 2026, "region": "East", "product": "Plus", "quarter": "Q2", "New": 37, "Expansion": 34, "Renewal": 34, "Support": 11},
+              {"year": 2026, "region": "East", "product": "Plus", "quarter": "Q3", "New": 39, "Expansion": 36, "Renewal": 35, "Support": 12},
+              {"year": 2026, "region": "East", "product": "Plus", "quarter": "Q4", "New": 42, "Expansion": 42, "Renewal": 38, "Support": 13},
+              {"year": 2026, "region": "West", "product": "Basic", "quarter": "Q1", "New": 39, "Expansion": 33, "Renewal": 34, "Support": 13},
+              {"year": 2026, "region": "West", "product": "Basic", "quarter": "Q2", "New": 42, "Expansion": 36, "Renewal": 37, "Support": 13},
+              {"year": 2026, "region": "West", "product": "Basic", "quarter": "Q3", "New": 45, "Expansion": 40, "Renewal": 40, "Support": 14},
+              {"year": 2026, "region": "West", "product": "Basic", "quarter": "Q4", "New": 48, "Expansion": 44, "Renewal": 42, "Support": 14},
+              {"year": 2026, "region": "West", "product": "Plus", "quarter": "Q1", "New": 29, "Expansion": 27, "Renewal": 31, "Support": 11},
+              {"year": 2026, "region": "West", "product": "Plus", "quarter": "Q2", "New": 32, "Expansion": 30, "Renewal": 33, "Support": 11},
+              {"year": 2026, "region": "West", "product": "Plus", "quarter": "Q3", "New": 35, "Expansion": 33, "Renewal": 35, "Support": 12},
+              {"year": 2026, "region": "West", "product": "Plus", "quarter": "Q4", "New": 37, "Expansion": 38, "Renewal": 36, "Support": 13}
+            ]
+          },
+          "params": [
+            {
+              "name": "selectedYear",
+              "value": 2026,
+              "bind": {
+                "input": "select",
+                "options": [2025, 2026],
+                "name": "Year "
+              }
+            }
+          ],
+          "vconcat": [
+            {
+              "title": "Annual total by region, product, and component",
+              "params": [
+                {
+                  "name": "selectedItem",
+                  "value": [{"region": "East", "product": "Basic"}],
+                  "select": {
+                    "type": "point",
+                    "fields": ["region", "product"],
+                    "on": "click",
+                    "clear": "dblclick"
+                  }
+                }
+              ],
+              "transform": [
+                {"filter": "datum.year == selectedYear"},
+                {
+                  "fold": ["New", "Expansion", "Renewal", "Support"],
+                  "as": ["component", "amount"]
+                },
+                {
+                  "aggregate": [{"op": "sum", "field": "amount", "as": "total"}],
+                  "groupby": ["region", "product", "component"]
+                }
+              ],
+              "mark": {"type": "bar", "cornerRadiusEnd": 2},
+              "encoding": {
+                "x": {"field": "region", "type": "nominal", "title": "Region"},
+                "xOffset": {"field": "product"},
+                "y": {"field": "total", "type": "quantitative", "title": "Annual total"},
+                "color": {
+                  "field": "component",
+                  "type": "nominal",
+                  "title": "Component",
+                  "scale": {"range": ["#1a73e8", "#34a853", "#fbbc04", "#9aa0a6"]}
+                },
+                "opacity": {
+                  "condition": {"param": "selectedItem", "value": 1},
+                  "value": 0.45
+                },
+                "tooltip": [
+                  {"field": "region", "type": "nominal", "title": "Region"},
+                  {"field": "product", "type": "nominal", "title": "Product"},
+                  {"field": "component", "type": "nominal", "title": "Component"},
+                  {"field": "total", "type": "quantitative", "title": "Annual total"}
+                ]
+              },
+              "width": 560,
+              "height": 180
+            },
+            {
+              "title": "Quarterly component trend for the clicked bar",
+              "transform": [
+                {"filter": "datum.year == selectedYear"},
+                {"filter": {"param": "selectedItem"}},
+                {
+                  "fold": ["New", "Expansion", "Renewal", "Support"],
+                  "as": ["component", "amount"]
+                }
+              ],
+              "mark": {"type": "line", "point": true, "strokeWidth": 2},
+              "encoding": {
+                "x": {"field": "quarter", "type": "ordinal", "title": "Quarter"},
+                "y": {"field": "amount", "type": "quantitative", "title": "Quarterly amount"},
+                "color": {
+                  "field": "component",
+                  "type": "nominal",
+                  "title": "Component",
+                  "scale": {"range": ["#1a73e8", "#34a853", "#fbbc04", "#9aa0a6"]}
+                },
+                "tooltip": [
+                  {"field": "year", "type": "ordinal", "title": "Year"},
+                  {"field": "region", "type": "nominal", "title": "Region"},
+                  {"field": "product", "type": "nominal", "title": "Product"},
+                  {"field": "quarter", "type": "ordinal", "title": "Quarter"},
+                  {"field": "component", "type": "nominal", "title": "Component"},
+                  {"field": "amount", "type": "quantitative", "title": "Amount"}
+                ]
+              },
+              "width": 560,
+              "height": 180
+            }
+          ],
+          "resolve": {
+            "scale": {
+              "color": "shared"
+            }
+          },
+          "config": {
+            "view": {"stroke": "transparent"},
+            "axis": {"labelFont": "system-ui", "titleFont": "system-ui"},
+            "legend": {"labelFont": "system-ui", "titleFont": "system-ui"},
+            "header": {"labelFont": "system-ui", "titleFont": "system-ui"}
+          }
+        }
+            </template>
+          </figure>
+        </section>
+
+        <section id="table-examples" data-toc data-toc-title="Table Examples">
+          <h2>8. Table Examples</h2>
+          <p>
+            Tables are managed as a single block by applying classes and attributes to <code>div.table-wrap</code>.
+            Choose the horizontal behavior first: use the standard table when columns should fit the content width and wrap, or add <code>table-wide</code> when the table should keep its natural width and scroll horizontally.
+            Then choose whether the table also needs a fixed vertical height: add <code>table-fixed-height</code> when many records should scroll under a sticky header.
+            Add <code>table-compact</code> only when shorter row spacing is useful.
+            Use <code>table-grid</code> when full cell borders help matrix-style reading, and <code>data-index-columns</code> to mark leading record-index columns.
+            Numbered table captions are generated for tables such as <a class="xref table-ref" href="01-introduction.html#standard-table-many-columns">Table 1-1</a> and <a class="xref table-ref" href="01-introduction.html#wide-table-many-columns">Table 1-2</a>.
+          </p>
+          <ul>
+            <li><strong>Horizontal width:</strong> standard table by default, or <code>table-wide</code> for horizontal scrolling.</li>
+            <li><strong>Vertical height:</strong> unrestricted by default, or <code>table-fixed-height</code> for a height-limited table with a sticky header.</li>
+            <li><strong>Row density:</strong> regular spacing by default, or <code>table-compact</code> when narrower row spacing is preferred.</li>
+          </ul>
+
+          <h3 id="standard-table-example" data-toc data-toc-level="3" data-toc-title="Standard Table">8.1. Standard Table</h3>
+          <p>
+            A standard table fills the content width and wraps cell text so it usually fits without horizontal scrolling.
+            This example keeps many columns so the default width, wrapping behavior, and numeric alignment can be inspected without switching to the wide-table mode.
+            The records are placeholder values for inspecting table presentation; they are not intended as technical guidance.
+          </p>
+
+          <div class="table-wrap">
+            <table id="standard-table-many-columns" data-numbered="table">
+              <caption><span class="numbered-label table-number">Table 1-1</span> Standard table example with many columns</caption>
+              <thead>
+                <tr>
+                  <th>Feature</th>
+                  <th>Input</th>
+                  <th>Output</th>
+                  <th>Mobile</th>
+                  <th>Print</th>
+                  <th>JavaScript</th>
+                  <th>Accessibility</th>
+                  <th class="numeric">Examples</th>
+                  <th class="numeric">Avg ms</th>
+                  <th class="numeric">Pass rate</th>
+                  <th>Numbering</th>
+                  <th>Copy support</th>
+                  <th>Review note</th>
+                  <th>Recommended use</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Callout</td>
+                  <td>Short prose</td>
+                  <td>Highlighted note</td>
+                  <td>Wraps</td>
+                  <td>Fits</td>
+                  <td>Not required</td>
+                  <td>Screen-reader friendly</td>
+                  <td class="numeric">1,234,567</td>
+                  <td class="numeric">0.312345</td>
+                  <td class="numeric">100%</td>
+                  <td>No</td>
+                  <td>No</td>
+                  <td>Keep notes concise.</td>
+                  <td>Use for warnings, tips, and prerequisites.</td>
+                </tr>
+                <tr>
+                  <td>Math</td>
+                  <td>TeX source</td>
+                  <td>Rendered formula</td>
+                  <td>May scroll</td>
+                  <td>Review</td>
+                  <td>Required</td>
+                  <td>Needs surrounding prose</td>
+                  <td class="numeric">98,765,432</td>
+                  <td class="numeric">38.765432</td>
+                  <td class="numeric">98.5%</td>
+                  <td>Yes</td>
+                  <td>No</td>
+                  <td>Check narrow screens.</td>
+                  <td>Use for equations that need mathematical notation.</td>
+                </tr>
+                <tr>
+                  <td>Table</td>
+                  <td>Rows and columns</td>
+                  <td>Structured grid</td>
+                  <td>Wraps</td>
+                  <td>Fits</td>
+                  <td>Not required</td>
+                  <td>Use header cells</td>
+                  <td class="numeric">987,654,321</td>
+                  <td class="numeric">0.654321</td>
+                  <td class="numeric">100%</td>
+                  <td>Optional</td>
+                  <td>No</td>
+                  <td>Choose normal or wide mode.</td>
+                  <td>Use for dense comparisons and result summaries.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 id="wide-table-example" data-toc data-toc-level="3" data-toc-title="Wide Table">8.2. Wide Table</h3>
+          <p>
+            Add <code>table-wide</code> when preserving the table's natural width is more important than forcing every column to wrap.
+            The wrapper keeps horizontal scrolling available on narrow screens.
+          </p>
+          <div class="table-wrap table-wide" style="--table-min-width: 58rem;">
+            <table id="wide-table-many-columns" data-numbered="table">
+              <caption><span class="numbered-label table-number">Table 1-2</span> Wide table example with many columns</caption>
+              <thead>
+                <tr>
+                  <th>Feature</th>
+                  <th>Input</th>
+                  <th>Output</th>
+                  <th>Mobile</th>
+                  <th>Print</th>
+                  <th>JavaScript</th>
+                  <th>Accessibility</th>
+                  <th class="numeric">Examples</th>
+                  <th class="numeric">Avg ms</th>
+                  <th class="numeric">Pass rate</th>
+                  <th>Numbering</th>
+                  <th>Copy support</th>
+                  <th>Review note</th>
+                  <th>Recommended use</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Callout</td>
+                  <td>Short prose</td>
+                  <td>Highlighted note</td>
+                  <td>Wraps</td>
+                  <td>Fits</td>
+                  <td>Not required</td>
+                  <td>Screen-reader friendly</td>
+                  <td class="numeric">1,234,567</td>
+                  <td class="numeric">0.312345</td>
+                  <td class="numeric">100%</td>
+                  <td>No</td>
+                  <td>No</td>
+                  <td>Keep notes concise.</td>
+                  <td>Use for warnings, tips, and prerequisites.</td>
+                </tr>
+                <tr>
+                  <td>Math</td>
+                  <td>TeX source</td>
+                  <td>Rendered formula</td>
+                  <td>May scroll</td>
+                  <td>Review</td>
+                  <td>Required</td>
+                  <td>Needs surrounding prose</td>
+                  <td class="numeric">98,765,432</td>
+                  <td class="numeric">38.765432</td>
+                  <td class="numeric">98.5%</td>
+                  <td>Yes</td>
+                  <td>No</td>
+                  <td>Check narrow screens.</td>
+                  <td>Use for equations that need mathematical notation.</td>
+                </tr>
+                <tr>
+                  <td>Table</td>
+                  <td>Rows and columns</td>
+                  <td>Structured grid</td>
+                  <td>Wraps</td>
+                  <td>Fits</td>
+                  <td>Not required</td>
+                  <td>Use header cells</td>
+                  <td class="numeric">987,654,321</td>
+                  <td class="numeric">0.654321</td>
+                  <td class="numeric">100%</td>
+                  <td>Optional</td>
+                  <td>No</td>
+                  <td>Choose normal or wide mode.</td>
+                  <td>Use for dense comparisons and result summaries.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 id="scrollable-table-example" data-toc data-toc-level="3" data-toc-title="Fixed-Height Table">8.3. Fixed-Height Table</h3>
+          <p>
+            Add <code>table-fixed-height</code> when a table has many records and should keep a viewport-aware maximum height.
+            The default height is based on the window size; set <code>--table-max-height</code> on an individual table wrapper when a specific height is needed.
+            The header row stays visible while the body scrolls vertically.
+            This is separate from <code>table-wide</code>; combine both classes only when a table needs horizontal and vertical scrolling.
+          </p>
+          <div class="table-wrap table-fixed-height table-compact">
+            <table id="scrollable-job-results" data-numbered="table">
+              <caption><span class="numbered-label table-number">Table 1-3</span> Fixed-height table example with many records</caption>
+              <thead>
+                <tr>
+                  <th>Run</th>
+                  <th>Dataset</th>
+                  <th>Status</th>
+                  <th class="numeric">Rows</th>
+                  <th class="numeric">Duration</th>
+                  <th class="numeric">Memory</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>R-001</td>
+                  <td>events-alpha</td>
+                  <td>Pass</td>
+                  <td class="numeric">12,480</td>
+                  <td class="numeric">4.2s</td>
+                  <td class="numeric">220 MB</td>
+                  <td>Baseline import.</td>
+                </tr>
+                <tr>
+                  <td>R-002</td>
+                  <td>events-beta</td>
+                  <td>Pass</td>
+                  <td class="numeric">18,920</td>
+                  <td class="numeric">5.1s</td>
+                  <td class="numeric">248 MB</td>
+                  <td>Schema matched.</td>
+                </tr>
+                <tr>
+                  <td>R-003</td>
+                  <td>events-gamma</td>
+                  <td>Warn</td>
+                  <td class="numeric">21,440</td>
+                  <td class="numeric">6.8s</td>
+                  <td class="numeric">310 MB</td>
+                  <td>Optional field missing.</td>
+                </tr>
+                <tr>
+                  <td>R-004</td>
+                  <td>metrics-alpha</td>
+                  <td>Pass</td>
+                  <td class="numeric">7,260</td>
+                  <td class="numeric">2.9s</td>
+                  <td class="numeric">180 MB</td>
+                  <td>Aggregates verified.</td>
+                </tr>
+                <tr>
+                  <td>R-005</td>
+                  <td>metrics-beta</td>
+                  <td>Pass</td>
+                  <td class="numeric">8,104</td>
+                  <td class="numeric">3.3s</td>
+                  <td class="numeric">192 MB</td>
+                  <td>Indexes reused.</td>
+                </tr>
+                <tr>
+                  <td>R-006</td>
+                  <td>metrics-gamma</td>
+                  <td>Pass</td>
+                  <td class="numeric">8,912</td>
+                  <td class="numeric">3.7s</td>
+                  <td class="numeric">205 MB</td>
+                  <td>Cache warmed.</td>
+                </tr>
+                <tr>
+                  <td>R-007</td>
+                  <td>logs-alpha</td>
+                  <td>Warn</td>
+                  <td class="numeric">31,506</td>
+                  <td class="numeric">8.9s</td>
+                  <td class="numeric">402 MB</td>
+                  <td>Late records detected.</td>
+                </tr>
+                <tr>
+                  <td>R-008</td>
+                  <td>logs-beta</td>
+                  <td>Pass</td>
+                  <td class="numeric">29,880</td>
+                  <td class="numeric">8.1s</td>
+                  <td class="numeric">388 MB</td>
+                  <td>Partition counts match.</td>
+                </tr>
+                <tr>
+                  <td>R-009</td>
+                  <td>logs-gamma</td>
+                  <td>Pass</td>
+                  <td class="numeric">34,220</td>
+                  <td class="numeric">9.4s</td>
+                  <td class="numeric">430 MB</td>
+                  <td>Compressed source.</td>
+                </tr>
+                <tr>
+                  <td>R-010</td>
+                  <td>audit-alpha</td>
+                  <td>Pass</td>
+                  <td class="numeric">4,820</td>
+                  <td class="numeric">1.8s</td>
+                  <td class="numeric">144 MB</td>
+                  <td>Small reference set.</td>
+                </tr>
+                <tr>
+                  <td>R-011</td>
+                  <td>audit-beta</td>
+                  <td>Pass</td>
+                  <td class="numeric">5,016</td>
+                  <td class="numeric">2.0s</td>
+                  <td class="numeric">150 MB</td>
+                  <td>Checksum verified.</td>
+                </tr>
+                <tr>
+                  <td>R-012</td>
+                  <td>audit-gamma</td>
+                  <td>Warn</td>
+                  <td class="numeric">5,208</td>
+                  <td class="numeric">2.4s</td>
+                  <td class="numeric">162 MB</td>
+                  <td>Manual review queued.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 id="indexed-table-example" data-toc data-toc-level="3" data-toc-title="Indexed Table">8.4. Indexed Table</h3>
+          <p>
+            Use <code>data-index-columns="2"</code> when the first two columns identify each record, similar to a DataFrame with a multi-column index.
+            Header rows can also be grouped with <code>rowspan</code> and <code>colspan</code> when the data columns have multiple levels.
+            This example also uses <code>table-grid</code> to show the full grid style with vertical rules, which can help when the table is read as a matrix.
+          </p>
+          <div class="table-wrap table-wide table-grid" data-index-columns="2">
+            <table id="indexed-table-two-columns" data-numbered="table">
+              <caption><span class="numbered-label table-number">Table 1-4</span> Wide indexed table example with grouped columns</caption>
+              <thead>
+                <tr>
+                  <th rowspan="2">Region</th>
+                  <th rowspan="2">Product</th>
+                  <th colspan="4">2025 result</th>
+                  <th colspan="4">2026 result</th>
+                </tr>
+                <tr>
+                  <th class="numeric">Q1</th>
+                  <th class="numeric">Q2</th>
+                  <th class="numeric">Q3</th>
+                  <th class="numeric">Q4</th>
+                  <th class="numeric">Q1</th>
+                  <th class="numeric">Q2</th>
+                  <th class="numeric">Q3</th>
+                  <th class="numeric">Q4</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">East</th>
+                  <th scope="row">Basic</th>
+                  <td class="numeric">104</td>
+                  <td class="numeric">111</td>
+                  <td class="numeric">118</td>
+                  <td class="numeric">126</td>
+                  <td class="numeric">120</td>
+                  <td class="numeric">132</td>
+                  <td class="numeric">141</td>
+                  <td class="numeric">150</td>
+                </tr>
+                <tr>
+                  <th scope="row">East</th>
+                  <th scope="row">Pro</th>
+                  <td class="numeric">72</td>
+                  <td class="numeric">79</td>
+                  <td class="numeric">83</td>
+                  <td class="numeric">90</td>
+                  <td class="numeric">88</td>
+                  <td class="numeric">94</td>
+                  <td class="numeric">101</td>
+                  <td class="numeric">117</td>
+                </tr>
+                <tr>
+                  <th scope="row">West</th>
+                  <th scope="row">Basic</th>
+                  <td class="numeric">84</td>
+                  <td class="numeric">91</td>
+                  <td class="numeric">96</td>
+                  <td class="numeric">103</td>
+                  <td class="numeric">99</td>
+                  <td class="numeric">105</td>
+                  <td class="numeric">110</td>
+                  <td class="numeric">124</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 id="compact-table-example" data-toc data-toc-level="3" data-toc-title="Compact Table">8.5. Compact Table</h3>
+          <p>
+            Add <code>table-compact</code> when a table has many short rows and needs a denser layout.
+          </p>
+          <div class="table-wrap table-compact">
+            <table id="compact-quality-checks" data-numbered="table">
+              <caption><span class="numbered-label table-number">Table 1-5</span> Compact table example</caption>
+              <thead>
+                <tr>
+                  <th>Check</th>
+                  <th>Status</th>
+                  <th>Duration</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>HTML validation</td>
+                  <td>Pass</td>
+                  <td>0.8s</td>
+                  <td>No structural issues.</td>
+                </tr>
+                <tr>
+                  <td>Link check</td>
+                  <td>Pass</td>
+                  <td>1.4s</td>
+                  <td>Internal links resolved.</td>
+                </tr>
+                <tr>
+                  <td>Print smoke</td>
+                  <td>Warn</td>
+                  <td>2.1s</td>
+                  <td>Review wide tables manually.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="notes" data-toc data-toc-title="Operational Notes">
+          <h2>9. Operational Notes</h2>
+          <div class="card card-muted">
+            <h3>Interpreting Runtime Results</h3>
+            <p>
+              Browser execution time is affected by device performance, battery state, browser optimization, and other running processes.
+              Treat timing output as a rough signal for behavior and trends, not as a strict benchmark.
+            </p>
+          </div>
+
+          <div class="card card-muted">
+            <h3>Progressive Reading Design</h3>
+            <p>
+              Body text, links, and code content remain readable as normal HTML.
+              Sidebar contents, heading references, and chapter navigation are present in the generated HTML.
+              Python execution, Mermaid, MathJax, Vega-Lite, Prism, and copy buttons are convenience enhancements added by JavaScript.
+            </p>
+          </div>
+        </section>
+
+        <section id="changelog" data-toc data-toc-title="Changelog">
+          <h2>10. Changelog</h2>
+          <p>
+            The release history is shown in <a class="xref table-ref" href="01-introduction.html#release-history">Table 1-6</a>.
+          </p>
+          <p>
+            For table layout patterns, see <a href="#table-examples">Table Examples</a>.
+            When <code>data-numbered="table"</code> is present and table numbering is enabled, the caption receives the generated table number.
+          </p>
+          <div class="table-wrap">
+            <table id="release-history" data-numbered="table">
+              <caption><span class="numbered-label table-number">Table 1-6</span> Template release history</caption>
+              <thead>
+                <tr>
+                  <th>Version</th>
+                  <th>Date</th>
+                  <th>Changes</th>
+                  <th>Author</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>0.1.0</td>
+                  <td>2026-04-25</td>
+                  <td>Initial technical HTML document template draft.</td>
+                  <td>Atsushi Suzuki</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <nav class="chapter-nav" data-chapter-nav aria-label="Chapter navigation">
+          <a class="chapter-nav-link next" href="02-examples.html">
+            <span>Next</span>
+            <strong>Chapter 2: Minimal Page</strong>
+          </a>
+        </nav>
+
+        <footer class="footer">
+          Prototype template with robust navigation and Pyodide runner.
+        </footer>
+      </article>
+    </main>
+  </div>
+
+  <script defer src="../../assets/js/technical-doc.js"></script>
+</body>
+</html>

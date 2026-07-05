@@ -4,6 +4,10 @@ Use this file when you want to create a document from this template. This workfl
 
 For project overview, template development, CI, and browser-test details, see [README.md](README.md).
 
+For concrete component examples, keep the generated template guide available at `template-docs/chapters/01-introduction.html`.
+That guide is outside `chapters-src/` so it remains available after the starter document has been replaced with project-specific content.
+When asking an LLM to continue a partially written document, include `QUICKSTART.md` and the relevant `template-docs/chapters/` page as reference material.
+
 ## 1. Edit Content
 
 Edit the source files under `chapters-src/`:
@@ -14,6 +18,8 @@ Edit the source files under `chapters-src/`:
 Files under `chapters-src/` are article fragments. They are inserted into `<article class="content">` by `scripts/build_site.py`.
 
 The root `chapters-src/` directory is the user-facing document input. The similarly named `tests/fixtures/basic-site/chapters-src/` directory is fixed template test data; do not edit the fixture when you are only writing document content.
+
+Do not rely on `chapters-src/` as the long-term template manual. It is meant to be rewritten for the actual document. Use `template-docs/chapters/` for the persistent guide and examples.
 
 Use top-level `externalLinks` in `chapters-src/site-manifest.json` for links that should appear on every chapter. Use optional chapter-level `externalLinks` for links that should appear only on that chapter.
 
@@ -138,6 +144,7 @@ The `tests/fixtures/basic-site/` tree is only needed when developing the templat
 
 If you are an AI agent using this template:
 
+- Treat `QUICKSTART.md` and `template-docs/chapters/` as the persistent template instructions.
 - Prefer editing `chapters-src/`, not generated `chapters/`.
 - Edit only the requested content unless asked to change the template.
 - Create only article fragments for chapter content.

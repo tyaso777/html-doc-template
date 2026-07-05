@@ -9,7 +9,10 @@ from typing import Any
 
 
 def relative_path(from_file: Path, to_file: Path) -> str:
-    return Path(os.path.relpath(to_file.resolve(), from_file.resolve().parent)).as_posix()
+    try:
+        return Path(os.path.relpath(to_file.resolve(), from_file.resolve().parent)).as_posix()
+    except ValueError:
+        return to_file.resolve().as_uri()
 
 
 def render_nav_link(direction: str, title: str, href: str, indent: str) -> str:

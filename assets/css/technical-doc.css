@@ -538,7 +538,7 @@ h3 {
 .table-wrap.table-fixed-height {
   --table-caption-sticky-offset: 0px;
   --table-header-sticky-offset: 0px;
-  max-height: var(--table-max-height, 22rem);
+  max-height: var(--table-max-height, 60vh);
   overflow-y: auto;
 }
 

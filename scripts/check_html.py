@@ -385,7 +385,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "paths",
         nargs="*",
-        default=["index.html", "chapters-src", "chapters"],
+        default=["index.html", "chapters-src", "chapters", "template-docs/chapters-src", "template-docs/chapters"],
         help="HTML files or directories to check. Defaults to maintained project HTML files.",
     )
     parser.add_argument(

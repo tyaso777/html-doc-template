@@ -1,8 +1,8 @@
 {
-  "title": "Starter document",
-  "description": "A starter multi-page technical document built with html-doc-template.",
+  "title": "html-doc-template guide",
+  "description": "A technical HTML document template for multi-page documents with code, math, diagrams, tables, and optional Python examples.",
   "lang": "en",
-  "shell": "../layouts/chapter-shell.html",
+  "shell": "../../layouts/chapter-shell.html",
   "outputDir": "../chapters",
   "layout": {
     "defaultMode": "standard"
@@ -38,17 +38,17 @@
   },
   "chapters": [
     {
-      "title": "Chapter 1: Getting Started",
-      "sidebarTitle": "Chapter 1\nGetting Started",
-      "subtitle": "Starter document",
+      "title": "Chapter 1: Introduction",
+      "sidebarTitle": "Chapter 1\nIntroduction",
+      "subtitle": "Multi-page example",
       "number": 1,
       "source": "01-introduction.html",
       "href": "01-introduction.html"
     },
     {
-      "title": "Chapter 2: Example Page",
-      "sidebarTitle": "Chapter 2\nExample Page",
-      "subtitle": "Starter document",
+      "title": "Chapter 2: Minimal Page",
+      "sidebarTitle": "Chapter 2\nMinimal Page",
+      "subtitle": "Multi-page example",
       "number": 2,
       "source": "02-examples.html",
       "href": "02-examples.html",
@@ -65,9 +65,9 @@
       ]
     },
     {
-      "title": "Chapter 3: Notes",
-      "sidebarTitle": "Chapter 3\nNotes",
-      "subtitle": "Starter document",
+      "title": "Chapter 3: Reference Page",
+      "sidebarTitle": "Chapter 3\nReference Page",
+      "subtitle": "Multi-page example",
       "number": 3,
       "source": "03-reference.html",
       "href": "03-reference.html"
@@ -78,16 +78,12 @@
       "title": "Project",
       "items": [
         {
-          "label": "Template guide",
-          "href": "../template-docs/chapters/01-introduction.html"
-        },
-        {
           "label": "Project index",
-          "href": "../index.html"
+          "href": "../../index.html"
         },
         {
           "label": "Repository README",
-          "href": "../README.md"
+          "href": "../../README.md"
         }
       ]
     }

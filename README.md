@@ -13,6 +13,7 @@ Main files:
 ```text
 QUICKSTART.md                         # shortest document-authoring workflow
 chapters-src/                         # editable chapter fragments and manifest
+template-docs/chapters/                # generated template guide with concrete examples
 layouts/chapter-shell.html             # shared shell used by the build script
 ```
 
@@ -77,6 +78,16 @@ html-doc-template/
     01-introduction.html
     02-examples.html
     03-reference.html
+  template-docs/
+    chapters-src/
+      site-manifest.json
+      01-introduction.html
+      02-examples.html
+      03-reference.html
+    chapters/
+      01-introduction.html
+      02-examples.html
+      03-reference.html
   layouts/
     chapter-shell.html
   tests/
@@ -88,7 +99,9 @@ html-doc-template/
 
 ## Folder Roles
 
-Use `chapters-src/` as the editable source for the real document in this repository. The default `scripts/build_site.py` command reads `chapters-src/site-manifest.json` and writes generated public pages to `chapters/`.
+Use `chapters-src/` as the editable source for the real document in this repository. The default `scripts/build_site.py` command reads `chapters-src/site-manifest.json` and writes generated public pages to `chapters/`. These starter chapters are intentionally short and are safe to replace when beginning a new document.
+
+Use `template-docs/` as the maintained guide for this template itself. `template-docs/chapters-src/` contains the source for the guide, and `template-docs/chapters/` contains the generated guide pages with concrete examples of tables, callouts, diagrams, math, code blocks, Python runners, and other components. When the starter `chapters-src/` is replaced by a real document, the detailed usage examples remain available in `template-docs/chapters/`.
 
 Use `layouts/chapter-shell.html` as the shared wrapper for generated multi-page chapters. It contains the document shell: `<html>`, `<head>`, sidebar, shared CSS, shared JavaScript, and build-time placeholders for fixed and chapter-specific optional CDN assets. CDN URLs and SRI hashes are maintained in `scripts/site_builder/cdn-assets.json`.
 
@@ -120,7 +133,9 @@ The short version:
 
 On Windows, use `py -3` instead of `python3`. Node.js is not required for document authoring.
 
-This template can be used for multi-page documents by sharing one shell template and the same `assets/` directory across generated HTML files. In this workflow, edit the user-facing `chapters-src/` and treat `chapters/` as generated output. See `chapters/01-introduction.html`, `chapters/02-examples.html`, and `chapters/03-reference.html` for a minimal three-page example.
+This template can be used for multi-page documents by sharing one shell template and the same `assets/` directory across generated HTML files. In this workflow, edit the user-facing `chapters-src/` and treat `chapters/` as generated output. See `chapters/01-introduction.html`, `chapters/02-examples.html`, and `chapters/03-reference.html` for a minimal starter document.
+
+For concrete component examples and usage patterns, open `template-docs/chapters/01-introduction.html`. That guide is separate from the starter document so it remains available after `chapters-src/` has been rewritten for a real project.
 
 Each file under `chapters-src/` is an article fragment, not a complete HTML document. It should contain only the content that belongs inside `<article class="content">`. Keep `<head>`, sidebar markup, shared CSS, and shared JavaScript in `layouts/chapter-shell.html`; the build injects CDN assets from `scripts/site_builder/cdn-assets.json`, including optional assets such as Mermaid and Vega-Lite only for chapters that use them.
 
@@ -306,7 +321,7 @@ python3 -m unittest discover -s tests/python
 git diff --exit-code chapters
 ```
 
-If npm is available, `npm run check:html` and `npm run check:sri` run the HTML checker and CDN SRI verification through the Python launcher wrapper.
+If npm is available, `npm run build:all` rebuilds both the starter document and the template guide. `npm run check:html` and `npm run check:sri` run the HTML checker and CDN SRI verification through the Python launcher wrapper.
 
 If Node.js and Playwright are available, also run:
 

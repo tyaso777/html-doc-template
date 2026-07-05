@@ -131,7 +131,8 @@
         A technical HTML document template with code blocks, math, Mermaid diagrams, and optional in-browser Python examples.
       </p>
       <div class="actions">
-        <a class="button" href="./chapters/01-introduction.html">Open Chapter Example</a>
+        <a class="button" href="./chapters/01-introduction.html">Open Starter Document</a>
+        <a class="button secondary" href="./template-docs/chapters/01-introduction.html">Open Template Guide</a>
         <a class="button secondary" href="./README.md">View README</a>
       </div>
     </header>
@@ -140,7 +141,8 @@
       <h2>Files</h2>
       <div class="card">
         <p><strong>Repository guide:</strong> <a href="./README.md"><code>README.md</code></a></p>
-        <p><strong>Chapter example:</strong> <a href="./chapters/01-introduction.html"><code>chapters/01-introduction.html</code></a></p>
+        <p><strong>Starter document:</strong> <a href="./chapters/01-introduction.html"><code>chapters/01-introduction.html</code></a></p>
+        <p><strong>Template guide:</strong> <a href="./template-docs/chapters/01-introduction.html"><code>template-docs/chapters/01-introduction.html</code></a></p>
       </div>
     </section>
 
@@ -148,10 +150,10 @@
       <h2>Use This Template</h2>
       <div class="card">
         <p>
-          Edit fragments under <code>chapters-src/</code>, keep shared shells under <code>layouts/</code>, and run <code>python3 scripts/build_site.py</code> to generate <code>chapters/</code>.
+          Edit fragments under <code>chapters-src/</code>, keep shared shells under <code>layouts/</code>, and run <code>npm run build</code> to generate <code>chapters/</code>.
         </p>
         <p>
-          Replace the title, document information, body content, Materials, External Links, and Changelog. The Python runner loads Pyodide from a CDN only after the reader presses <strong>Load Python Runtime</strong>.
+          The full component reference remains under <code>template-docs/</code>, so the starter chapters can be replaced freely. During template development, run <code>npm run build:template-docs</code> or <code>npm run build:all</code> to regenerate the guide.
         </p>
       </div>
     </section>

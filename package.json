@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "node scripts/run_python.mjs scripts/build_site.py",
+    "build:template-docs": "node scripts/run_python.mjs scripts/build_site.py --manifest template-docs/chapters-src/site-manifest.json --output-dir template-docs/chapters",
+    "build:all": "npm run build && npm run build:template-docs",
     "check:html": "node scripts/run_python.mjs scripts/check_html.py",
     "check:sri": "node scripts/run_python.mjs scripts/update_cdn_sri.py --check",
     "update:sri": "node scripts/run_python.mjs scripts/update_cdn_sri.py",

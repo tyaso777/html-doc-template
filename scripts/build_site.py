@@ -61,7 +61,10 @@ except ModuleNotFoundError:
 
 
 def asset_prefix(output_path: Path, root: Path) -> str:
-    relative = Path(os.path.relpath(root.resolve(), output_path.resolve().parent)).as_posix()
+    try:
+        relative = Path(os.path.relpath(root.resolve(), output_path.resolve().parent)).as_posix()
+    except ValueError:
+        return root.resolve().as_uri().rstrip("/") + "/"
     return "" if relative == "." else relative.rstrip("/") + "/"
 
 
