@@ -134,6 +134,19 @@ main()
       indexUrl: "https://cdn.jsdelivr.net/pyodide/v0.29.3/full/"
     };
 
+    function normalizePyodideAssetUrl(value, label) {
+      if (typeof value !== "string" || value.trim() === "") {
+        throw new Error(`Invalid Pyodide ${label} URL.`);
+      }
+
+      const url = new URL(value, window.location.href);
+      if (url.protocol !== "https:" && url.origin !== window.location.origin) {
+        throw new Error(`Pyodide ${label} URL must be HTTPS or same-origin.`);
+      }
+
+      return url.href;
+    }
+
     const LAYOUT_MODE_STORAGE_KEY = "technicalDocLayoutMode";
 
     function defaultLayoutMode() {
@@ -321,9 +334,12 @@ main()
           return pyodideWorker;
         }
 
+        const pyodideScriptUrl = normalizePyodideAssetUrl(PYODIDE_WORKER_CONFIG.scriptUrl, "script");
+        const pyodideIndexUrl = normalizePyodideAssetUrl(PYODIDE_WORKER_CONFIG.indexUrl, "index");
+
         const workerSource = `
-        const pyodideScriptUrl = "${PYODIDE_WORKER_CONFIG.scriptUrl}";
-        const pyodideIndexUrl = "${PYODIDE_WORKER_CONFIG.indexUrl}";
+        const pyodideScriptUrl = ${JSON.stringify(pyodideScriptUrl)};
+        const pyodideIndexUrl = ${JSON.stringify(pyodideIndexUrl)};
 
         importScripts(pyodideScriptUrl);
         let pyodideReadyPromise = null;
