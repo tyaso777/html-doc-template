@@ -99,6 +99,10 @@
         {
           "label": "Mermaid",
           "href": "https://mermaid.js.org/"
+        },
+        {
+          "label": "Vega-Lite",
+          "href": "https://vega.github.io/vega-lite/"
         }
       ]
     },

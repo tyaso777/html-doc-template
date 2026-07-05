@@ -221,7 +221,8 @@ AI agents should follow [QUICKSTART.md](QUICKSTART.md), edit `chapters-src/` ins
       "items": [
         { "label": "Prism.js", "href": "https://prismjs.com/" },
         { "label": "MathJax", "href": "https://www.mathjax.org/" },
-        { "label": "Mermaid", "href": "https://mermaid.js.org/" }
+        { "label": "Mermaid", "href": "https://mermaid.js.org/" },
+        { "label": "Vega-Lite", "href": "https://vega.github.io/vega-lite/" }
       ]
     },
     {
@@ -358,6 +359,9 @@ The template currently loads these libraries from CDN:
 - CodeMirror
 - MathJax
 - Mermaid
+- Vega
+- Vega-Lite
+- vega-embed
 - Pyodide
 
 Browser-loaded script and stylesheet CDN assets use SRI with `crossorigin="anonymous"`, and the HTML checker reports external script or stylesheet tags that omit those attributes.
@@ -376,7 +380,20 @@ This project is intended as a source template. Documents created from it should 
 
 ## Third-party Libraries
 
-This template loads third-party libraries from public CDNs. Those libraries are distributed under their own licenses, including MIT, Apache-2.0, and MPL-2.0. The MIT License in this repository applies to the template files maintained here, not to third-party libraries loaded from CDNs.
+This template loads third-party libraries from public CDNs. Those libraries are distributed under their own licenses:
+
+| Library | Use in this template | License |
+| --- | --- | --- |
+| Prism | Syntax highlighting | MIT |
+| CodeMirror | Python runner editor | MIT |
+| MathJax | Math rendering | Apache-2.0 |
+| Mermaid | Text-based diagrams | MIT |
+| Vega | Vega-Lite runtime dependency | BSD-3-Clause |
+| Vega-Lite | Declarative charts | BSD-3-Clause |
+| vega-embed | Vega/Vega-Lite embed helper | BSD-3-Clause |
+| Pyodide | Optional in-browser Python runtime | MPL-2.0 |
+
+The MIT License in this repository applies to the template files maintained here, not to third-party libraries loaded from CDNs. When redistributing a bundled or archived copy of this template, keep the third-party license notices required by those projects.
 
 ## License
 

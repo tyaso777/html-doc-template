@@ -149,6 +149,41 @@ main()
       }
     }
 
+    function initializeVegaLite() {
+      if (!window.vegaEmbed) {
+        return;
+      }
+
+      for (const target of document.querySelectorAll("[data-vega-lite]")) {
+        const specId = target.dataset.vegaLiteSpec;
+        const specElement = specId ? document.getElementById(specId) : null;
+
+        if (!specElement) {
+          target.textContent = "Vega-Lite spec was not found.";
+          continue;
+        }
+
+        let spec;
+
+        try {
+          const specText = specElement.content
+            ? specElement.content.textContent
+            : specElement.textContent;
+          spec = JSON.parse(specText);
+        } catch (error) {
+          target.textContent = `Vega-Lite spec error: ${error.message}`;
+          continue;
+        }
+
+        window.vegaEmbed(target, spec, {
+          actions: false,
+          renderer: "svg"
+        }).catch((error) => {
+          target.textContent = `Vega-Lite render error: ${error.message || error}`;
+        });
+      }
+    }
+
     function getTocTitle(element) {
       if (element.dataset.tocTitle) {
         return element.dataset.tocTitle;
@@ -832,4 +867,5 @@ except BaseException:
       }
       initializeCodeCopyButtons();
       initializeMermaid();
+      initializeVegaLite();
     });

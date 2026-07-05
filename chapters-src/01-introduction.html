@@ -353,6 +353,480 @@ flowchart LR
   </figure>
 </section>
 
+<section id="vega-lite" data-toc data-toc-title="Vega-Lite Charts">
+  <h2>Vega-Lite Charts</h2>
+  <p>
+    Vega-Lite renders charts from a JSON specification.
+    This template loads Vega, Vega-Lite, and vega-embed from pinned CDN assets, so authors can add a chart by editing the JSON spec in the source HTML.
+    The example below combines a year selector, clickable stacked bars, tooltips, and a linked component breakdown without adding custom JavaScript.
+  </p>
+
+  <div class="code-caption">vega-lite json excerpt</div>
+  <pre class="code-block"><code>{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "params": [
+    {
+      "name": "selectedYear",
+      "value": 2026,
+      "bind": {
+        "input": "select",
+        "options": [2025, 2026],
+        "name": "Year "
+      }
+    }
+  ],
+  "vconcat": [
+    {
+      "params": [
+        {
+          "name": "selectedItem",
+          "value": [{"region": "East", "product": "Basic"}],
+          "select": {"type": "point", "fields": ["region", "product"]}
+        }
+      ],
+      "mark": "bar",
+      "transform": [{"fold": ["New", "Expansion", "Renewal", "Support"], "as": ["component", "amount"]}]
+    },
+    {
+      "transform": [
+        {"filter": {"param": "selectedItem"}},
+        {"fold": ["New", "Expansion", "Renewal", "Support"], "as": ["component", "amount"]}
+      ],
+      "mark": {"type": "line", "point": true}
+    }
+  ]
+}</code></pre>
+
+  <figure id="quarterly-results-chart" class="vega-lite-figure" data-numbered="figure">
+    <figcaption>Interactive Vega-Lite chart rendered from JSON</figcaption>
+    <div class="vega-lite-wrap">
+      <div class="vega-lite" data-vega-lite data-vega-lite-spec="quarterly-results-chart-spec" aria-label="Quarterly results by year, region, and product"></div>
+    </div>
+    <template type="application/json" id="quarterly-results-chart-spec">
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Linked component breakdown example with a year selector and click selection.",
+  "data": {
+    "values": [
+      {"year": 2025, "region": "East", "product": "Basic", "quarter": "Q1", "New": 42, "Expansion": 30, "Renewal": 34, "Support": 12},
+      {"year": 2025, "region": "East", "product": "Basic", "quarter": "Q2", "New": 45, "Expansion": 34, "Renewal": 35, "Support": 12},
+      {"year": 2025, "region": "East", "product": "Basic", "quarter": "Q3", "New": 46, "Expansion": 37, "Renewal": 36, "Support": 12},
+      {"year": 2025, "region": "East", "product": "Basic", "quarter": "Q4", "New": 49, "Expansion": 42, "Renewal": 38, "Support": 13},
+      {"year": 2025, "region": "East", "product": "Plus", "quarter": "Q1", "New": 29, "Expansion": 24, "Renewal": 28, "Support": 10},
+      {"year": 2025, "region": "East", "product": "Plus", "quarter": "Q2", "New": 31, "Expansion": 27, "Renewal": 29, "Support": 10},
+      {"year": 2025, "region": "East", "product": "Plus", "quarter": "Q3", "New": 33, "Expansion": 29, "Renewal": 30, "Support": 11},
+      {"year": 2025, "region": "East", "product": "Plus", "quarter": "Q4", "New": 35, "Expansion": 33, "Renewal": 32, "Support": 11},
+      {"year": 2025, "region": "West", "product": "Basic", "quarter": "Q1", "New": 35, "Expansion": 28, "Renewal": 31, "Support": 11},
+      {"year": 2025, "region": "West", "product": "Basic", "quarter": "Q2", "New": 38, "Expansion": 30, "Renewal": 33, "Support": 12},
+      {"year": 2025, "region": "West", "product": "Basic", "quarter": "Q3", "New": 40, "Expansion": 34, "Renewal": 35, "Support": 12},
+      {"year": 2025, "region": "West", "product": "Basic", "quarter": "Q4", "New": 42, "Expansion": 37, "Renewal": 37, "Support": 13},
+      {"year": 2025, "region": "West", "product": "Plus", "quarter": "Q1", "New": 25, "Expansion": 22, "Renewal": 27, "Support": 10},
+      {"year": 2025, "region": "West", "product": "Plus", "quarter": "Q2", "New": 27, "Expansion": 24, "Renewal": 29, "Support": 10},
+      {"year": 2025, "region": "West", "product": "Plus", "quarter": "Q3", "New": 28, "Expansion": 26, "Renewal": 31, "Support": 10},
+      {"year": 2025, "region": "West", "product": "Plus", "quarter": "Q4", "New": 30, "Expansion": 29, "Renewal": 32, "Support": 11},
+      {"year": 2026, "region": "East", "product": "Basic", "quarter": "Q1", "New": 46, "Expansion": 35, "Renewal": 38, "Support": 13},
+      {"year": 2026, "region": "East", "product": "Basic", "quarter": "Q2", "New": 51, "Expansion": 40, "Renewal": 40, "Support": 14},
+      {"year": 2026, "region": "East", "product": "Basic", "quarter": "Q3", "New": 53, "Expansion": 43, "Renewal": 42, "Support": 14},
+      {"year": 2026, "region": "East", "product": "Basic", "quarter": "Q4", "New": 57, "Expansion": 50, "Renewal": 44, "Support": 15},
+      {"year": 2026, "region": "East", "product": "Plus", "quarter": "Q1", "New": 34, "Expansion": 30, "Renewal": 32, "Support": 11},
+      {"year": 2026, "region": "East", "product": "Plus", "quarter": "Q2", "New": 37, "Expansion": 34, "Renewal": 34, "Support": 11},
+      {"year": 2026, "region": "East", "product": "Plus", "quarter": "Q3", "New": 39, "Expansion": 36, "Renewal": 35, "Support": 12},
+      {"year": 2026, "region": "East", "product": "Plus", "quarter": "Q4", "New": 42, "Expansion": 42, "Renewal": 38, "Support": 13},
+      {"year": 2026, "region": "West", "product": "Basic", "quarter": "Q1", "New": 39, "Expansion": 33, "Renewal": 34, "Support": 13},
+      {"year": 2026, "region": "West", "product": "Basic", "quarter": "Q2", "New": 42, "Expansion": 36, "Renewal": 37, "Support": 13},
+      {"year": 2026, "region": "West", "product": "Basic", "quarter": "Q3", "New": 45, "Expansion": 40, "Renewal": 40, "Support": 14},
+      {"year": 2026, "region": "West", "product": "Basic", "quarter": "Q4", "New": 48, "Expansion": 44, "Renewal": 42, "Support": 14},
+      {"year": 2026, "region": "West", "product": "Plus", "quarter": "Q1", "New": 29, "Expansion": 27, "Renewal": 31, "Support": 11},
+      {"year": 2026, "region": "West", "product": "Plus", "quarter": "Q2", "New": 32, "Expansion": 30, "Renewal": 33, "Support": 11},
+      {"year": 2026, "region": "West", "product": "Plus", "quarter": "Q3", "New": 35, "Expansion": 33, "Renewal": 35, "Support": 12},
+      {"year": 2026, "region": "West", "product": "Plus", "quarter": "Q4", "New": 37, "Expansion": 38, "Renewal": 36, "Support": 13}
+    ]
+  },
+  "params": [
+    {
+      "name": "selectedYear",
+      "value": 2026,
+      "bind": {
+        "input": "select",
+        "options": [2025, 2026],
+        "name": "Year "
+      }
+    }
+  ],
+  "vconcat": [
+    {
+      "title": "Annual total by region, product, and component",
+      "params": [
+        {
+          "name": "selectedItem",
+          "value": [{"region": "East", "product": "Basic"}],
+          "select": {
+            "type": "point",
+            "fields": ["region", "product"],
+            "on": "click",
+            "clear": "dblclick"
+          }
+        }
+      ],
+      "transform": [
+        {"filter": "datum.year == selectedYear"},
+        {
+          "fold": ["New", "Expansion", "Renewal", "Support"],
+          "as": ["component", "amount"]
+        },
+        {
+          "aggregate": [{"op": "sum", "field": "amount", "as": "total"}],
+          "groupby": ["region", "product", "component"]
+        }
+      ],
+      "mark": {"type": "bar", "cornerRadiusEnd": 2},
+      "encoding": {
+        "x": {"field": "region", "type": "nominal", "title": "Region"},
+        "xOffset": {"field": "product"},
+        "y": {"field": "total", "type": "quantitative", "title": "Annual total"},
+        "color": {
+          "field": "component",
+          "type": "nominal",
+          "title": "Component",
+          "scale": {"range": ["#1a73e8", "#34a853", "#fbbc04", "#9aa0a6"]}
+        },
+        "opacity": {
+          "condition": {"param": "selectedItem", "value": 1},
+          "value": 0.45
+        },
+        "tooltip": [
+          {"field": "region", "type": "nominal", "title": "Region"},
+          {"field": "product", "type": "nominal", "title": "Product"},
+          {"field": "component", "type": "nominal", "title": "Component"},
+          {"field": "total", "type": "quantitative", "title": "Annual total"}
+        ]
+      },
+      "width": 560,
+      "height": 180
+    },
+    {
+      "title": "Quarterly component trend for the clicked bar",
+      "transform": [
+        {"filter": "datum.year == selectedYear"},
+        {"filter": {"param": "selectedItem"}},
+        {
+          "fold": ["New", "Expansion", "Renewal", "Support"],
+          "as": ["component", "amount"]
+        }
+      ],
+      "mark": {"type": "line", "point": true, "strokeWidth": 2},
+      "encoding": {
+        "x": {"field": "quarter", "type": "ordinal", "title": "Quarter"},
+        "y": {"field": "amount", "type": "quantitative", "title": "Quarterly amount"},
+        "color": {
+          "field": "component",
+          "type": "nominal",
+          "title": "Component",
+          "scale": {"range": ["#1a73e8", "#34a853", "#fbbc04", "#9aa0a6"]}
+        },
+        "tooltip": [
+          {"field": "year", "type": "ordinal", "title": "Year"},
+          {"field": "region", "type": "nominal", "title": "Region"},
+          {"field": "product", "type": "nominal", "title": "Product"},
+          {"field": "quarter", "type": "ordinal", "title": "Quarter"},
+          {"field": "component", "type": "nominal", "title": "Component"},
+          {"field": "amount", "type": "quantitative", "title": "Amount"}
+        ]
+      },
+      "width": 560,
+      "height": 180
+    }
+  ],
+  "resolve": {
+    "scale": {
+      "color": "shared"
+    }
+  },
+  "config": {
+    "view": {"stroke": "transparent"},
+    "axis": {"labelFont": "system-ui", "titleFont": "system-ui"},
+    "legend": {"labelFont": "system-ui", "titleFont": "system-ui"},
+    "header": {"labelFont": "system-ui", "titleFont": "system-ui"}
+  }
+}
+    </template>
+  </figure>
+</section>
+
+<section id="table-examples" data-toc data-toc-title="Table Examples">
+  <h2>Table Examples</h2>
+  <p>
+    Tables are managed as a single block by applying classes and attributes to <code>div.table-wrap</code>.
+    Use the default table for compact comparisons, <code>table-wide</code> for tables that should keep their natural width and scroll horizontally when needed, and <code>data-index-columns</code> to mark leading record-index columns.
+    Numbered table captions are generated for tables such as <span data-ref="standard-table-many-columns"></span> and <span data-ref="wide-table-many-columns"></span>.
+  </p>
+
+  <h3 id="standard-table-example" data-toc data-toc-level="3" data-toc-title="Standard Table">Standard Table</h3>
+  <p>
+    A standard table fills the content width and wraps cell text so it usually fits without horizontal scrolling.
+    This example keeps many columns so the default width, wrapping behavior, and numeric alignment can be inspected without switching to the wide-table mode.
+    The records are placeholder values for inspecting table presentation; they are not intended as technical guidance.
+  </p>
+
+  <div class="table-wrap">
+    <table id="standard-table-many-columns" data-numbered="table">
+      <caption>Standard table example with many columns</caption>
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>Input</th>
+          <th>Output</th>
+          <th>Mobile</th>
+          <th>Print</th>
+          <th>JavaScript</th>
+          <th>Accessibility</th>
+          <th class="numeric">Examples</th>
+          <th class="numeric">Avg ms</th>
+          <th class="numeric">Pass rate</th>
+          <th>Numbering</th>
+          <th>Copy support</th>
+          <th>Review note</th>
+          <th>Recommended use</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Callout</td>
+          <td>Short prose</td>
+          <td>Highlighted note</td>
+          <td>Wraps</td>
+          <td>Fits</td>
+          <td>Not required</td>
+          <td>Screen-reader friendly</td>
+          <td class="numeric">1,234,567</td>
+          <td class="numeric">0.312345</td>
+          <td class="numeric">100%</td>
+          <td>No</td>
+          <td>No</td>
+          <td>Keep notes concise.</td>
+          <td>Use for warnings, tips, and prerequisites.</td>
+        </tr>
+        <tr>
+          <td>Math</td>
+          <td>TeX source</td>
+          <td>Rendered formula</td>
+          <td>May scroll</td>
+          <td>Review</td>
+          <td>Required</td>
+          <td>Needs surrounding prose</td>
+          <td class="numeric">98,765,432</td>
+          <td class="numeric">38.765432</td>
+          <td class="numeric">98.5%</td>
+          <td>Yes</td>
+          <td>No</td>
+          <td>Check narrow screens.</td>
+          <td>Use for equations that need mathematical notation.</td>
+        </tr>
+        <tr>
+          <td>Table</td>
+          <td>Rows and columns</td>
+          <td>Structured grid</td>
+          <td>Wraps</td>
+          <td>Fits</td>
+          <td>Not required</td>
+          <td>Use header cells</td>
+          <td class="numeric">987,654,321</td>
+          <td class="numeric">0.654321</td>
+          <td class="numeric">100%</td>
+          <td>Optional</td>
+          <td>No</td>
+          <td>Choose normal or wide mode.</td>
+          <td>Use for dense comparisons and result summaries.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 id="wide-table-example" data-toc data-toc-level="3" data-toc-title="Wide Table">Wide Table</h3>
+  <p>
+    Add <code>table-wide</code> when preserving the table's natural width is more important than forcing every column to wrap.
+    The wrapper keeps horizontal scrolling available on narrow screens.
+  </p>
+  <div class="table-wrap table-wide" style="--table-min-width: 58rem;">
+    <table id="wide-table-many-columns" data-numbered="table">
+      <caption>Wide table example with many columns</caption>
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>Input</th>
+          <th>Output</th>
+          <th>Mobile</th>
+          <th>Print</th>
+          <th>JavaScript</th>
+          <th>Accessibility</th>
+          <th class="numeric">Examples</th>
+          <th class="numeric">Avg ms</th>
+          <th class="numeric">Pass rate</th>
+          <th>Numbering</th>
+          <th>Copy support</th>
+          <th>Review note</th>
+          <th>Recommended use</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Callout</td>
+          <td>Short prose</td>
+          <td>Highlighted note</td>
+          <td>Wraps</td>
+          <td>Fits</td>
+          <td>Not required</td>
+          <td>Screen-reader friendly</td>
+          <td class="numeric">1,234,567</td>
+          <td class="numeric">0.312345</td>
+          <td class="numeric">100%</td>
+          <td>No</td>
+          <td>No</td>
+          <td>Keep notes concise.</td>
+          <td>Use for warnings, tips, and prerequisites.</td>
+        </tr>
+        <tr>
+          <td>Math</td>
+          <td>TeX source</td>
+          <td>Rendered formula</td>
+          <td>May scroll</td>
+          <td>Review</td>
+          <td>Required</td>
+          <td>Needs surrounding prose</td>
+          <td class="numeric">98,765,432</td>
+          <td class="numeric">38.765432</td>
+          <td class="numeric">98.5%</td>
+          <td>Yes</td>
+          <td>No</td>
+          <td>Check narrow screens.</td>
+          <td>Use for equations that need mathematical notation.</td>
+        </tr>
+        <tr>
+          <td>Table</td>
+          <td>Rows and columns</td>
+          <td>Structured grid</td>
+          <td>Wraps</td>
+          <td>Fits</td>
+          <td>Not required</td>
+          <td>Use header cells</td>
+          <td class="numeric">987,654,321</td>
+          <td class="numeric">0.654321</td>
+          <td class="numeric">100%</td>
+          <td>Optional</td>
+          <td>No</td>
+          <td>Choose normal or wide mode.</td>
+          <td>Use for dense comparisons and result summaries.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 id="indexed-table-example" data-toc data-toc-level="3" data-toc-title="Indexed Table">Indexed Table</h3>
+  <p>
+    Use <code>data-index-columns="2"</code> when the first two columns identify each record, similar to a DataFrame with a multi-column index.
+    Header rows can also be grouped with <code>rowspan</code> and <code>colspan</code> when the data columns have multiple levels.
+  </p>
+  <div class="table-wrap table-wide" data-index-columns="2">
+    <table id="indexed-table-two-columns" data-numbered="table">
+      <caption>Wide indexed table example with grouped columns</caption>
+      <thead>
+        <tr>
+          <th rowspan="2">Region</th>
+          <th rowspan="2">Product</th>
+          <th colspan="4">2025 result</th>
+          <th colspan="4">2026 result</th>
+        </tr>
+        <tr>
+          <th>Q1</th>
+          <th>Q2</th>
+          <th>Q3</th>
+          <th>Q4</th>
+          <th>Q1</th>
+          <th>Q2</th>
+          <th>Q3</th>
+          <th>Q4</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">East</th>
+          <th scope="row">Basic</th>
+          <td>104</td>
+          <td>111</td>
+          <td>118</td>
+          <td>126</td>
+          <td>120</td>
+          <td>132</td>
+          <td>141</td>
+          <td>150</td>
+        </tr>
+        <tr>
+          <th scope="row">East</th>
+          <th scope="row">Pro</th>
+          <td>72</td>
+          <td>79</td>
+          <td>83</td>
+          <td>90</td>
+          <td>88</td>
+          <td>94</td>
+          <td>101</td>
+          <td>117</td>
+        </tr>
+        <tr>
+          <th scope="row">West</th>
+          <th scope="row">Basic</th>
+          <td>84</td>
+          <td>91</td>
+          <td>96</td>
+          <td>103</td>
+          <td>99</td>
+          <td>105</td>
+          <td>110</td>
+          <td>124</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 id="compact-table-example" data-toc data-toc-level="3" data-toc-title="Compact Table">Compact Table</h3>
+  <p>
+    Add <code>table-compact</code> when a table has many short rows and needs a denser layout.
+  </p>
+  <div class="table-wrap table-compact">
+    <table id="compact-quality-checks" data-numbered="table">
+      <caption>Compact table example</caption>
+      <thead>
+        <tr>
+          <th>Check</th>
+          <th>Status</th>
+          <th>Duration</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>HTML validation</td>
+          <td>Pass</td>
+          <td>0.8s</td>
+          <td>No structural issues.</td>
+        </tr>
+        <tr>
+          <td>Link check</td>
+          <td>Pass</td>
+          <td>1.4s</td>
+          <td>Internal links resolved.</td>
+        </tr>
+        <tr>
+          <td>Print smoke</td>
+          <td>Warn</td>
+          <td>2.1s</td>
+          <td>Review wide tables manually.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
 <section id="notes" data-toc data-toc-title="Operational Notes">
   <h2>Operational Notes</h2>
   <div class="card card-muted">
@@ -376,6 +850,10 @@ flowchart LR
   <h2>Changelog</h2>
   <p>
     The release history is shown in <span data-ref="release-history"></span>.
+  </p>
+  <p>
+    For table layout patterns, see <a href="#table-examples">Table Examples</a>.
+    When <code>data-numbered="table"</code> is present and table numbering is enabled, the caption receives the generated table number.
   </p>
   <div class="table-wrap">
     <table id="release-history" data-numbered="table">
