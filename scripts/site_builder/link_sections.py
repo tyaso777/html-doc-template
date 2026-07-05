@@ -6,10 +6,7 @@ import html
 from pathlib import Path
 from typing import Any
 
-try:
-    from navigation import relative_path
-except ModuleNotFoundError:
-    from scripts.navigation import relative_path
+from .navigation import relative_path
 
 
 def is_external_href(href: str) -> bool:

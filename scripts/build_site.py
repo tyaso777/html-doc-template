@@ -31,9 +31,9 @@ try:
         missing_shell_tokens,
         normalize_manifest,
     )
-    from link_sections import chapter_external_links, render_link_section
-    from navigation import relative_path, render_chapter_nav, render_contents_tree
-    from python_runner import expand_python_runners
+    from site_builder.link_sections import chapter_external_links, render_link_section
+    from site_builder.navigation import relative_path, render_chapter_nav, render_contents_tree
+    from site_builder.python_runner import expand_python_runners
 except ModuleNotFoundError:
     from scripts.html_fragment import (
         FragmentNode,
@@ -49,9 +49,9 @@ except ModuleNotFoundError:
         missing_shell_tokens,
         normalize_manifest,
     )
-    from scripts.link_sections import chapter_external_links, render_link_section
-    from scripts.navigation import relative_path, render_chapter_nav, render_contents_tree
-    from scripts.python_runner import expand_python_runners
+    from scripts.site_builder.link_sections import chapter_external_links, render_link_section
+    from scripts.site_builder.navigation import relative_path, render_chapter_nav, render_contents_tree
+    from scripts.site_builder.python_runner import expand_python_runners
 
 
 def asset_prefix(output_path: Path, root: Path) -> str:
