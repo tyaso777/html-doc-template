@@ -34,9 +34,9 @@ test("chapter page initializes document enhancements", async ({ page }) => {
   await expect(page.locator(".chapter-nav-link.next")).toContainText("Chapter 2: Minimal Page");
   await expect(page.locator('a[href="01-introduction.html#normal-density"]')).toHaveText("Equation 1-1");
   await expect(page.locator("#document-flow figcaption")).toContainText("Figure 1-1");
-  await expect(page.locator("#release-history caption")).toContainText("Table 1-1");
+  await expect(page.locator("#release-history-caption")).toContainText("Table 1-1");
   await expect(page.locator("#normal-density")).toHaveCSS("display", "grid");
-  await expect(page.locator("#release-history caption")).toHaveCSS("caption-side", "top");
+  await expect(page.locator("#release-history")).toHaveAttribute("aria-labelledby", "release-history-caption");
 
   const numberedLayout = await page.evaluate(() => {
     const equation = document.querySelector("#normal-density mjx-container");
@@ -44,7 +44,7 @@ test("chapter page initializes document enhancements", async ({ page }) => {
     const figureBody = document.querySelector("#document-flow .mermaid-wrap");
     const figureCaption = document.querySelector("#document-flow figcaption");
     const table = document.querySelector("#release-history");
-    const tableCaption = document.querySelector("#release-history caption");
+    const tableCaption = document.querySelector("#release-history-caption");
     return {
       equationLabelIsRight:
         equation.getBoundingClientRect().right <= equationLabel.getBoundingClientRect().left,
