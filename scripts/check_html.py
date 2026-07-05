@@ -69,6 +69,8 @@ class Element:
     attrs: dict[str, str | None]
     line: int
     column: int
+    callout_requires_label: bool = False
+    callout_has_label: bool = False
 
 
 @dataclass
@@ -106,7 +108,16 @@ class DocumentParser(HTMLParser):
     def handle_starttag(self, tag: str, attrs_list: list[tuple[str, str | None]]) -> None:
         attrs = dict(attrs_list)
         line, column = self.getpos()
-        element = Element(tag=tag, attrs=attrs, line=line, column=column)
+        element = Element(
+            tag=tag,
+            attrs=attrs,
+            line=line,
+            column=column,
+            callout_requires_label=has_class(attrs, "callout"),
+        )
+
+        if self.stack and self.stack[-1].callout_requires_label and has_class(attrs, "callout-label"):
+            self.stack[-1].callout_has_label = True
 
         element_id = attrs.get("id")
         if element_id:
@@ -162,6 +173,7 @@ class DocumentParser(HTMLParser):
 
         for index in range(len(self.stack) - 1, -1, -1):
             if self.stack[index].tag == tag:
+                self.validate_closed_elements(self.stack[index:])
                 del self.stack[index:]
                 return
 
@@ -179,6 +191,17 @@ class DocumentParser(HTMLParser):
 
         for ref in self.local_refs:
             self.validate_local_ref(ref)
+
+        self.validate_closed_elements(self.stack)
+
+    def validate_closed_elements(self, elements: list[Element]) -> None:
+        for element in elements:
+            if element.callout_requires_label and not element.callout_has_label:
+                self.error(
+                    element.line,
+                    element.column,
+                    ".callout must contain a direct .callout-label child",
+                )
 
     def validate_code_block(self, block: CodeBlock) -> None:
         if block.code_count == 0:
