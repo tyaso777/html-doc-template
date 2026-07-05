@@ -74,6 +74,18 @@ test("chapter page initializes document enhancements", async ({ page }) => {
   await expect(page.locator(".mermaid svg").first()).toBeVisible();
 });
 
+test("skip link moves keyboard focus to main content", async ({ page }) => {
+  await page.goto(`${CHAPTER_BASE}/01-introduction.html`);
+
+  const skipLink = page.locator(".skip-link");
+  await page.keyboard.press("Tab");
+  await expect(skipLink).toBeFocused();
+  await expect(skipLink).toBeVisible();
+
+  await page.keyboard.press("Enter");
+  await expect(page.locator("#main")).toBeFocused();
+});
+
 test("generated chapter navigation works", async ({ page }) => {
   await page.goto(`${CHAPTER_BASE}/02-examples.html`);
 

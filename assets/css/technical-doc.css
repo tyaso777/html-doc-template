@@ -61,6 +61,26 @@ textarea:focus-visible {
   border: 0;
 }
 
+.skip-link {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 1000;
+  padding: 8px 12px;
+  color: #fff;
+  background: var(--accent);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  transform: translateY(calc(-100% - 24px));
+  transition: transform 0.15s ease;
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+  transform: translateY(0);
+  text-decoration: none;
+}
+
 .layout {
   display: grid;
   grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
