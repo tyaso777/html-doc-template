@@ -187,7 +187,7 @@ for log in logs:
 
     def test_section_refs_use_heading_numbering_registry(self) -> None:
         sources = [
-            """<p>See <a data-heading-ref="plan"></a>, <a data-section-ref="detail"></a>, 節(detail), and 参照(deeper).</p>
+            """<p>See <a data-heading-ref="plan"></a>, <a data-section-ref="detail"></a>, and <span data-heading-ref="deeper"></span>.</p>
 <section id="plan" data-toc data-toc-title="Plan">
   <h2>DAG Plan</h2>
   <h3 id="detail" data-toc data-toc-level="3" data-toc-title="Detail">Execution Detail</h3>
@@ -334,7 +334,7 @@ for log in logs:
 
     def test_numbered_items_add_labels_and_resolve_refs(self) -> None:
         sources = [
-            """<p>See <span data-ref="flow"></span>, 表(logs), and 式(cost-model).</p>
+            """<p>See <span data-ref="flow"></span>, <span data-ref="logs"></span>, and <span data-ref="cost-model"></span>.</p>
 <figure id="flow" data-numbered="figure">
   <figcaption>MapReduce flow</figcaption>
 </figure>
@@ -395,23 +395,6 @@ for log in logs:
                 Path("/tmp/project/chapters/chapter.html"),
                 Path("/tmp/project/chapters"),
             )
-
-    def test_numbered_shorthand_does_not_corrupt_raw_text_blocks(self) -> None:
-        source = """<div data-python-runner>
-  <pre><code class="language-python">if x < 3:
-    print("ok")
-</code></pre>
-</div>"""
-
-        rendered = apply_numbered_items(
-            source,
-            {},
-            Path("/tmp/project/chapters/chapter.html"),
-            Path("/tmp/project/chapters"),
-        )
-
-        self.assertEqual(rendered, source)
-
 
 if __name__ == "__main__":
     unittest.main()

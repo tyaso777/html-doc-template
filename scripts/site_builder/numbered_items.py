@@ -1,24 +1,19 @@
 from __future__ import annotations
 
 import html
-import re
 from pathlib import Path
 from typing import Any
 
 try:
     from html_fragment import FragmentNode, iter_nodes, parse_fragment, replace_ranges
-    from site_builder.html_constants import protected_text_ranges
     from site_builder.navigation import relative_path
 except ModuleNotFoundError:
     from scripts.html_fragment import FragmentNode, iter_nodes, parse_fragment, replace_ranges
-    from scripts.site_builder.html_constants import protected_text_ranges
     from scripts.site_builder.navigation import relative_path
 
 
 NUMBERED_KIND_TO_SECTION = {"figure": "figures", "table": "tables", "equation": "equations"}
 NUMBERED_KIND_TO_CLASS = {"figure": "figure-number", "table": "table-number", "equation": "equation-number"}
-NUMBERED_SHORTHAND_PREFIX = {"図": "figure", "表": "table", "式": "equation"}
-NUMBERED_REF_PATTERN = re.compile(r"(?<![\w.-])(?P<prefix>図|表|式)\((?P<id>[A-Za-z][A-Za-z0-9_.:-]*)\)")
 
 
 def numbered_kind_config(numbering: dict[str, Any], kind: str) -> dict[str, Any]:
@@ -145,36 +140,6 @@ def replace_explicit_numbered_refs(
     return replace_ranges(source, replacements)
 
 
-def replace_numbered_shorthand_refs(
-    source: str,
-    registry: dict[str, dict[str, str]],
-    output_path: Path,
-    output_dir: Path,
-) -> str:
-    ranges = protected_text_ranges(source)
-    rendered: list[str] = []
-    position = 0
-
-    def replace_match(match: re.Match[str]) -> str:
-        ref_id = match.group("id")
-        expected_kind = NUMBERED_SHORTHAND_PREFIX[match.group("prefix")]
-        if ref_id not in registry:
-            raise ValueError(f'unknown numbered shorthand reference target "{ref_id}"')
-        item = registry[ref_id]
-        if item["kind"] != expected_kind:
-            raise ValueError(f'numbered shorthand reference "{match.group(0)}" points to {item["kind"]}, not {expected_kind}')
-        return numbered_ref_link(item, output_path, output_dir)
-
-    for start, end in ranges:
-        if position < start:
-            rendered.append(NUMBERED_REF_PATTERN.sub(replace_match, source[position:start]))
-        rendered.append(source[start:end])
-        position = end
-
-    rendered.append(NUMBERED_REF_PATTERN.sub(replace_match, source[position:]))
-    return "".join(rendered)
-
-
 def apply_numbered_items(
     source: str,
     registry: dict[str, dict[str, str]],
@@ -192,5 +157,4 @@ def apply_numbered_items(
             replacements.append(replacement)
 
     source = replace_ranges(source, replacements)
-    source = replace_explicit_numbered_refs(source, registry, output_path, output_dir)
-    return replace_numbered_shorthand_refs(source, registry, output_path, output_dir)
+    return replace_explicit_numbered_refs(source, registry, output_path, output_dir)

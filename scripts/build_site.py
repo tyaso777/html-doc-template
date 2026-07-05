@@ -33,7 +33,7 @@ try:
     )
     from site_builder.link_sections import chapter_external_links, render_link_section
     from site_builder.navigation import relative_path, render_chapter_nav, render_contents_tree
-    from site_builder.html_constants import RAW_TEXT_INDENT_TAGS, protected_text_ranges
+    from site_builder.html_constants import RAW_TEXT_INDENT_TAGS
     from site_builder.numbered_items import apply_numbered_items, collect_numbered_items
     from site_builder.optional_assets import render_fixed_head_assets, render_optional_head_assets
     from site_builder.python_runner import expand_python_runners
@@ -54,7 +54,7 @@ except ModuleNotFoundError:
     )
     from scripts.site_builder.link_sections import chapter_external_links, render_link_section
     from scripts.site_builder.navigation import relative_path, render_chapter_nav, render_contents_tree
-    from scripts.site_builder.html_constants import RAW_TEXT_INDENT_TAGS, protected_text_ranges
+    from scripts.site_builder.html_constants import RAW_TEXT_INDENT_TAGS
     from scripts.site_builder.numbered_items import apply_numbered_items, collect_numbered_items
     from scripts.site_builder.optional_assets import render_fixed_head_assets, render_optional_head_assets
     from scripts.site_builder.python_runner import expand_python_runners
@@ -71,7 +71,6 @@ def sidebar_title_html(title: str) -> str:
 
 HEADING_TAG_PATTERN = re.compile(r"h[2-6]")
 HEADING_NUMBER_TOKENS = re.compile(r"(\{title\}|\{number\}|\{local\})")
-SECTION_REF_PATTERN = re.compile(r"(?<![\w.-])(?:節|参照)\((?P<id>[A-Za-z][A-Za-z0-9_.:-]*)\)")
 
 
 def indent_content_preserving_raw_text(content: str, indent: str) -> str:
@@ -338,32 +337,6 @@ def replace_explicit_section_refs(
     return replace_ranges(source, replacements)
 
 
-def replace_section_shorthand_refs(
-    source: str,
-    registry: dict[str, list[dict[str, str]]],
-    output_path: Path,
-    output_dir: Path,
-    heading_numbering: dict[str, Any],
-) -> str:
-    ranges = protected_text_ranges(source)
-    rendered: list[str] = []
-    position = 0
-
-    def replace_match(match: re.Match[str]) -> str:
-        ref_id = match.group("id")
-        item = resolve_section_ref(registry, ref_id, output_path, output_dir, "section shorthand reference")
-        return section_ref_link(item, output_path, output_dir, heading_numbering)
-
-    for start, end in ranges:
-        if position < start:
-            rendered.append(SECTION_REF_PATTERN.sub(replace_match, source[position:start]))
-        rendered.append(source[start:end])
-        position = end
-
-    rendered.append(SECTION_REF_PATTERN.sub(replace_match, source[position:]))
-    return "".join(rendered)
-
-
 def apply_section_refs(
     source: str,
     registry: dict[str, list[dict[str, str]]],
@@ -371,8 +344,7 @@ def apply_section_refs(
     output_dir: Path,
     heading_numbering: dict[str, Any],
 ) -> str:
-    source = replace_explicit_section_refs(source, registry, output_path, output_dir, heading_numbering)
-    return replace_section_shorthand_refs(source, registry, output_path, output_dir, heading_numbering)
+    return replace_explicit_section_refs(source, registry, output_path, output_dir, heading_numbering)
 
 
 def extract_toc_entries(
