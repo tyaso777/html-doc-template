@@ -15,10 +15,18 @@ const candidates = [
 ];
 
 for (const candidate of candidates) {
-  const check = spawnSync(candidate[0], [...candidate.slice(1), "--version"], {
-    encoding: "utf8",
-    shell: false
-  });
+  const check = spawnSync(
+    candidate[0],
+    [
+      ...candidate.slice(1),
+      "-c",
+      "import sys; raise SystemExit(0 if sys.version_info >= (3, 10) else 1)"
+    ],
+    {
+      encoding: "utf8",
+      shell: false
+    }
+  );
 
   if (check.status !== 0) {
     continue;

@@ -14,9 +14,31 @@ from scripts.build_site import (
     indent_content_preserving_raw_text,
     render_shell,
 )
+from scripts.site_builder.optional_assets import optional_asset_keys, render_optional_head_assets
 
 
 class BuildSiteTests(unittest.TestCase):
+    def test_optional_head_assets_detect_mermaid_and_vega_lite(self) -> None:
+        source = (
+            '<pre class="code-block language-mermaid"><code>flowchart LR</code></pre>'
+            '<div class="mermaid">flowchart LR\nA --> B</div>'
+            '<div data-vega-lite data-vega-lite-spec="chart-spec"></div>'
+        )
+
+        self.assertEqual(optional_asset_keys(source), {"mermaid", "vega-lite"})
+
+        rendered = render_optional_head_assets(source)
+        self.assertIn("mermaid.min.js", rendered)
+        self.assertIn("vega.min.js", rendered)
+        self.assertIn("vega-lite.min.js", rendered)
+        self.assertIn("vega-embed.min.js", rendered)
+
+    def test_optional_head_assets_ignore_mermaid_code_blocks(self) -> None:
+        source = '<pre class="code-block language-mermaid"><code>flowchart LR</code></pre>'
+
+        self.assertEqual(optional_asset_keys(source), set())
+        self.assertEqual(render_optional_head_assets(source), "")
+
     def test_build_site_can_build_basic_fixture_to_temp_output(self) -> None:
         root = Path(__file__).resolve().parents[2]
         manifest_path = root / "tests/fixtures/basic-site/chapters-src/site-manifest.json"
@@ -229,7 +251,7 @@ for log in logs:
     def test_render_shell_includes_common_and_chapter_external_links(self) -> None:
         shell = (
             "{{DOCUMENT_LANG}} {{DOCUMENT_TITLE}} {{SIDEBAR_TITLE}} {{SIDEBAR_SUBTITLE}} "
-            "{{ASSET_PREFIX}} {{DEFAULT_LAYOUT_MODE}} {{CONTENTS_TREE}} {{MATERIALS_SECTION}} "
+            "{{ASSET_PREFIX}} {{DEFAULT_LAYOUT_MODE}} {{OPTIONAL_HEAD_ASSETS}} {{CONTENTS_TREE}} {{MATERIALS_SECTION}} "
             "{{EXTERNAL_LINKS_SECTION}} {{CONTENT}}"
         )
         chapter = {
@@ -257,17 +279,19 @@ for log in logs:
             [[]],
             [],
             [{"title": "Common", "items": [{"label": "Common link", "href": "https://example.com/common"}]}],
+            "<script defer src=\"optional.js\"></script>",
             {"defaultMode": "wide"},
         )
 
         self.assertIn("Common link", rendered)
         self.assertIn("Chapter link", rendered)
         self.assertIn("wide", rendered)
+        self.assertIn("optional.js", rendered)
         self.assertIn('href="https://example.com/common" target="_blank" rel="noopener"', rendered)
         self.assertIn('href="https://example.com/chapter" target="_blank" rel="noopener"', rendered)
 
     def test_render_shell_marks_numbered_toc_lists(self) -> None:
-        shell = "{{DOCUMENT_LANG}} {{DOCUMENT_TITLE}} {{SIDEBAR_TITLE}} {{SIDEBAR_SUBTITLE}} {{ASSET_PREFIX}} {{DEFAULT_LAYOUT_MODE}} {{CONTENTS_TREE}} {{MATERIALS_SECTION}} {{EXTERNAL_LINKS_SECTION}} {{CONTENT}}"
+        shell = "{{DOCUMENT_LANG}} {{DOCUMENT_TITLE}} {{SIDEBAR_TITLE}} {{SIDEBAR_SUBTITLE}} {{ASSET_PREFIX}} {{DEFAULT_LAYOUT_MODE}} {{OPTIONAL_HEAD_ASSETS}} {{CONTENTS_TREE}} {{MATERIALS_SECTION}} {{EXTERNAL_LINKS_SECTION}} {{CONTENT}}"
         chapter = {
             "title": "Chapter",
             "href": "chapter.html",
@@ -291,6 +315,7 @@ for log in logs:
             [[{"id": "intro", "title": "1. Intro", "level": 2}]],
             [],
             [],
+            "",
             {"defaultMode": "standard"},
             {"enabled": True, "toc": True},
         )
