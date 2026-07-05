@@ -560,7 +560,7 @@ flowchart LR
   <h2>Table Examples</h2>
   <p>
     Tables are managed as a single block by applying classes and attributes to <code>div.table-wrap</code>.
-    Use the default table for compact comparisons, <code>table-wide</code> for tables that should keep their natural width and scroll horizontally when needed, and <code>data-index-columns</code> to mark leading record-index columns.
+    Use the default table for compact comparisons, <code>table-wide</code> for tables that should keep their natural width and scroll horizontally when needed, <code>table-grid</code> when full cell borders help matrix-style reading, and <code>data-index-columns</code> to mark leading record-index columns.
     Numbered table captions are generated for tables such as <span data-ref="standard-table-many-columns"></span> and <span data-ref="wide-table-many-columns"></span>.
   </p>
 
@@ -729,7 +729,7 @@ flowchart LR
     Use <code>data-index-columns="2"</code> when the first two columns identify each record, similar to a DataFrame with a multi-column index.
     Header rows can also be grouped with <code>rowspan</code> and <code>colspan</code> when the data columns have multiple levels.
   </p>
-  <div class="table-wrap table-wide" data-index-columns="2">
+  <div class="table-wrap table-wide table-grid" data-index-columns="2">
     <table id="indexed-table-two-columns" data-numbered="table">
       <caption>Wide indexed table example with grouped columns</caption>
       <thead>
@@ -740,52 +740,52 @@ flowchart LR
           <th colspan="4">2026 result</th>
         </tr>
         <tr>
-          <th>Q1</th>
-          <th>Q2</th>
-          <th>Q3</th>
-          <th>Q4</th>
-          <th>Q1</th>
-          <th>Q2</th>
-          <th>Q3</th>
-          <th>Q4</th>
+          <th class="numeric">Q1</th>
+          <th class="numeric">Q2</th>
+          <th class="numeric">Q3</th>
+          <th class="numeric">Q4</th>
+          <th class="numeric">Q1</th>
+          <th class="numeric">Q2</th>
+          <th class="numeric">Q3</th>
+          <th class="numeric">Q4</th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <th scope="row">East</th>
           <th scope="row">Basic</th>
-          <td>104</td>
-          <td>111</td>
-          <td>118</td>
-          <td>126</td>
-          <td>120</td>
-          <td>132</td>
-          <td>141</td>
-          <td>150</td>
+          <td class="numeric">104</td>
+          <td class="numeric">111</td>
+          <td class="numeric">118</td>
+          <td class="numeric">126</td>
+          <td class="numeric">120</td>
+          <td class="numeric">132</td>
+          <td class="numeric">141</td>
+          <td class="numeric">150</td>
         </tr>
         <tr>
           <th scope="row">East</th>
           <th scope="row">Pro</th>
-          <td>72</td>
-          <td>79</td>
-          <td>83</td>
-          <td>90</td>
-          <td>88</td>
-          <td>94</td>
-          <td>101</td>
-          <td>117</td>
+          <td class="numeric">72</td>
+          <td class="numeric">79</td>
+          <td class="numeric">83</td>
+          <td class="numeric">90</td>
+          <td class="numeric">88</td>
+          <td class="numeric">94</td>
+          <td class="numeric">101</td>
+          <td class="numeric">117</td>
         </tr>
         <tr>
           <th scope="row">West</th>
           <th scope="row">Basic</th>
-          <td>84</td>
-          <td>91</td>
-          <td>96</td>
-          <td>103</td>
-          <td>99</td>
-          <td>105</td>
-          <td>110</td>
-          <td>124</td>
+          <td class="numeric">84</td>
+          <td class="numeric">91</td>
+          <td class="numeric">96</td>
+          <td class="numeric">103</td>
+          <td class="numeric">99</td>
+          <td class="numeric">105</td>
+          <td class="numeric">110</td>
+          <td class="numeric">124</td>
         </tr>
       </tbody>
     </table>

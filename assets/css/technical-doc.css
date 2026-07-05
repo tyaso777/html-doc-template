@@ -404,6 +404,10 @@ h3 {
   -webkit-overflow-scrolling: touch;
 }
 
+.table-wrap.table-wide {
+  box-shadow: inset -18px 0 18px -18px rgba(26, 115, 232, 0.45);
+}
+
 .table-wrap table {
   width: 100%;
   border-collapse: collapse;
@@ -412,7 +416,8 @@ h3 {
 
 .table-wrap th,
 .table-wrap td {
-  border: 1px solid var(--border);
+  border: 0;
+  border-bottom: 1px solid var(--border);
   padding: 10px 12px;
   text-align: left;
   vertical-align: top;
@@ -421,8 +426,26 @@ h3 {
 }
 
 .table-wrap th {
-  background: #fafafa;
+  background: #f1f4f8;
+  border-bottom: 2px solid var(--border);
   font-weight: 700;
+}
+
+.table-wrap.table-grid th,
+.table-wrap.table-grid td {
+  border: 1px solid var(--border);
+}
+
+.table-wrap.table-grid th {
+  border-bottom-width: 1px;
+}
+
+.table-wrap tbody tr:nth-child(even) {
+  background: #f5f8fc;
+}
+
+.table-wrap tbody tr:hover {
+  background: var(--accent-bg);
 }
 
 .table-wrap th.numeric,
@@ -471,7 +494,7 @@ h3 {
 .table-wrap[data-index-columns="2"] tbody td:nth-child(-n + 2),
 .table-wrap[data-index-columns="3"] tbody th:nth-child(-n + 3),
 .table-wrap[data-index-columns="3"] tbody td:nth-child(-n + 3) {
-  background: #f5f8fc;
+  background: #eaf1fb;
   font-weight: 700;
 }
 
@@ -653,7 +676,17 @@ code[class*="language-"] {
 
 table[data-numbered] caption {
   caption-side: top;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding-bottom: 0.5rem;
   text-align: left;
+}
+
+.mermaid-figure figcaption .numbered-label,
+.vega-lite-figure figcaption .numbered-label,
+table[data-numbered] caption .numbered-label {
+  color: var(--accent);
 }
 
 .mermaid-wrap,
