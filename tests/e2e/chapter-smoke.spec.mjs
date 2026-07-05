@@ -65,6 +65,7 @@ test("chapter page initializes document enhancements", async ({ page }) => {
 
   await expect(page.locator(".code-block-wrap .copy-code-button").first()).toBeVisible();
   await expect(page.locator("[data-python-runner-panel]")).toHaveCount(1);
+  await expect(page.locator("[data-python-runner-panel]")).toHaveAttribute("data-python-packages", "numpy");
   await expect(page.locator("[data-python-code]")).toHaveCount(1);
   await expect(page.locator("[data-python-run-button]")).toBeDisabled();
   await expect(page.locator(".CodeMirror")).toBeVisible();
@@ -226,6 +227,7 @@ test("python runner can load Pyodide and execute code @pyodide", async ({ page }
   await expect(page.locator("[data-python-output]")).toContainText("Python runtime loaded", {
     timeout: 120_000
   });
+  await expect(page.locator("[data-python-output]")).toContainText("with packages: numpy");
 
   await page.locator("[data-python-run-button]").click();
   await expect(page.locator("[data-python-output]")).toContainText("Interpretation:", {

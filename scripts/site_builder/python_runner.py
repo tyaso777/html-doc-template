@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import base64
 import html
+import re
 
 try:
     from html_fragment import (
@@ -26,17 +27,39 @@ except ModuleNotFoundError:
         text_content,
     )
 
+PYODIDE_PACKAGE_NAME = re.compile(r"^[A-Za-z0-9_.-]+$")
 
-def render_python_runner(caption: str | None, code: str, runner_id: str) -> str:
+
+def package_names_from_attribute(value: str | None) -> list[str]:
+    if not value:
+        return []
+
+    packages: list[str] = []
+    seen: set[str] = set()
+    for package in value.split(","):
+        name = package.strip()
+        if not name or name in seen:
+            continue
+        if not PYODIDE_PACKAGE_NAME.fullmatch(name):
+            raise ValueError(f'Pyodide package name "{name}" must contain only letters, numbers, underscores, dots, or hyphens')
+        seen.add(name)
+        packages.append(name)
+
+    return packages
+
+
+def render_python_runner(caption: str | None, code: str, runner_id: str, packages: list[str] | None = None) -> str:
     default_help = "Edit the code in the highlighted Python editor, then press Run Python."
     help_text = html.escape(html.unescape(caption or default_help))
     encoded_code = base64.b64encode(html.unescape(code).strip("\n").encode("utf-8")).decode("ascii")
+    package_text = ",".join(packages or [])
+    package_attr = f' data-python-packages="{html.escape(package_text, quote=True)}"' if package_text else ""
     help_id = f"{runner_id}-help"
     code_id = f"{runner_id}-code"
     output_id = f"{runner_id}-output"
     print_code_id = f"{runner_id}-print-code"
     print_output_id = f"{runner_id}-print-output"
-    return f'''<div class="runner-panel" data-python-runner-panel>
+    return f'''<div class="runner-panel" data-python-runner-panel{package_attr}>
   <p id="{help_id}" data-python-runner-help>
     {help_text}
     On slow connections or constrained devices, the first Python runtime load can take some time.
@@ -84,7 +107,7 @@ def render_python_runner(caption: str | None, code: str, runner_id: str) -> str:
 </div>'''
 
 
-def extract_python_runner_source(source: str, node: FragmentNode) -> tuple[str | None, str]:
+def extract_python_runner_source(source: str, node: FragmentNode) -> tuple[str | None, str, list[str]]:
     descendants = iter_nodes(node.children)
     caption_nodes = [
         child
@@ -102,7 +125,8 @@ def extract_python_runner_source(source: str, node: FragmentNode) -> tuple[str |
 
     caption = text_content(source, caption_nodes[0]) if caption_nodes else None
     code = node_inner_html(source, code_nodes[0])
-    return caption, code
+    packages = package_names_from_attribute(node.attrs.get("data-python-packages"))
+    return caption, code, packages
 
 
 def expand_python_runners(source: str) -> str:
@@ -117,7 +141,7 @@ def expand_python_runners(source: str) -> str:
         if node.end is None:
             raise ValueError("data-python-runner element is missing its closing tag")
 
-        caption, code = extract_python_runner_source(source, node)
-        replacements.append((node.start, node.end, render_python_runner(caption, code, f"python-runner-{runner_index}")))
+        caption, code, packages = extract_python_runner_source(source, node)
+        replacements.append((node.start, node.end, render_python_runner(caption, code, f"python-runner-{runner_index}", packages)))
 
     return replace_ranges(source, replacements)

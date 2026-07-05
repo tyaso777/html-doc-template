@@ -307,7 +307,21 @@ print(sum(scores) / len(scores))</code></pre>
 </div>
 ```
 
+Add `data-python-packages` when a runner needs Pyodide packages:
+
+```html
+<div class="python-runner-source"
+     data-python-runner
+     data-python-packages="numpy,pandas">
+  <p class="runner-caption">Run a small NumPy example.</p>
+  <pre><code class="language-python">import numpy as np
+values = np.array([2, 4, 6, 8])
+print(values.mean())</code></pre>
+</div>
+```
+
 `build_site.py` expands each `div[data-python-runner]` into a scoped Pyodide runner UI in the generated `chapters/` files. A generated page may contain multiple runner blocks. Do not write Load, Run, Restart buttons, textareas, or output panels by hand in `chapters-src/`.
+If a runner declares `data-python-packages`, that runner loads the listed package names when the reader presses <strong>Load Python Runtime</strong>. Package values are names only; arbitrary wheel URLs and package installation commands are not supported. If Pyodide cannot load a requested package, the error appears in the runner output.
 
 Mermaid code block and rendered diagram examples are included in the template.
 
@@ -424,6 +438,7 @@ Pyodide is different: it is loaded inside a Web Worker with `importScripts()` wh
 The Python runner is optional. The document remains readable without loading Pyodide.
 
 For generated chapters, initial Python code is taken from `div[data-python-runner]` blocks in `chapters-src/`. The `DEFAULT_CODE` JavaScript constant in `assets/js/technical-doc.js` remains a fallback for standalone pages.
+Pyodide packages can be requested per runner with `data-python-packages`, and are loaded only after the reader presses <strong>Load Python Runtime</strong>.
 
 ## Notes
 

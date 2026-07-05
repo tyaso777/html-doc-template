@@ -99,6 +99,7 @@
                     <ol>
                       <li><a href="01-introduction.html#python-code-display-example">4.1. Python Code Block</a></li>
                       <li><a href="01-introduction.html#python-runner-example">4.2. Executable Code Example</a></li>
+                      <li><a href="01-introduction.html#python-packages-example">4.3. Pyodide Packages</a></li>
                     </ol>
                   </li>
                   <li><a href="01-introduction.html#chapter-specific-javascript">5. Chapter-specific JavaScript</a>
@@ -412,9 +413,9 @@ print(summary)
             </p>
           </aside>
 
-        <div class="runner-panel" data-python-runner-panel>
+        <div class="runner-panel" data-python-runner-panel data-python-packages="numpy,pandas">
           <p id="python-runner-1-help" data-python-runner-help>
-            Try changing the input sizes and run the code.
+            Load NumPy and pandas, then run a small analysis example.
             On slow connections or constrained devices, the first Python runtime load can take some time.
           </p>
 
@@ -434,7 +435,7 @@ print(summary)
               autocomplete="off"
               autocorrect="off"
               autocapitalize="off"
-              data-initial-code-base64="ZnJvbSB0aW1lIGltcG9ydCBwZXJmX2NvdW50ZXIKCgpkZWYgbGluZWFyX3NlYXJjaF93aXRoX2NvdW50KHZhbHVlczogbGlzdFtpbnRdLCB0YXJnZXQ6IGludCkgLT4gdHVwbGVbaW50LCBpbnRdOgogICAgIiIiRmluZHMgdGhlIHRhcmdldCBieSBzY2FubmluZyB2YWx1ZXMgYW5kIGNvdW50cyBjb21wYXJpc29ucy4KCiAgICBBcmdzOgogICAgICAgIHZhbHVlczogU29ydGVkIGludGVnZXIgdmFsdWVzLgogICAgICAgIHRhcmdldDogVmFsdWUgdG8gZmluZC4KCiAgICBSZXR1cm5zOgogICAgICAgIEEgcGFpciBvZiB0aGUgdGFyZ2V0IGluZGV4IGFuZCB0aGUgbnVtYmVyIG9mIGNvbXBhcmlzb25zLgogICAgIiIiCiAgICBjb21wYXJpc29ucyA9IDAKCiAgICBmb3IgaW5kZXgsIHZhbHVlIGluIGVudW1lcmF0ZSh2YWx1ZXMpOgogICAgICAgIGNvbXBhcmlzb25zICs9IDEKICAgICAgICBpZiB2YWx1ZSA9PSB0YXJnZXQ6CiAgICAgICAgICAgIHJldHVybiBpbmRleCwgY29tcGFyaXNvbnMKCiAgICByZXR1cm4gLTEsIGNvbXBhcmlzb25zCgoKZGVmIGJpbmFyeV9zZWFyY2hfd2l0aF9jb3VudCh2YWx1ZXM6IGxpc3RbaW50XSwgdGFyZ2V0OiBpbnQpIC0+IHR1cGxlW2ludCwgaW50XToKICAgICIiIkZpbmRzIHRoZSB0YXJnZXQgdXNpbmcgYmluYXJ5IHNlYXJjaCBhbmQgY291bnRzIGNvbXBhcmlzb25zLgoKICAgIEFyZ3M6CiAgICAgICAgdmFsdWVzOiBTb3J0ZWQgaW50ZWdlciB2YWx1ZXMuCiAgICAgICAgdGFyZ2V0OiBWYWx1ZSB0byBmaW5kLgoKICAgIFJldHVybnM6CiAgICAgICAgQSBwYWlyIG9mIHRoZSB0YXJnZXQgaW5kZXggYW5kIHRoZSBudW1iZXIgb2YgY29tcGFyaXNvbnMuCiAgICAiIiIKICAgIGxlZnQgPSAwCiAgICByaWdodCA9IGxlbih2YWx1ZXMpIC0gMQogICAgY29tcGFyaXNvbnMgPSAwCgogICAgd2hpbGUgbGVmdCA8PSByaWdodDoKICAgICAgICBtaWRkbGUgPSAobGVmdCArIHJpZ2h0KSAvLyAyCiAgICAgICAgY29tcGFyaXNvbnMgKz0gMQoKICAgICAgICBpZiB2YWx1ZXNbbWlkZGxlXSA9PSB0YXJnZXQ6CiAgICAgICAgICAgIHJldHVybiBtaWRkbGUsIGNvbXBhcmlzb25zCgogICAgICAgIGlmIHZhbHVlc1ttaWRkbGVdIDwgdGFyZ2V0OgogICAgICAgICAgICBsZWZ0ID0gbWlkZGxlICsgMQogICAgICAgIGVsc2U6CiAgICAgICAgICAgIHJpZ2h0ID0gbWlkZGxlIC0gMQoKICAgIHJldHVybiAtMSwgY29tcGFyaXNvbnMKCgpkZWYgbWVhc3VyZV9vbmNlKG46IGludCwgcmVwZWF0czogaW50KSAtPiB0dXBsZVtpbnQsIGludCwgZmxvYXQsIGZsb2F0XToKICAgICIiIk1lYXN1cmVzIGNvbXBhcmlzb24gY291bnRzIGFuZCBhdmVyYWdlIGV4ZWN1dGlvbiB0aW1lcy4KCiAgICBBcmdzOgogICAgICAgIG46IE51bWJlciBvZiBlbGVtZW50cy4KICAgICAgICByZXBlYXRzOiBOdW1iZXIgb2YgcmVwZWF0ZWQgc2VhcmNoZXMuCgogICAgUmV0dXJuczoKICAgICAgICBMaW5lYXItc2VhcmNoIGNvbXBhcmlzb25zLCBiaW5hcnktc2VhcmNoIGNvbXBhcmlzb25zLCBhdmVyYWdlIGxpbmVhci1zZWFyY2gKICAgICAgICB0aW1lLCBhbmQgYXZlcmFnZSBiaW5hcnktc2VhcmNoIHRpbWUuCiAgICAiIiIKICAgIHZhbHVlcyA9IGxpc3QocmFuZ2UobikpCiAgICB0YXJnZXQgPSBuIC0gMQoKICAgIF8sIGxpbmVhcl9jb21wYXJpc29ucyA9IGxpbmVhcl9zZWFyY2hfd2l0aF9jb3VudCh2YWx1ZXMsIHRhcmdldCkKICAgIF8sIGJpbmFyeV9jb21wYXJpc29ucyA9IGJpbmFyeV9zZWFyY2hfd2l0aF9jb3VudCh2YWx1ZXMsIHRhcmdldCkKCiAgICBzdGFydCA9IHBlcmZfY291bnRlcigpCiAgICBmb3IgXyBpbiByYW5nZShyZXBlYXRzKToKICAgICAgICBsaW5lYXJfc2VhcmNoX3dpdGhfY291bnQodmFsdWVzLCB0YXJnZXQpCiAgICBsaW5lYXJfbXMgPSAocGVyZl9jb3VudGVyKCkgLSBzdGFydCkgKiAxMDAwIC8gcmVwZWF0cwoKICAgIHN0YXJ0ID0gcGVyZl9jb3VudGVyKCkKICAgIGZvciBfIGluIHJhbmdlKHJlcGVhdHMpOgogICAgICAgIGJpbmFyeV9zZWFyY2hfd2l0aF9jb3VudCh2YWx1ZXMsIHRhcmdldCkKICAgIGJpbmFyeV9tcyA9IChwZXJmX2NvdW50ZXIoKSAtIHN0YXJ0KSAqIDEwMDAgLyByZXBlYXRzCgogICAgcmV0dXJuIGxpbmVhcl9jb21wYXJpc29ucywgYmluYXJ5X2NvbXBhcmlzb25zLCBsaW5lYXJfbXMsIGJpbmFyeV9tcwoKCmRlZiBtYWluKCkgLT4gTm9uZToKICAgICIiIlJ1bnMgYSBzaW1wbGUgZ3Jvd3RoLXJhdGUgZXhwZXJpbWVudC4iIiIKICAgIHNpemVzID0gWzFfMDAwLCAxMF8wMDAsIDEwMF8wMDAsIDUwMF8wMDAsIDFfMDAwXzAwMF0KICAgIHJlcGVhdHNfYnlfc2l6ZSA9IHsKICAgICAgICAxXzAwMDogMjAwLAogICAgICAgIDEwXzAwMDogMTAwLAogICAgICAgIDEwMF8wMDA6IDIwLAogICAgICAgIDUwMF8wMDA6IDUsCiAgICAgICAgMV8wMDBfMDAwOiAzLAogICAgfQoKICAgIHByaW50KCJuICAgICAgICAgIGxpbmVhcl9jbXAgICBiaW5hcnlfY21wICAgY21wX3JhdGlvICAgbGluZWFyX21zICAgYmluYXJ5X21zIikKICAgIHByaW50KCItIiAqIDc4KQoKICAgIGZvciBuIGluIHNpemVzOgogICAgICAgIGxpbmVhcl9jbXAsIGJpbmFyeV9jbXAsIGxpbmVhcl9tcywgYmluYXJ5X21zID0gbWVhc3VyZV9vbmNlKG4sIHJlcGVhdHNfYnlfc2l6ZVtuXSkKICAgICAgICByYXRpbyA9IGxpbmVhcl9jbXAgLyBiaW5hcnlfY21wIGlmIGJpbmFyeV9jbXAgPiAwIGVsc2UgZmxvYXQoImluZiIpCiAgICAgICAgcHJpbnQoCiAgICAgICAgICAgIGYie246Pjl9ICAiCiAgICAgICAgICAgIGYie2xpbmVhcl9jbXA6PjEwfSAgIgogICAgICAgICAgICBmIntiaW5hcnlfY21wOj4xMH0gICIKICAgICAgICAgICAgZiJ7cmF0aW86PjkuMWZ9eCAgIgogICAgICAgICAgICBmIntsaW5lYXJfbXM6PjkuNGZ9ICAiCiAgICAgICAgICAgIGYie2JpbmFyeV9tczo+OS40Zn0iCiAgICAgICAgKQoKICAgIHByaW50KCkKICAgIHByaW50KCJJbnRlcnByZXRhdGlvbjoiKQogICAgcHJpbnQoIi0gQ29tcGFyaXNvbiBjb3VudHMgYXJlIHRoZSBjbGVhbmVzdCBzaWduYWwgaGVyZS4iKQogICAgcHJpbnQoIi0gTGluZWFyIHNlYXJjaCBjb21wYXJpc29ucyBncm93IGFsbW9zdCBkaXJlY3RseSB3aXRoIG4uIikKICAgIHByaW50KCItIEJpbmFyeSBzZWFyY2ggY29tcGFyaXNvbnMgZ3JvdyBzbG93bHkgYmVjYXVzZSB0aGUgc2VhcmNoIHJhbmdlIGlzIGhhbHZlZC4iKQogICAgcHJpbnQoIi0gVGltaW5nIG51bWJlcnMgYXJlIHVzZWZ1bCBidXQgbm9pc2llciB0aGFuIGNvbXBhcmlzb24gY291bnRzLiIpCgoKbWFpbigp"
+              data-initial-code-base64="aW1wb3J0IG51bXB5IGFzIG5wCmltcG9ydCBwYW5kYXMgYXMgcGQKCgpzY29yZXMgPSBucC5hcnJheShbNzIsIDg4LCA5MSwgODQsIDk1LCA3OV0pCmxhYmVscyA9IFtmInNhbXBsZS17aW5kZXh9IiBmb3IgaW5kZXggaW4gcmFuZ2UoMSwgbGVuKHNjb3JlcykgKyAxKV0KCmZyYW1lID0gcGQuRGF0YUZyYW1lKHsKICAgICJsYWJlbCI6IGxhYmVscywKICAgICJzY29yZSI6IHNjb3JlcywKICAgICJjZW50ZXJlZCI6IHNjb3JlcyAtIHNjb3Jlcy5tZWFuKCksCn0pCgpwcmludCgiTnVtUHkgbWVhbjoiLCByb3VuZChmbG9hdChzY29yZXMubWVhbigpKSwgMikpCnByaW50KCJwYW5kYXMgc3VtbWFyeToiKQpwcmludChmcmFtZVtbInNjb3JlIiwgImNlbnRlcmVkIl1dLmRlc2NyaWJlKCkucm91bmQoMikpCnByaW50KCkKcHJpbnQoIlJvd3MgYWJvdmUgbWVhbjoiKQpwcmludChmcmFtZS5sb2NbZnJhbWVbInNjb3JlIl0gPiBzY29yZXMubWVhbigpLCBbImxhYmVsIiwgInNjb3JlIl1dKQ=="
               data-python-code
             ></textarea>
             <button class="copy-code-button python-editor-copy-button" type="button" aria-label="Copy Python code" data-python-copy-button>Copy</button>
@@ -458,6 +459,31 @@ print(summary)
             <pre id="python-runner-1-print-output" class="print-output-block" data-python-print-output></pre>
           </section>
         </div>
+
+          <h3 id="python-packages-example" data-toc data-toc-level="3" data-toc-title="Pyodide Packages">4.3. Pyodide Packages</h3>
+          <p>
+            Add <code>data-python-packages</code> to a runner source when the code needs Pyodide packages such as NumPy or pandas.
+            Package names are loaded when the reader presses <strong>Load Python Runtime</strong>; runners without this attribute keep the standard Pyodide behavior.
+          </p>
+
+          <div class="code-caption">chapters-src example</div>
+          <pre class="code-block language-html"><code class="language-html">&lt;div class="python-runner-source"
+     data-python-runner
+     data-python-packages="numpy,pandas"&gt;
+  &lt;p class="runner-caption"&gt;Run a small data analysis example.&lt;/p&gt;
+  &lt;pre&gt;&lt;code class="language-python"&gt;import numpy as np
+import pandas as pd
+
+values = np.array([2, 4, 6, 8])
+frame = pd.DataFrame({"value": values})
+print(frame["value"].mean())
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;</code></pre>
+
+          <p>
+            Only package names are accepted here. Remote wheel URLs or arbitrary installation commands are not supported by this template.
+            If Pyodide cannot load a package, the runner shows the error in its output area.
+          </p>
         </section>
 
         <section id="chapter-specific-javascript" data-toc data-toc-title="Chapter-specific JavaScript">

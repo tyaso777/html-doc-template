@@ -106,6 +106,22 @@ print(sum(scores) / len(scores))</code></pre>
 </div>
 ```
 
+If the example needs Pyodide packages, add `data-python-packages` with comma-separated package names:
+
+```html
+<div class="python-runner-source"
+     data-python-runner
+     data-python-packages="numpy,pandas">
+  <p class="runner-caption">Run a small NumPy example.</p>
+  <pre><code class="language-python">import numpy as np
+
+values = np.array([2, 4, 6, 8])
+print(values.mean())</code></pre>
+</div>
+```
+
+The template accepts package names only. It does not install arbitrary wheel URLs or run package installation commands.
+
 Do not hand-write Pyodide buttons, textareas, output panels, or runtime wiring. The build script expands `div[data-python-runner]` into the full runner UI.
 
 ## 4. Build
@@ -166,7 +182,7 @@ If you are an AI agent using this template:
 - Do not add full HTML document wrappers to chapter fragments.
 - Do not add CDN tags, `<script>`, `<link>`, or custom runtime wiring to chapter fragments.
 - Use chapter-level `scripts` in `site-manifest.json` for local per-chapter JavaScript under `assets/`.
-- For executable Python examples, use `div.python-runner-source` with `data-python-runner`.
+- For executable Python examples, use `div.python-runner-source` with `data-python-runner`; use `data-python-packages` only for Pyodide package names.
 - Run `python3 scripts/build_site.py` after content changes.
 - Run `python3 scripts/check_html.py` after building.
 - Do not require Node.js, npm, Playwright, or browser tests unless explicitly requested.

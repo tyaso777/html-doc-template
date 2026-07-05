@@ -16,6 +16,7 @@ from scripts.build_site import (
     render_shell,
 )
 from scripts.site_builder.optional_assets import optional_asset_keys, render_fixed_head_assets, render_optional_head_assets
+from scripts.site_builder.python_runner import expand_python_runners
 
 
 class BuildSiteTests(unittest.TestCase):
@@ -64,9 +65,27 @@ class BuildSiteTests(unittest.TestCase):
             introduction = (output_dir / "01-introduction.html").read_text(encoding="utf-8")
             examples = (output_dir / "02-examples.html").read_text(encoding="utf-8")
             self.assertIn('href="01-introduction.html#python-runner-example">Section 4.2</a>', introduction)
+            self.assertIn('data-python-packages="numpy"', introduction)
             self.assertIn('href="02-examples.html"', introduction)
             self.assertIn('<script defer src="', examples)
             self.assertIn('assets/js/chapter-script-example.js"></script>', examples)
+
+    def test_python_runner_keeps_package_attribute(self) -> None:
+        source = """<div class="python-runner-source" data-python-runner data-python-packages="numpy,pandas">
+  <pre><code class="language-python">import numpy as np</code></pre>
+</div>"""
+
+        rendered = expand_python_runners(source)
+
+        self.assertIn('data-python-packages="numpy,pandas"', rendered)
+
+    def test_python_runner_rejects_invalid_package_names(self) -> None:
+        source = """<div class="python-runner-source" data-python-runner data-python-packages="numpy,https://example.com/pkg.whl">
+  <pre><code class="language-python">print("bad")</code></pre>
+</div>"""
+
+        with self.assertRaisesRegex(ValueError, "Pyodide package name"):
+            expand_python_runners(source)
 
     def test_chapter_scripts_must_exist_under_assets(self) -> None:
         root = Path(__file__).resolve().parents[2]

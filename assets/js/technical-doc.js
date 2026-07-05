@@ -133,6 +133,7 @@ main()
       scriptUrl: "https://cdn.jsdelivr.net/pyodide/v0.29.3/full/pyodide.js",
       indexUrl: "https://cdn.jsdelivr.net/pyodide/v0.29.3/full/"
     };
+    const PYODIDE_PACKAGE_NAME_PATTERN = /^[A-Za-z0-9_.-]+$/;
 
     function normalizePyodideAssetUrl(value, label) {
       if (typeof value !== "string" || value.trim() === "") {
@@ -243,6 +244,29 @@ main()
       }
     }
 
+    function normalizePythonPackageList(value) {
+      if (typeof value !== "string" || value.trim() === "") {
+        return [];
+      }
+
+      const packages = [];
+      const seenPackages = new Set();
+
+      for (const rawName of value.split(",")) {
+        const name = rawName.trim();
+        if (!name || seenPackages.has(name)) {
+          continue;
+        }
+        if (!PYODIDE_PACKAGE_NAME_PATTERN.test(name)) {
+          throw new Error(`Invalid Pyodide package name: ${name}`);
+        }
+        seenPackages.add(name);
+        packages.push(name);
+      }
+
+      return packages;
+    }
+
     function initializePythonRunner(panel) {
       const codeArea = panel.querySelector("[data-python-code]");
       const output = panel.querySelector("[data-python-output]");
@@ -263,6 +287,7 @@ main()
       let pyodideReady = false;
       let pyodideRequestId = 0;
       let pythonEditor = null;
+      let runnerPythonPackages = [];
       const pyodidePendingRequests = new Map();
       const initialPythonCode = codeArea.dataset.initialCodeBase64
         ? decodeBase64Utf8(codeArea.dataset.initialCodeBase64)
@@ -345,6 +370,7 @@ main()
         let pyodideReadyPromise = null;
         let streamsConfigured = false;
         let currentRunId = null;
+        const loadedPackageNames = new Set();
 
         async function getPyodideRuntime() {
           if (!pyodideReadyPromise) {
@@ -406,12 +432,19 @@ except BaseException:
         }
 
         self.addEventListener("message", async (event) => {
-          const { id, type, code } = event.data;
+          const { id, type, code, packages } = event.data;
 
           try {
             const pyodide = await getPyodideRuntime();
 
             if (type === "load") {
+              const requestedPackages = Array.isArray(packages) ? packages : [];
+              const unloadedPackages = requestedPackages.filter((packageName) => !loadedPackageNames.has(packageName));
+              if (unloadedPackages.length > 0) {
+                await pyodide.loadPackage(unloadedPackages);
+                unloadedPackages.forEach((packageName) => loadedPackageNames.add(packageName));
+              }
+
               self.postMessage({
                 id,
                 type: "loaded",
@@ -533,13 +566,21 @@ except BaseException:
         loadButton.disabled = true;
         setOutputBusy(true);
         setStatus("Python runtime: loading in worker...");
-        setOutput("Loading Pyodide in a classic Web Worker. The page should remain responsive.");
+        setOutput(
+          runnerPythonPackages.length > 0
+            ? `Loading Pyodide in a classic Web Worker. The page should remain responsive.\nLoading Python packages: ${runnerPythonPackages.join(", ")}`
+            : "Loading Pyodide in a classic Web Worker. The page should remain responsive."
+        );
 
         try {
-          await sendPyodideWorkerMessage("load");
+          await sendPyodideWorkerMessage("load", { packages: runnerPythonPackages });
           pyodideReady = true;
           setStatus("Python runtime: loaded in worker.");
-          setOutput("Python runtime loaded in worker. Press Run Python.");
+          setOutput(
+            runnerPythonPackages.length > 0
+              ? `Python runtime loaded in worker with packages: ${runnerPythonPackages.join(", ")}. Press Run Python.`
+              : "Python runtime loaded in worker. Press Run Python."
+          );
           setOutputBusy(false);
           runButton.disabled = false;
           restartRuntimeButton.disabled = false;
@@ -690,6 +731,15 @@ except BaseException:
       setPythonCode(initialPythonCode);
       initializePrintSnapshotSync();
       initializePythonCodeCopyButton();
+
+      try {
+        runnerPythonPackages = normalizePythonPackageList(panel.dataset.pythonPackages || "");
+      } catch (error) {
+        loadButton.disabled = true;
+        runButton.disabled = true;
+        setStatus("Python runtime: invalid package list.");
+        setOutput(String(error));
+      }
 
       loadButton.addEventListener("click", loadPythonRuntime);
       runButton.addEventListener("click", runPythonCode);

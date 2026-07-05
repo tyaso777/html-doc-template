@@ -195,126 +195,53 @@ print(summary)
     </p>
   </aside>
 
-<div class="python-runner-source" data-python-runner>
-  <p class="runner-caption">Try changing the input sizes and run the code.</p>
-  <pre><code class="language-python">from time import perf_counter
+<div class="python-runner-source" data-python-runner data-python-packages="numpy,pandas">
+  <p class="runner-caption">Load NumPy and pandas, then run a small analysis example.</p>
+  <pre><code class="language-python">import numpy as np
+import pandas as pd
 
 
-def linear_search_with_count(values: list[int], target: int) -> tuple[int, int]:
-    """Finds the target by scanning values and counts comparisons.
+scores = np.array([72, 88, 91, 84, 95, 79])
+labels = [f"sample-{index}" for index in range(1, len(scores) + 1)]
 
-    Args:
-        values: Sorted integer values.
-        target: Value to find.
+frame = pd.DataFrame({
+    "label": labels,
+    "score": scores,
+    "centered": scores - scores.mean(),
+})
 
-    Returns:
-        A pair of the target index and the number of comparisons.
-    """
-    comparisons = 0
-
-    for index, value in enumerate(values):
-        comparisons += 1
-        if value == target:
-            return index, comparisons
-
-    return -1, comparisons
-
-
-def binary_search_with_count(values: list[int], target: int) -> tuple[int, int]:
-    """Finds the target using binary search and counts comparisons.
-
-    Args:
-        values: Sorted integer values.
-        target: Value to find.
-
-    Returns:
-        A pair of the target index and the number of comparisons.
-    """
-    left = 0
-    right = len(values) - 1
-    comparisons = 0
-
-    while left <= right:
-        middle = (left + right) // 2
-        comparisons += 1
-
-        if values[middle] == target:
-            return middle, comparisons
-
-        if values[middle] < target:
-            left = middle + 1
-        else:
-            right = middle - 1
-
-    return -1, comparisons
-
-
-def measure_once(n: int, repeats: int) -> tuple[int, int, float, float]:
-    """Measures comparison counts and average execution times.
-
-    Args:
-        n: Number of elements.
-        repeats: Number of repeated searches.
-
-    Returns:
-        Linear-search comparisons, binary-search comparisons, average linear-search
-        time, and average binary-search time.
-    """
-    values = list(range(n))
-    target = n - 1
-
-    _, linear_comparisons = linear_search_with_count(values, target)
-    _, binary_comparisons = binary_search_with_count(values, target)
-
-    start = perf_counter()
-    for _ in range(repeats):
-        linear_search_with_count(values, target)
-    linear_ms = (perf_counter() - start) * 1000 / repeats
-
-    start = perf_counter()
-    for _ in range(repeats):
-        binary_search_with_count(values, target)
-    binary_ms = (perf_counter() - start) * 1000 / repeats
-
-    return linear_comparisons, binary_comparisons, linear_ms, binary_ms
-
-
-def main() -> None:
-    """Runs a simple growth-rate experiment."""
-    sizes = [1_000, 10_000, 100_000, 500_000, 1_000_000]
-    repeats_by_size = {
-        1_000: 200,
-        10_000: 100,
-        100_000: 20,
-        500_000: 5,
-        1_000_000: 3,
-    }
-
-    print("n          linear_cmp   binary_cmp   cmp_ratio   linear_ms   binary_ms")
-    print("-" * 78)
-
-    for n in sizes:
-        linear_cmp, binary_cmp, linear_ms, binary_ms = measure_once(n, repeats_by_size[n])
-        ratio = linear_cmp / binary_cmp if binary_cmp > 0 else float("inf")
-        print(
-            f"{n:>9}  "
-            f"{linear_cmp:>10}  "
-            f"{binary_cmp:>10}  "
-            f"{ratio:>9.1f}x  "
-            f"{linear_ms:>9.4f}  "
-            f"{binary_ms:>9.4f}"
-        )
-
-    print()
-    print("Interpretation:")
-    print("- Comparison counts are the cleanest signal here.")
-    print("- Linear search comparisons grow almost directly with n.")
-    print("- Binary search comparisons grow slowly because the search range is halved.")
-    print("- Timing numbers are useful but noisier than comparison counts.")
-
-
-main()</code></pre>
+print("NumPy mean:", round(float(scores.mean()), 2))
+print("pandas summary:")
+print(frame[["score", "centered"]].describe().round(2))
+print()
+print("Rows above mean:")
+print(frame.loc[frame["score"] > scores.mean(), ["label", "score"]])</code></pre>
 </div>
+
+  <h3 id="python-packages-example" data-toc data-toc-level="3" data-toc-title="Pyodide Packages">Pyodide Packages</h3>
+  <p>
+    Add <code>data-python-packages</code> to a runner source when the code needs Pyodide packages such as NumPy or pandas.
+    Package names are loaded when the reader presses <strong>Load Python Runtime</strong>; runners without this attribute keep the standard Pyodide behavior.
+  </p>
+
+  <div class="code-caption">chapters-src example</div>
+  <pre class="code-block language-html"><code class="language-html">&lt;div class="python-runner-source"
+     data-python-runner
+     data-python-packages="numpy,pandas"&gt;
+  &lt;p class="runner-caption"&gt;Run a small data analysis example.&lt;/p&gt;
+  &lt;pre&gt;&lt;code class="language-python"&gt;import numpy as np
+import pandas as pd
+
+values = np.array([2, 4, 6, 8])
+frame = pd.DataFrame({"value": values})
+print(frame["value"].mean())
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;</code></pre>
+
+  <p>
+    Only package names are accepted here. Remote wheel URLs or arbitrary installation commands are not supported by this template.
+    If Pyodide cannot load a package, the runner shows the error in its output area.
+  </p>
 </section>
 
 <section id="chapter-specific-javascript" data-toc data-toc-title="Chapter-specific JavaScript">
