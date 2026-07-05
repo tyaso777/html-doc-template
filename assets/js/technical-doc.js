@@ -842,25 +842,66 @@ except BaseException:
         return;
       }
 
+      const ensureFrame = (wrapper) => {
+        if (wrapper.parentElement && wrapper.parentElement.classList.contains("table-scroll-frame")) {
+          return wrapper.parentElement;
+        }
+
+        const frame = document.createElement("div");
+        frame.className = "table-scroll-frame";
+        wrapper.parentNode.insertBefore(frame, wrapper);
+        frame.appendChild(wrapper);
+        return frame;
+      };
+
+      const ensureShadow = (frame, className) => {
+        let shadow = frame.querySelector(`:scope > .${className}`);
+        if (!shadow) {
+          shadow = document.createElement("span");
+          shadow.className = `table-scroll-shadow ${className}`;
+          shadow.setAttribute("aria-hidden", "true");
+          frame.insertBefore(shadow, frame.firstChild);
+        }
+        return shadow;
+      };
+
       const updateWrapper = (wrapper) => {
+        const frame = wrapper.parentElement && wrapper.parentElement.classList.contains("table-scroll-frame")
+          ? wrapper.parentElement
+          : wrapper;
+        const captionOffset = window.getComputedStyle(wrapper).getPropertyValue("--table-caption-sticky-offset") || "0px";
+        frame.style.setProperty("--table-caption-sticky-offset", captionOffset.trim());
+
         if (wrapper.classList.contains("table-wide")) {
           const maxScrollLeft = wrapper.scrollWidth - wrapper.clientWidth;
           const hasLess = maxScrollLeft > 1 && wrapper.scrollLeft > 1;
           const hasMore = maxScrollLeft > 1 && wrapper.scrollLeft < maxScrollLeft - 1;
-          wrapper.classList.toggle("has-scroll-x-less", hasLess);
-          wrapper.classList.toggle("has-scroll-x-more", hasMore);
+          frame.classList.toggle("has-scroll-x-less", hasLess);
+          frame.classList.toggle("has-scroll-x-more", hasMore);
         }
 
         if (wrapper.classList.contains("table-fixed-height")) {
           const maxScrollTop = wrapper.scrollHeight - wrapper.clientHeight;
           const hasLess = maxScrollTop > 1 && wrapper.scrollTop > 1;
           const hasMore = maxScrollTop > 1 && wrapper.scrollTop < maxScrollTop - 1;
-          wrapper.classList.toggle("has-scroll-y-less", hasLess);
-          wrapper.classList.toggle("has-scroll-y-more", hasMore);
+          frame.classList.toggle("has-scroll-y-less", hasLess);
+          frame.classList.toggle("has-scroll-y-more", hasMore);
         }
       };
 
       for (const wrapper of wrappers) {
+        const frame = ensureFrame(wrapper);
+
+        if (wrapper.classList.contains("table-wide")) {
+          ensureShadow(frame, "table-scroll-shadow-x-left");
+          ensureShadow(frame, "table-scroll-shadow-x-right");
+        }
+
+        if (wrapper.classList.contains("table-fixed-height")) {
+          ensureShadow(frame, "table-scroll-shadow-y-top");
+          ensureShadow(frame, "table-scroll-shadow-y-bottom");
+        }
+
         updateWrapper(wrapper);
         wrapper.addEventListener("scroll", () => updateWrapper(wrapper), { passive: true });
       }
