@@ -251,13 +251,21 @@
           </p>
 
           <aside class="callout callout-success">
-            Use a supplemental note (<code>aside.callout-success</code>) for helpful context, prerequisites, successful states, and recommendations.
-            Example: This template is designed to remain readable on narrow screens.
+            <div class="callout-label">Note</div>
+            <div class="callout-title">Supplemental context</div>
+            <p>
+              Use a supplemental note (<code>aside.callout-success</code>) for helpful context, prerequisites, successful states, and recommendations.
+              Example: This template is designed to remain readable on narrow screens.
+            </p>
           </aside>
 
           <aside class="callout callout-warning">
-            Use a warning note (<code>aside.callout-warning</code>) for constraints, environment-specific behavior, and exceptions readers should know in advance.
-            Example: Python execution, Mermaid, MathJax, Vega-Lite, and Prism depend on JavaScript; the chapter contents and navigation are generated at build time.
+            <div class="callout-label">Warning</div>
+            <div class="callout-title">JavaScript-dependent enhancements</div>
+            <p>
+              Use a warning note (<code>aside.callout-warning</code>) for constraints, environment-specific behavior, and exceptions readers should know in advance.
+              Example: Python execution, Mermaid, MathJax, Vega-Lite, and Prism depend on JavaScript; the chapter contents and navigation are generated at build time.
+            </p>
           </aside>
         </section>
 
@@ -270,15 +278,19 @@
           </p>
 
           <aside class="callout callout-success">
-            Use <code>&lt;section id="..." data-toc data-toc-title="..."&gt;</code> for top-level sections that should appear in the table of contents.
-            For optional subsection entries, add <code>id</code>, <code>data-toc</code>, and <code>data-toc-level="3"</code> to the heading.
+            <div class="callout-label">Note</div>
+            <p>
+              Use <code>&lt;section id="..." data-toc data-toc-title="..."&gt;</code> for top-level sections that should appear in the table of contents.
+              For optional subsection entries, add <code>id</code>, <code>data-toc</code>, and <code>data-toc-level="3"</code> to the heading.
+            </p>
           </aside>
 
           <div class="card">
             <h3>Common Components</h3>
             <ul>
-              <li>Supplemental notes and recommendations: <code>&lt;aside class="callout callout-success"&gt;</code></li>
-              <li>Warnings and constraints: <code>&lt;aside class="callout callout-warning"&gt;</code></li>
+              <li>Supplemental notes and recommendations: <code>&lt;aside class="callout callout-success"&gt;</code> with <code>&lt;div class="callout-label"&gt;Note&lt;/div&gt;</code></li>
+              <li>Warnings and constraints: <code>&lt;aside class="callout callout-warning"&gt;</code> with <code>&lt;div class="callout-label"&gt;Warning&lt;/div&gt;</code></li>
+              <li>Optional callout subtitle: <code>&lt;div class="callout-title"&gt;...&lt;/div&gt;</code></li>
               <li>Standard body card: <code>&lt;div class="card"&gt;</code></li>
               <li>Muted card: <code>&lt;div class="card card-muted"&gt;</code></li>
               <li>Compact card: <code>&lt;div class="card card-compact"&gt;</code></li>
@@ -289,11 +301,15 @@
           </div>
 
           <aside class="callout callout-warning">
-            The Python runner, Mermaid, MathJax, Vega-Lite, Prism, and copy buttons are JavaScript enhancements.
-            The sidebar contents, heading references, and previous/next chapter navigation are generated at build time.
-            The sidebar Layout control can switch the page between the standard width and a wide layout; the initial mode is set by <code>layout.defaultMode</code> in the site manifest, and the viewer's last choice is remembered by the browser.
-            This is separate from <code>table-wide</code>, which controls an individual table.
-            Keep important explanations in normal HTML body text so the document remains readable if JavaScript is unavailable.
+            <div class="callout-label">Warning</div>
+            <div class="callout-title">Progressive enhancement</div>
+            <p>
+              The Python runner, Mermaid, MathJax, Vega-Lite, Prism, and copy buttons are JavaScript enhancements.
+              The sidebar contents, heading references, and previous/next chapter navigation are generated at build time.
+              The sidebar Layout control can switch the page between the standard width and a wide layout; the initial mode is set by <code>layout.defaultMode</code> in the site manifest, and the viewer's last choice is remembered by the browser.
+              This is separate from <code>table-wide</code>, which controls an individual table.
+              Keep important explanations in normal HTML body text so the document remains readable if JavaScript is unavailable.
+            </p>
           </aside>
         </section>
 
@@ -375,9 +391,13 @@ print(summary)
           </p>
 
           <aside class="callout callout-warning">
-            The Python runner loads Pyodide from a CDN only after the reader presses <strong>Load Python Runtime</strong>.
-            Pyodide is loaded with <code>importScripts()</code> inside a Web Worker, so normal script-tag SRI with <code>integrity</code> cannot be used there.
-            For documents that require strict supply-chain control, host a reviewed Pyodide distribution locally.
+            <div class="callout-label">Warning</div>
+            <div class="callout-title">Pyodide CDN loading</div>
+            <p>
+              The Python runner loads Pyodide from a CDN only after the reader presses <strong>Load Python Runtime</strong>.
+              Pyodide is loaded with <code>importScripts()</code> inside a Web Worker, so normal script-tag SRI with <code>integrity</code> cannot be used there.
+              For documents that require strict supply-chain control, host a reviewed Pyodide distribution locally.
+            </p>
           </aside>
 
         <div class="runner-panel" data-python-runner-panel>
@@ -454,8 +474,12 @@ ORDER BY updated_at DESC;
 </code></pre>
 
           <aside class="callout callout-warning">
-            To add another language such as cmd, bash, or JSON, load the corresponding Prism language component and change the <code>language-...</code> class to match.
-            If you add files from a CDN, also add SRI metadata for those files.
+            <div class="callout-label">Warning</div>
+            <div class="callout-title">Additional Prism languages</div>
+            <p>
+              To add another language such as cmd, bash, or JSON, load the corresponding Prism language component and change the <code>language-...</code> class to match.
+              If you add files from a CDN, also add SRI metadata for those files.
+            </p>
           </aside>
         </section>
 

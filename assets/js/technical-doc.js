@@ -837,17 +837,27 @@ except BaseException:
     }
 
     function initializeTableScrollHints() {
-      const wrappers = Array.from(document.querySelectorAll(".table-wrap.table-wide"));
+      const wrappers = Array.from(document.querySelectorAll(".table-wrap.table-wide, .table-wrap.table-fixed-height"));
       if (wrappers.length === 0) {
         return;
       }
 
       const updateWrapper = (wrapper) => {
-        const maxScrollLeft = wrapper.scrollWidth - wrapper.clientWidth;
-        const hasLess = maxScrollLeft > 1 && wrapper.scrollLeft > 1;
-        const hasMore = maxScrollLeft > 1 && wrapper.scrollLeft < maxScrollLeft - 1;
-        wrapper.classList.toggle("has-scroll-x-less", hasLess);
-        wrapper.classList.toggle("has-scroll-x-more", hasMore);
+        if (wrapper.classList.contains("table-wide")) {
+          const maxScrollLeft = wrapper.scrollWidth - wrapper.clientWidth;
+          const hasLess = maxScrollLeft > 1 && wrapper.scrollLeft > 1;
+          const hasMore = maxScrollLeft > 1 && wrapper.scrollLeft < maxScrollLeft - 1;
+          wrapper.classList.toggle("has-scroll-x-less", hasLess);
+          wrapper.classList.toggle("has-scroll-x-more", hasMore);
+        }
+
+        if (wrapper.classList.contains("table-fixed-height")) {
+          const maxScrollTop = wrapper.scrollHeight - wrapper.clientHeight;
+          const hasLess = maxScrollTop > 1 && wrapper.scrollTop > 1;
+          const hasMore = maxScrollTop > 1 && wrapper.scrollTop < maxScrollTop - 1;
+          wrapper.classList.toggle("has-scroll-y-less", hasLess);
+          wrapper.classList.toggle("has-scroll-y-more", hasMore);
+        }
       };
 
       for (const wrapper of wrappers) {
