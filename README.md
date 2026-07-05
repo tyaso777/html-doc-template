@@ -303,6 +303,8 @@ python3 -m unittest discover -s tests/python
 git diff --exit-code chapters
 ```
 
+If npm is available, `npm run check:html` and `npm run check:sri` run the HTML checker and CDN SRI verification through the Python launcher wrapper.
+
 If Node.js and Playwright are available, also run:
 
 ```bash
@@ -365,6 +367,20 @@ The template currently loads these libraries from CDN:
 - Pyodide
 
 Browser-loaded script and stylesheet CDN assets are listed in `scripts/site_builder/cdn-assets.json`, use SRI with `crossorigin="anonymous"`, and the HTML checker reports external script or stylesheet tags that omit those attributes.
+
+To verify that the listed CDN SRI hashes still match the downloaded assets, run:
+
+```bash
+npm run check:sri
+```
+
+To refresh SRI hashes after intentionally changing CDN URLs or versions, run:
+
+```bash
+npm run update:sri
+```
+
+Both commands require network access to the listed CDN URLs. Dependabot is configured in `.github/dependabot.yml` for npm dependencies and GitHub Actions. It opens update PRs for those ecosystems, but it does not automatically update CDN URLs in `cdn-assets.json`.
 
 Pyodide is different: it is loaded inside a Web Worker with `importScripts()` when the user presses `Load Python Runtime`. `importScripts()` does not support normal script-tag SRI. If strict supply-chain verification is required, host a reviewed Pyodide build locally and update `PYODIDE_WORKER_CONFIG` in the template or split JavaScript.
 

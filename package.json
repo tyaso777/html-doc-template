@@ -6,6 +6,8 @@
   "scripts": {
     "build": "node scripts/run_python.mjs scripts/build_site.py",
     "check:html": "node scripts/run_python.mjs scripts/check_html.py",
+    "check:sri": "node scripts/run_python.mjs scripts/update_cdn_sri.py --check",
+    "update:sri": "node scripts/run_python.mjs scripts/update_cdn_sri.py",
     "build:test-fixture": "node scripts/run_python.mjs scripts/build_site.py --manifest tests/fixtures/basic-site/chapters-src/site-manifest.json --output-dir tests/fixtures/basic-site/chapters",
     "test:e2e": "playwright test",
     "test:e2e:pyodide": "cross-env PYODIDE_SMOKE=1 playwright test --grep @pyodide"
