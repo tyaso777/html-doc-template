@@ -250,12 +250,21 @@
             A server-side Python environment is not required, but the first runtime load can take some time because Pyodide is downloaded on demand.
           </p>
 
-          <aside class="callout callout-success">
+          <aside class="callout callout-note">
             <div class="callout-label">Note</div>
             <div class="callout-title">Supplemental context</div>
             <p>
-              Use a supplemental note (<code>aside.callout-success</code>) for helpful context, prerequisites, successful states, and recommendations.
+              Use a supplemental note (<code>aside.callout-note</code>) for helpful context, prerequisites, and recommendations.
               Example: This template is designed to remain readable on narrow screens.
+            </p>
+          </aside>
+
+          <aside class="callout callout-success">
+            <div class="callout-label">Success</div>
+            <div class="callout-title">Completed or verified state</div>
+            <p>
+              Use a success callout (<code>aside.callout-success</code>) for completed checks, verified outcomes, and successful states.
+              Example: The generated chapter passed the HTML validation step.
             </p>
           </aside>
 
@@ -277,7 +286,7 @@
             For an interactive code example, see <a class="xref section-ref" href="01-introduction.html#python-runner-example">Section 4.2</a>.
           </p>
 
-          <aside class="callout callout-success">
+          <aside class="callout callout-note">
             <div class="callout-label">Note</div>
             <p>
               Use <code>&lt;section id="..." data-toc data-toc-title="..."&gt;</code> for top-level sections that should appear in the table of contents.
@@ -288,7 +297,8 @@
           <div class="card">
             <h3>Common Components</h3>
             <ul>
-              <li>Supplemental notes and recommendations: <code>&lt;aside class="callout callout-success"&gt;</code> with <code>&lt;div class="callout-label"&gt;Note&lt;/div&gt;</code></li>
+              <li>Supplemental notes and recommendations: <code>&lt;aside class="callout callout-note"&gt;</code> with <code>&lt;div class="callout-label"&gt;Note&lt;/div&gt;</code></li>
+              <li>Completed checks and verified outcomes: <code>&lt;aside class="callout callout-success"&gt;</code> with <code>&lt;div class="callout-label"&gt;Success&lt;/div&gt;</code></li>
               <li>Warnings and constraints: <code>&lt;aside class="callout callout-warning"&gt;</code> with <code>&lt;div class="callout-label"&gt;Warning&lt;/div&gt;</code></li>
               <li>Optional callout subtitle: <code>&lt;div class="callout-title"&gt;...&lt;/div&gt;</code></li>
               <li>Standard body card: <code>&lt;div class="card"&gt;</code></li>

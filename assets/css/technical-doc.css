@@ -400,13 +400,26 @@ h3 {
   border-color: var(--accent-line);
 }
 
+.callout-note {
+  border-color: var(--accent-line);
+}
+
 .callout-info .callout-label {
+  background: var(--accent-bg);
+  color: var(--accent-text);
+}
+
+.callout-note .callout-label {
   background: var(--accent-bg);
   color: var(--accent-text);
 }
 
 .callout-info .callout-label::before {
   content: "i ";
+}
+
+.callout-note .callout-label::before {
+  content: "ⓘ ";
 }
 
 .callout-success {
