@@ -148,32 +148,6 @@
   </div>
 </section>
 
-<section id="chapter-specific-javascript" data-toc data-toc-title="Chapter-specific JavaScript">
-  <h2>Chapter-specific JavaScript</h2>
-  <p>
-    Keep arbitrary <code>&lt;script&gt;</code> tags out of chapter body fragments.
-    When one chapter needs a local interaction, such as an SVD demo or a custom visualization, add a <code>scripts</code> array to that chapter in <code>site-manifest.json</code>.
-    Script paths must point to local files under <code>assets/</code>, and the build fails if a listed file does not exist.
-  </p>
-
-  <div class="code-caption">site-manifest.json</div>
-  <pre class="code-block language-json"><code class="language-json">{
-  "title": "Chapter 1: Introduction",
-  "source": "01-introduction.html",
-  "href": "01-introduction.html",
-  "scripts": [
-    "assets/js/chapter-script-example.js"
-  ]
-}</code></pre>
-
-  <div class="card card-compact">
-    <h3>Loaded script output</h3>
-    <p data-chapter-script-output>
-      This text is replaced only when the chapter-specific script is loaded.
-    </p>
-  </div>
-</section>
-
 <section id="python-code-examples" data-toc data-toc-title="Python Code Display and Execution">
   <h2>Python Code Display and Execution</h2>
   <p>
@@ -341,6 +315,91 @@ def main() -> None:
 
 main()</code></pre>
 </div>
+</section>
+
+<section id="chapter-specific-javascript" data-toc data-toc-title="Chapter-specific JavaScript">
+  <h2>Chapter-specific JavaScript</h2>
+  <p>
+    Use the Python runner when readers should edit and execute Python code.
+    Use chapter-specific JavaScript when a page needs local browser behavior, such as an SVD control panel, a small visualization initializer, or a custom interaction that only belongs to one chapter.
+    Keep arbitrary <code>&lt;script&gt;</code> tags out of chapter body fragments; list local JavaScript files in the chapter entry instead.
+  </p>
+
+  <div class="code-caption">site-manifest.json</div>
+  <pre class="code-block language-json"><code class="language-json">{
+  "title": "Chapter 1: Introduction",
+  "source": "01-introduction.html",
+  "href": "01-introduction.html",
+  "scripts": [
+    "assets/js/chapter-script-example.js"
+  ]
+}</code></pre>
+
+  <p>
+    Script paths must point to local files under <code>assets/</code>, and the build fails if a listed file does not exist.
+    The generated page loads them after the shared document JavaScript with <code>defer</code>.
+  </p>
+
+  <div class="card card-compact chapter-js-demo" data-chapter-script-demo>
+    <h3>Chapter interaction demo</h3>
+    <p>
+      The controls below are static HTML in the chapter source. The chapter-specific script makes them interactive after the page loads.
+    </p>
+
+    <div class="chapter-demo-grid">
+      <div class="chapter-demo-panel">
+        <label class="chapter-demo-label" for="demo-progress">
+          Progress value
+          <output data-demo-progress-value for="demo-progress">50</output>
+        </label>
+        <input id="demo-progress" data-demo-progress type="range" min="0" max="100" value="50">
+        <p data-demo-progress-output>Progress is 50%, so the status is in the middle range.</p>
+      </div>
+
+      <div class="chapter-demo-panel">
+        <div class="chapter-demo-toggle" role="group" aria-label="Diagram view">
+          <button class="button secondary" type="button" data-demo-view="overview">Overview</button>
+          <button class="button secondary" type="button" data-demo-view="detail">Detail</button>
+        </div>
+        <div class="chapter-demo-view" data-demo-view-panel="overview">
+          <strong>Overview:</strong> show the short explanation first.
+        </div>
+        <div class="chapter-demo-view" data-demo-view-panel="detail" hidden>
+          <strong>Detail:</strong> reveal extra notes only when the reader asks for them.
+        </div>
+      </div>
+    </div>
+
+    <div class="chapter-demo-panel">
+      <label class="chapter-demo-label" for="demo-filter">Filter table rows</label>
+      <input id="demo-filter" class="chapter-demo-filter" data-demo-filter type="search" placeholder="Try code, table, or figure">
+      <div class="table-wrap table-compact">
+        <table>
+          <thead>
+            <tr>
+              <th>Component</th>
+              <th>Purpose</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-demo-row data-demo-keywords="code copy python">
+              <td>Code block</td>
+              <td>Display source text with syntax highlighting.</td>
+            </tr>
+            <tr data-demo-row data-demo-keywords="table data filter">
+              <td>Table</td>
+              <td>Compare rows and columns of structured data.</td>
+            </tr>
+            <tr data-demo-row data-demo-keywords="figure diagram image">
+              <td>Figure</td>
+              <td>Show a diagram, chart, or visual explanation.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted" data-demo-filter-count>Showing 3 rows.</p>
+    </div>
+  </div>
 </section>
 
 <section id="other-language-examples" data-toc data-toc-title="Other Languages">

@@ -886,6 +886,59 @@ table[data-numbered] caption .numbered-label,
   max-width: 100%;
 }
 
+.chapter-js-demo input[type="range"],
+.chapter-js-demo input[type="search"] {
+  width: 100%;
+}
+
+.chapter-demo-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  margin: 14px 0;
+}
+
+.chapter-demo-panel {
+  border: 1px solid var(--section-rule);
+  border-radius: var(--radius);
+  padding: 14px;
+  background: #fff;
+}
+
+.chapter-demo-label {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.chapter-demo-label output {
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.chapter-demo-toggle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.chapter-demo-view {
+  border-left: 4px solid var(--accent-line);
+  padding: 8px 12px;
+  background: var(--accent-bg);
+}
+
+.chapter-demo-filter {
+  min-height: 42px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px 10px;
+  font: inherit;
+}
+
 .runner-panel {
   border: 1px solid var(--border);
   border-radius: var(--radius);
