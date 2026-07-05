@@ -1,17 +1,59 @@
 from __future__ import annotations
 
+import html
+import json
+from functools import lru_cache
+from pathlib import Path
+from typing import Any
+
 try:
     from html_fragment import iter_nodes, parse_fragment
 except ModuleNotFoundError:
     from scripts.html_fragment import iter_nodes, parse_fragment
 
 
-MERMAID_ASSET = '<script defer src="https://cdn.jsdelivr.net/npm/mermaid@11.14.0/dist/mermaid.min.js" integrity="sha512-1CZj4aGbVA13DvizpBtnnUCPqBMDokst010DHdNrd7E79k2BoZqRaU0xybAKlsWERxKlLoAqvHpuKE1mBuveUQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>'
-VEGA_LITE_ASSETS = [
-    '<script defer src="https://cdn.jsdelivr.net/npm/vega@5.33.0/build/vega.min.js" integrity="sha384-Kpi0LDGE2Pg6N3+B3LiVIugYJ3rGL3AAqlnkRLfFxZtmejptl+TJ3iKY54HF5U3l" crossorigin="anonymous" referrerpolicy="no-referrer"></script>',
-    '<script defer src="https://cdn.jsdelivr.net/npm/vega-lite@5.23.0/build/vega-lite.min.js" integrity="sha384-D9LYH0esGjcxQJsBuxOuXtCDJGXRWW1+KhluzWPqi0rLJmiR/ygPChefaD+rFFDQ" crossorigin="anonymous" referrerpolicy="no-referrer"></script>',
-    '<script defer src="https://cdn.jsdelivr.net/npm/vega-embed@6.29.0/build/vega-embed.min.js" integrity="sha384-M+Ax7e/WFJpxSOF09HzI+Sj4wg9ottVd/uxmV2ItGGh02fLH28t2FAOJx3TJBap5" crossorigin="anonymous" referrerpolicy="no-referrer"></script>',
-]
+CDN_ASSETS_PATH = Path(__file__).with_name("cdn-assets.json")
+
+
+@lru_cache(maxsize=1)
+def load_cdn_assets() -> dict[str, Any]:
+    return json.loads(CDN_ASSETS_PATH.read_text(encoding="utf-8"))
+
+
+def render_asset_tag(asset: dict[str, Any]) -> str:
+    asset_type = asset.get("type")
+    attrs: list[tuple[str, str | None]] = []
+
+    if asset_type == "stylesheet":
+        attrs.append(("rel", "stylesheet"))
+        attrs.append(("href", str(asset["href"])))
+    elif asset_type == "script":
+        if asset.get("defer", False):
+            attrs.append(("defer", None))
+        attrs.append(("src", str(asset["src"])))
+    else:
+        raise ValueError(f'unsupported CDN asset type "{asset_type}"')
+
+    for name in ("integrity", "crossorigin", "referrerpolicy"):
+        if name in asset:
+            attrs.append((name, str(asset[name])))
+
+    rendered_attrs = " ".join(
+        html.escape(name, quote=True) if value is None else f'{html.escape(name, quote=True)}="{html.escape(value, quote=True)}"'
+        for name, value in attrs
+    )
+
+    if asset_type == "stylesheet":
+        return f"<link {rendered_attrs}>"
+    return f"<script {rendered_attrs}></script>"
+
+
+def render_asset_tags(assets: list[dict[str, Any]], indent: str = "  ") -> str:
+    return "\n".join(f"{indent}{render_asset_tag(asset)}" for asset in assets)
+
+
+def render_fixed_head_assets(indent: str = "  ") -> str:
+    return render_asset_tags(load_cdn_assets().get("fixed", []), indent)
 
 
 def node_classes(class_value: str | None) -> set[str]:
@@ -33,11 +75,11 @@ def optional_asset_keys(source: str) -> set[str]:
 
 def render_optional_head_assets(source: str, indent: str = "  ") -> str:
     keys = optional_asset_keys(source)
+    optional_assets = load_cdn_assets().get("optional", {})
     assets: list[str] = []
 
-    if "mermaid" in keys:
-        assets.append(MERMAID_ASSET)
-    if "vega-lite" in keys:
-        assets.extend(VEGA_LITE_ASSETS)
+    for key in ("mermaid", "vega-lite"):
+        if key in keys:
+            assets.extend(render_asset_tag(asset) for asset in optional_assets.get(key, []))
 
     return "\n".join(f"{indent}{asset}" for asset in assets)

@@ -35,7 +35,7 @@ try:
     from site_builder.navigation import relative_path, render_chapter_nav, render_contents_tree
     from site_builder.html_constants import RAW_TEXT_INDENT_TAGS, protected_text_ranges
     from site_builder.numbered_items import apply_numbered_items, collect_numbered_items
-    from site_builder.optional_assets import render_optional_head_assets
+    from site_builder.optional_assets import render_fixed_head_assets, render_optional_head_assets
     from site_builder.python_runner import expand_python_runners
 except ModuleNotFoundError:
     from scripts.html_fragment import (
@@ -56,7 +56,7 @@ except ModuleNotFoundError:
     from scripts.site_builder.navigation import relative_path, render_chapter_nav, render_contents_tree
     from scripts.site_builder.html_constants import RAW_TEXT_INDENT_TAGS, protected_text_ranges
     from scripts.site_builder.numbered_items import apply_numbered_items, collect_numbered_items
-    from scripts.site_builder.optional_assets import render_optional_head_assets
+    from scripts.site_builder.optional_assets import render_fixed_head_assets, render_optional_head_assets
     from scripts.site_builder.python_runner import expand_python_runners
 
 
@@ -472,6 +472,7 @@ def render_shell(
         "{{SIDEBAR_SUBTITLE}}": html.escape(chapter.get("subtitle", "")),
         "{{ASSET_PREFIX}}": asset_prefix(output_path, root),
         "{{DEFAULT_LAYOUT_MODE}}": html.escape(default_layout_mode, quote=True),
+        "{{FIXED_HEAD_ASSETS}}": render_fixed_head_assets(),
         "{{OPTIONAL_HEAD_ASSETS}}": optional_head_assets,
         "{{CONTENTS_TREE}}": render_contents_tree(
             chapters,

@@ -14,7 +14,7 @@ from scripts.build_site import (
     indent_content_preserving_raw_text,
     render_shell,
 )
-from scripts.site_builder.optional_assets import optional_asset_keys, render_optional_head_assets
+from scripts.site_builder.optional_assets import optional_asset_keys, render_fixed_head_assets, render_optional_head_assets
 
 
 class BuildSiteTests(unittest.TestCase):
@@ -32,6 +32,15 @@ class BuildSiteTests(unittest.TestCase):
         self.assertIn("vega.min.js", rendered)
         self.assertIn("vega-lite.min.js", rendered)
         self.assertIn("vega-embed.min.js", rendered)
+
+    def test_fixed_head_assets_render_from_json(self) -> None:
+        rendered = render_fixed_head_assets()
+
+        self.assertIn("prism.min.css", rendered)
+        self.assertIn("prism.min.js", rendered)
+        self.assertIn("mathjax@3.2.2", rendered)
+        self.assertIn('crossorigin="anonymous"', rendered)
+        self.assertIn('referrerpolicy="no-referrer"', rendered)
 
     def test_optional_head_assets_ignore_mermaid_code_blocks(self) -> None:
         source = '<pre class="code-block language-mermaid"><code>flowchart LR</code></pre>'
@@ -251,7 +260,7 @@ for log in logs:
     def test_render_shell_includes_common_and_chapter_external_links(self) -> None:
         shell = (
             "{{DOCUMENT_LANG}} {{DOCUMENT_TITLE}} {{SIDEBAR_TITLE}} {{SIDEBAR_SUBTITLE}} "
-            "{{ASSET_PREFIX}} {{DEFAULT_LAYOUT_MODE}} {{OPTIONAL_HEAD_ASSETS}} {{CONTENTS_TREE}} {{MATERIALS_SECTION}} "
+            "{{ASSET_PREFIX}} {{DEFAULT_LAYOUT_MODE}} {{FIXED_HEAD_ASSETS}} {{OPTIONAL_HEAD_ASSETS}} {{CONTENTS_TREE}} {{MATERIALS_SECTION}} "
             "{{EXTERNAL_LINKS_SECTION}} {{CONTENT}}"
         )
         chapter = {
@@ -285,13 +294,14 @@ for log in logs:
 
         self.assertIn("Common link", rendered)
         self.assertIn("Chapter link", rendered)
+        self.assertIn("prism.min.css", rendered)
         self.assertIn("wide", rendered)
         self.assertIn("optional.js", rendered)
         self.assertIn('href="https://example.com/common" target="_blank" rel="noopener"', rendered)
         self.assertIn('href="https://example.com/chapter" target="_blank" rel="noopener"', rendered)
 
     def test_render_shell_marks_numbered_toc_lists(self) -> None:
-        shell = "{{DOCUMENT_LANG}} {{DOCUMENT_TITLE}} {{SIDEBAR_TITLE}} {{SIDEBAR_SUBTITLE}} {{ASSET_PREFIX}} {{DEFAULT_LAYOUT_MODE}} {{OPTIONAL_HEAD_ASSETS}} {{CONTENTS_TREE}} {{MATERIALS_SECTION}} {{EXTERNAL_LINKS_SECTION}} {{CONTENT}}"
+        shell = "{{DOCUMENT_LANG}} {{DOCUMENT_TITLE}} {{SIDEBAR_TITLE}} {{SIDEBAR_SUBTITLE}} {{ASSET_PREFIX}} {{DEFAULT_LAYOUT_MODE}} {{FIXED_HEAD_ASSETS}} {{OPTIONAL_HEAD_ASSETS}} {{CONTENTS_TREE}} {{MATERIALS_SECTION}} {{EXTERNAL_LINKS_SECTION}} {{CONTENT}}"
         chapter = {
             "title": "Chapter",
             "href": "chapter.html",

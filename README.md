@@ -90,7 +90,7 @@ html-doc-template/
 
 Use `chapters-src/` as the editable source for the real document in this repository. The default `scripts/build_site.py` command reads `chapters-src/site-manifest.json` and writes generated public pages to `chapters/`.
 
-Use `layouts/chapter-shell.html` as the shared wrapper for generated multi-page chapters. It contains the document shell: `<html>`, `<head>`, fixed CDN assets, sidebar, shared CSS, shared JavaScript, and a build-time placeholder for chapter-specific optional CDN assets.
+Use `layouts/chapter-shell.html` as the shared wrapper for generated multi-page chapters. It contains the document shell: `<html>`, `<head>`, sidebar, shared CSS, shared JavaScript, and build-time placeholders for fixed and chapter-specific optional CDN assets. CDN URLs and SRI hashes are maintained in `scripts/site_builder/cdn-assets.json`.
 
 Use `tests/fixtures/basic-site/` only for template tests. It mirrors the same `chapters-src/` and `layouts/` structure, but it is fixed test input so Python unit tests and browser smoke tests do not break when the user-facing document changes.
 
@@ -122,7 +122,7 @@ On Windows, use `py -3` instead of `python3`. Node.js is not required for docume
 
 This template can be used for multi-page documents by sharing one shell template and the same `assets/` directory across generated HTML files. In this workflow, edit the user-facing `chapters-src/` and treat `chapters/` as generated output. See `chapters/01-introduction.html`, `chapters/02-examples.html`, and `chapters/03-reference.html` for a minimal three-page example.
 
-Each file under `chapters-src/` is an article fragment, not a complete HTML document. It should contain only the content that belongs inside `<article class="content">`. Keep shared CDN assets, `<head>`, sidebar markup, shared CSS, and shared JavaScript in `layouts/chapter-shell.html`; the build injects optional assets such as Mermaid and Vega-Lite only for chapters that use them.
+Each file under `chapters-src/` is an article fragment, not a complete HTML document. It should contain only the content that belongs inside `<article class="content">`. Keep `<head>`, sidebar markup, shared CSS, and shared JavaScript in `layouts/chapter-shell.html`; the build injects CDN assets from `scripts/site_builder/cdn-assets.json`, including optional assets such as Mermaid and Vega-Lite only for chapters that use them.
 
 Each source chapter should include a chapter navigation placeholder near the end of the fragment:
 
@@ -364,7 +364,7 @@ The template currently loads these libraries from CDN:
 - vega-embed
 - Pyodide
 
-Browser-loaded script and stylesheet CDN assets, including build-injected optional assets, use SRI with `crossorigin="anonymous"`, and the HTML checker reports external script or stylesheet tags that omit those attributes.
+Browser-loaded script and stylesheet CDN assets are listed in `scripts/site_builder/cdn-assets.json`, use SRI with `crossorigin="anonymous"`, and the HTML checker reports external script or stylesheet tags that omit those attributes.
 
 Pyodide is different: it is loaded inside a Web Worker with `importScripts()` when the user presses `Load Python Runtime`. `importScripts()` does not support normal script-tag SRI. If strict supply-chain verification is required, host a reviewed Pyodide build locally and update `PYODIDE_WORKER_CONFIG` in the template or split JavaScript.
 
