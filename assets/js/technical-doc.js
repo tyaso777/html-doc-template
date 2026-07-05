@@ -184,124 +184,6 @@ main()
       }
     }
 
-    function getTocTitle(element) {
-      if (element.dataset.tocTitle) {
-        return element.dataset.tocTitle;
-      }
-
-      const heading = element.matches("section")
-        ? element.querySelector("h2, h3")
-        : element;
-
-      return heading ? heading.textContent.trim() : element.id;
-    }
-
-    function getTocHref(element) {
-      return `#${element.id}`;
-    }
-
-    function getTocLevel(element) {
-      if (element.dataset.tocLevel) {
-        return Number.parseInt(element.dataset.tocLevel, 10);
-      }
-
-      if (element.matches("h3")) {
-        return 3;
-      }
-
-      return 2;
-    }
-
-    function createTocItem(element) {
-      const item = document.createElement("li");
-      const link = document.createElement("a");
-      const level = getTocLevel(element);
-
-      link.href = getTocHref(element);
-      link.textContent = getTocTitle(element);
-
-      if (level >= 3) {
-        item.classList.add(`toc-level-${level}`);
-      }
-
-      item.appendChild(link);
-      return item;
-    }
-
-    function getOrCreateChildList(item) {
-      let childList = item.querySelector(":scope > ol");
-
-      if (!childList) {
-        childList = document.createElement("ol");
-        item.appendChild(childList);
-      }
-
-      return childList;
-    }
-
-    function buildNestedToc(toc, tocTargets) {
-      const stack = [
-        {
-          level: 1,
-          list: toc,
-          item: null
-        }
-      ];
-
-      for (const target of tocTargets) {
-        const level = getTocLevel(target);
-        const item = createTocItem(target);
-
-        while (stack.length > 1 && stack[stack.length - 1].level >= level) {
-          stack.pop();
-        }
-
-        let parent = stack[stack.length - 1];
-
-        if (level > parent.level + 1 && parent.item) {
-          const childList = getOrCreateChildList(parent.item);
-          parent = {
-            level: level - 1,
-            list: childList,
-            item: parent.item
-          };
-          stack.push(parent);
-        }
-
-        parent.list.appendChild(item);
-
-        stack.push({
-          level,
-          list: getOrCreateChildList(item),
-          item
-        });
-      }
-
-      for (const emptyList of toc.querySelectorAll("ol:empty")) {
-        emptyList.remove();
-      }
-    }
-
-    function buildToc() {
-      const toc = document.getElementById("auto-toc");
-
-      if (!toc) {
-        return;
-      }
-
-      const tocTargets = Array.from(document.querySelectorAll("main [data-toc][id]"));
-      toc.innerHTML = "";
-
-      if (tocTargets.length === 0) {
-        const item = document.createElement("li");
-        item.textContent = "No TOC targets found. Add data-toc to structural sections or headings.";
-        toc.appendChild(item);
-        return;
-      }
-
-      buildNestedToc(toc, tocTargets);
-    }
-
     function initializePythonRunner(panel) {
       const codeArea = panel.querySelector("[data-python-code]");
       const output = panel.querySelector("[data-python-output]");
@@ -853,7 +735,6 @@ except BaseException:
 
 
     document.addEventListener("DOMContentLoaded", () => {
-      buildToc();
       const runners = Array.from(document.querySelectorAll("[data-python-runner-panel]"));
 
       for (const runner of runners) {

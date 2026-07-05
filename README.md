@@ -37,7 +37,7 @@ If you primarily want Markdown-first authoring, automatic page generation, site-
 ## Features
 
 - Responsive two-column layout with a collapsible sidebar.
-- Auto-generated table of contents from `data-toc` elements.
+- Build-time generated contents navigation from `data-toc` elements.
 - Document metadata block for version, update date, and author.
 - Callout blocks for notes and warnings.
 - Card components for compact document sections.
@@ -130,7 +130,7 @@ Each source chapter should include a chapter navigation placeholder near the end
 <nav class="chapter-nav" data-chapter-nav aria-label="Chapter navigation"></nav>
 ```
 
-`scripts/build_site.py` reads `chapters-src/site-manifest.json`, combines each source fragment with `layouts/chapter-shell.html`, writes the left-side nested Contents tree from all chapter TOC entries, renders manifest-managed Materials and External Links sections, and writes the generated Previous and Next links into each output file. It uses Python's standard-library HTML parser for chapter TOC extraction, Python runner expansion, and chapter navigation replacement. This keeps chapter order, document language, shell metadata, and shared link lists in one place while keeping the generated HTML usable through GitHub Pages or direct `file://` previews. For custom builds, pass `--manifest` and optionally `--output-dir`, for example `python3 scripts/build_site.py --manifest tests/fixtures/basic-site/chapters-src/site-manifest.json --output-dir /tmp/basic-site/chapters`.
+`scripts/build_site.py` reads `chapters-src/site-manifest.json`, combines each source fragment with `layouts/chapter-shell.html`, writes the left-side nested Contents tree from all chapter TOC entries, renders manifest-managed Materials and External Links sections, and writes the generated Previous and Next links into each output file. It uses Python's standard-library HTML parser for chapter TOC extraction, heading references, Python runner expansion, and chapter navigation replacement. This keeps chapter order, document language, shell metadata, contents navigation, heading references, and shared link lists in one place while keeping the generated HTML usable through GitHub Pages or direct `file://` previews without depending on client-side JavaScript for navigation. For custom builds, pass `--manifest` and optionally `--output-dir`, for example `python3 scripts/build_site.py --manifest tests/fixtures/basic-site/chapters-src/site-manifest.json --output-dir /tmp/basic-site/chapters`.
 
 CI runs the build and checks that the generated `chapters/` files have no uncommitted diff, so updates to `chapters-src/` should be committed together with the rebuilt public chapter files.
 Template unit and browser smoke tests use `tests/fixtures/basic-site/` as stable input, not the user-facing `chapters-src/`.
@@ -286,7 +286,7 @@ python3 scripts/check_html.py
 
 On Windows, use `py -3 scripts/check_html.py`. If npm is available, `npm run check:html` runs the same checker through the Python launcher wrapper.
 
-The checker uses only the Python standard library. It validates duplicate IDs, missing `data-toc` IDs, local file links, same-page fragment links, `aria-describedby` references, `pre.code-block` / `code.language-*` consistency, external CDN script and stylesheet SRI attributes, chapter manifest integrity, shell template tokens, generated Previous/Next navigation, and the scoped IDs emitted for generated Python runners.
+The checker uses only the Python standard library. It validates duplicate IDs, missing `data-toc` IDs, local file links, same-page fragment links, `aria-describedby` references, `pre.code-block` / `code.language-*` consistency, external CDN script and stylesheet SRI attributes, chapter manifest integrity, shell template tokens, generated contents navigation, generated Previous/Next navigation, and the scoped IDs emitted for generated Python runners.
 
 When using this template in another document project, copy `scripts/check_html.py`, `scripts/html_fragment.py`, and `scripts/site_manifest.py` with the template and run the checker against the generated HTML file. For multi-page chapter sets, keep `chapters-src/site-manifest.json`, `chapters-src/`, and `chapters/` together so the manifest checks can verify generated navigation.
 

@@ -46,7 +46,7 @@
 
   <aside class="callout callout-warning">
     Use a warning note (<code>aside.callout-warning</code>) for constraints, environment-specific behavior, and exceptions readers should know in advance.
-    Example: TOC generation, Python execution, Mermaid, MathJax, and Prism depend on JavaScript.
+    Example: Python execution, Mermaid, MathJax, Vega-Lite, and Prism depend on JavaScript; the chapter contents and navigation are generated at build time.
   </aside>
 </section>
 
@@ -78,7 +78,8 @@
   </div>
 
   <aside class="callout callout-warning">
-    The TOC, Python runner, Mermaid, MathJax, and Prism are JavaScript enhancements.
+    The Python runner, Mermaid, MathJax, Vega-Lite, Prism, and copy buttons are JavaScript enhancements.
+    The sidebar contents, heading references, and previous/next chapter navigation are generated at build time.
     Keep important explanations in normal HTML body text so the document remains readable if JavaScript is unavailable.
   </aside>
 </section>
@@ -841,7 +842,8 @@ flowchart LR
     <h3>Progressive Reading Design</h3>
     <p>
       Body text, links, and code content remain readable as normal HTML.
-      TOC generation, Python execution, Mermaid, MathJax, and Prism are convenience enhancements added by JavaScript.
+      Sidebar contents, heading references, and chapter navigation are present in the generated HTML.
+      Python execution, Mermaid, MathJax, Vega-Lite, Prism, and copy buttons are convenience enhancements added by JavaScript.
     </p>
   </div>
 </section>
