@@ -1,5 +1,6 @@
 {
   "title": "html-doc-template chapter examples",
+  "description": "A technical HTML document template for multi-page documents with code, math, diagrams, tables, and optional Python examples.",
   "lang": "en",
   "shell": "../layouts/chapter-shell.html",
   "outputDir": "../chapters",

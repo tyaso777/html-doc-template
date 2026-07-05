@@ -425,6 +425,8 @@ def render_shell(
     root: Path,
     manifest_dir: Path,
     document_lang: str,
+    site_title: str,
+    description: str,
     chapters: list[dict[str, Any]],
     current_index: int,
     output_dir: Path,
@@ -437,9 +439,12 @@ def render_shell(
 ) -> str:
     numbered_toc = bool((heading_numbering or {}).get("enabled", False) and (heading_numbering or {}).get("toc", True))
     default_layout_mode = str((layout or {}).get("defaultMode", "standard"))
+    document_description = str(chapter.get("description", description))
     replacements = {
         "{{DOCUMENT_LANG}}": html.escape(document_lang, quote=True),
         "{{DOCUMENT_TITLE}}": html.escape(chapter["title"]),
+        "{{DOCUMENT_DESCRIPTION}}": html.escape(document_description, quote=True),
+        "{{SITE_TITLE}}": html.escape(site_title, quote=True),
         "{{SIDEBAR_TITLE}}": sidebar_title_html(chapter.get("sidebarTitle", chapter["title"])),
         "{{SIDEBAR_SUBTITLE}}": html.escape(chapter.get("subtitle", "")),
         "{{ASSET_PREFIX}}": asset_prefix(output_path, root),
@@ -481,6 +486,8 @@ def build_chapter(
     index: int,
     toc_entries_by_chapter: list[list[dict[str, str | int]]],
     document_lang: str,
+    site_title: str,
+    description: str,
     materials: list[Any],
     external_links: list[Any],
     layout: dict[str, str],
@@ -507,6 +514,8 @@ def build_chapter(
         root,
         manifest_dir,
         document_lang,
+        site_title,
+        description,
         chapters,
         index,
         output_dir,
@@ -571,6 +580,8 @@ def build_site(root: Path, manifest_path: Path, output_dir_override: Path | None
                 index,
                 toc_entries_by_chapter,
                 manifest.document_lang,
+                manifest.site_title,
+                manifest.description,
                 manifest.materials,
                 manifest.external_links,
                 manifest.layout,

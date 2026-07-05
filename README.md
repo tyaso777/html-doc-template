@@ -140,6 +140,7 @@ AI agents should follow [QUICKSTART.md](QUICKSTART.md), edit `chapters-src/` ins
 ```json
 {
   "title": "html-doc-template chapter examples",
+  "description": "A technical HTML document template for multi-page documents with code, math, diagrams, tables, and optional Python examples.",
   "lang": "en",
   "shell": "../layouts/chapter-shell.html",
   "outputDir": "../chapters",
@@ -234,6 +235,8 @@ AI agents should follow [QUICKSTART.md](QUICKSTART.md), edit `chapters-src/` ins
   ]
 }
 ```
+
+The top-level `description` is injected into `<meta name="description">` and basic Open Graph description tags. Individual chapters may set `description` to override the shared text for that page.
 
 `materials` and `externalLinks` use the same recursive `items` structure. An item with `label` and `href` is rendered as a link. An item with `title` and `items` is rendered as a nested group. Top-level `externalLinks` are shown on every chapter. Optional `externalLinks` inside a chapter are appended after the shared links for that chapter only.
 

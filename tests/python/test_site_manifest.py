@@ -23,6 +23,8 @@ class SiteManifestTests(unittest.TestCase):
         )
 
         self.assertEqual(manifest.shell, "../layouts/chapter-shell.html")
+        self.assertEqual(manifest.site_title, "")
+        self.assertEqual(manifest.description, "")
         self.assertEqual(manifest.output_dir, "../chapters")
         self.assertEqual(manifest.document_lang, "en")
         self.assertEqual(manifest.materials, [])
@@ -60,6 +62,7 @@ class SiteManifestTests(unittest.TestCase):
                     "number": "1",
                     "sidebarTitle": "Intro",
                     "subtitle": "",
+                    "description": "",
                     "externalLinks": [],
                 }
             ],
@@ -171,6 +174,8 @@ class SiteManifestTests(unittest.TestCase):
         errors = manifest_validation_errors(
             {
                 "shell": "",
+                "title": 123,
+                "description": 456,
                 "outputDir": "",
                 "lang": "",
                 "materials": {},
@@ -201,6 +206,7 @@ class SiteManifestTests(unittest.TestCase):
                         "number": "",
                         "sidebarTitle": 123,
                         "subtitle": 456,
+                        "description": 789,
                         "externalLinks": {},
                     },
                 ],
@@ -208,6 +214,8 @@ class SiteManifestTests(unittest.TestCase):
         )
 
         self.assertIn("site manifest must have a non-empty shell path", errors)
+        self.assertIn("site manifest title must be a string", errors)
+        self.assertIn("site manifest description must be a string", errors)
         self.assertIn("site manifest must have a non-empty outputDir", errors)
         self.assertIn("site manifest lang must be a non-empty string", errors)
         self.assertIn("site manifest materials must be an array when provided", errors)
@@ -236,6 +244,7 @@ class SiteManifestTests(unittest.TestCase):
         self.assertIn("chapter 2 number must be a non-empty string or integer", errors)
         self.assertIn("chapter 2 sidebarTitle must be a string", errors)
         self.assertIn("chapter 2 subtitle must be a string", errors)
+        self.assertIn("chapter 2 description must be a string", errors)
         self.assertIn("chapter 2 externalLinks must be an array when provided", errors)
 
     def test_manifest_validation_reports_invalid_link_tree_items(self) -> None:

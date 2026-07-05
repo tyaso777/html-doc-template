@@ -259,7 +259,7 @@ for log in logs:
 
     def test_render_shell_includes_common_and_chapter_external_links(self) -> None:
         shell = (
-            "{{DOCUMENT_LANG}} {{DOCUMENT_TITLE}} {{SIDEBAR_TITLE}} {{SIDEBAR_SUBTITLE}} "
+            "{{DOCUMENT_LANG}} {{DOCUMENT_TITLE}} {{DOCUMENT_DESCRIPTION}} {{SITE_TITLE}} {{SIDEBAR_TITLE}} {{SIDEBAR_SUBTITLE}} "
             "{{ASSET_PREFIX}} {{DEFAULT_LAYOUT_MODE}} {{FIXED_HEAD_ASSETS}} {{OPTIONAL_HEAD_ASSETS}} {{CONTENTS_TREE}} {{MATERIALS_SECTION}} "
             "{{EXTERNAL_LINKS_SECTION}} {{CONTENT}}"
         )
@@ -269,6 +269,7 @@ for log in logs:
             "source": "chapter.html",
             "sidebarTitle": "Chapter",
             "subtitle": "",
+            "description": "Chapter & details",
             "externalLinks": [
                 {"title": "Chapter links", "items": [{"label": "Chapter link", "href": "https://example.com/chapter"}]}
             ],
@@ -282,6 +283,8 @@ for log in logs:
             Path("/tmp/project"),
             Path("/tmp/project/chapters-src"),
             "en",
+            "Site & Docs",
+            "Site description",
             [chapter],
             0,
             Path("/tmp/project/chapters"),
@@ -293,6 +296,8 @@ for log in logs:
         )
 
         self.assertIn("Common link", rendered)
+        self.assertIn("Chapter &amp; details", rendered)
+        self.assertIn("Site &amp; Docs", rendered)
         self.assertIn("Chapter link", rendered)
         self.assertIn("prism.min.css", rendered)
         self.assertIn("wide", rendered)
@@ -301,7 +306,7 @@ for log in logs:
         self.assertIn('href="https://example.com/chapter" target="_blank" rel="noopener"', rendered)
 
     def test_render_shell_marks_numbered_toc_lists(self) -> None:
-        shell = "{{DOCUMENT_LANG}} {{DOCUMENT_TITLE}} {{SIDEBAR_TITLE}} {{SIDEBAR_SUBTITLE}} {{ASSET_PREFIX}} {{DEFAULT_LAYOUT_MODE}} {{FIXED_HEAD_ASSETS}} {{OPTIONAL_HEAD_ASSETS}} {{CONTENTS_TREE}} {{MATERIALS_SECTION}} {{EXTERNAL_LINKS_SECTION}} {{CONTENT}}"
+        shell = "{{DOCUMENT_LANG}} {{DOCUMENT_TITLE}} {{DOCUMENT_DESCRIPTION}} {{SITE_TITLE}} {{SIDEBAR_TITLE}} {{SIDEBAR_SUBTITLE}} {{ASSET_PREFIX}} {{DEFAULT_LAYOUT_MODE}} {{FIXED_HEAD_ASSETS}} {{OPTIONAL_HEAD_ASSETS}} {{CONTENTS_TREE}} {{MATERIALS_SECTION}} {{EXTERNAL_LINKS_SECTION}} {{CONTENT}}"
         chapter = {
             "title": "Chapter",
             "href": "chapter.html",
@@ -319,6 +324,8 @@ for log in logs:
             Path("/tmp/project"),
             Path("/tmp/project/chapters-src"),
             "en",
+            "Site",
+            "Description",
             [chapter],
             0,
             Path("/tmp/project/chapters"),

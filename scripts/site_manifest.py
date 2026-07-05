@@ -11,6 +11,8 @@ from typing import Any, Pattern
 REQUIRED_SHELL_TOKENS = {
     "{{DOCUMENT_LANG}}",
     "{{DOCUMENT_TITLE}}",
+    "{{DOCUMENT_DESCRIPTION}}",
+    "{{SITE_TITLE}}",
     "{{SIDEBAR_TITLE}}",
     "{{SIDEBAR_SUBTITLE}}",
     "{{ASSET_PREFIX}}",
@@ -34,6 +36,8 @@ SOURCE_FRAGMENT_FORBIDDEN_PATTERNS = (
 
 @dataclass(frozen=True)
 class SiteManifest:
+    site_title: str
+    description: str
     shell: str
     output_dir: str
     document_lang: str
@@ -263,6 +267,8 @@ def manifest_validation_errors(manifest: Any) -> list[str]:
     if not isinstance(manifest, dict):
         return ["site manifest must be a JSON object"]
 
+    site_title = manifest.get("title", "")
+    description = manifest.get("description", "")
     shell = manifest.get("shell", "../layouts/chapter-shell.html")
     output_dir = manifest.get("outputDir", "../chapters")
     document_lang = manifest.get("lang", "en")
@@ -273,6 +279,10 @@ def manifest_validation_errors(manifest: Any) -> list[str]:
     numbering = manifest.get("numbering", {})
     chapters = manifest.get("chapters")
 
+    if not isinstance(site_title, str):
+        errors.append("site manifest title must be a string")
+    if not isinstance(description, str):
+        errors.append("site manifest description must be a string")
     if not isinstance(shell, str) or not shell.strip():
         errors.append("site manifest must have a non-empty shell path")
     if not isinstance(output_dir, str) or not output_dir.strip():
@@ -299,6 +309,7 @@ def manifest_validation_errors(manifest: Any) -> list[str]:
         chapter_number = chapter.get("number", index)
         sidebar_title = chapter.get("sidebarTitle", title)
         subtitle = chapter.get("subtitle", "")
+        description = chapter.get("description", "")
         chapter_external_links = chapter.get("externalLinks", [])
 
         if not isinstance(title, str) or not title.strip():
@@ -313,6 +324,8 @@ def manifest_validation_errors(manifest: Any) -> list[str]:
             errors.append(f"chapter {index} sidebarTitle must be a string")
         if not isinstance(subtitle, str):
             errors.append(f"chapter {index} subtitle must be a string")
+        if not isinstance(description, str):
+            errors.append(f"chapter {index} description must be a string")
         errors.extend(link_tree_validation_errors(chapter_external_links, f"chapter {index} externalLinks"))
 
     return errors
@@ -324,6 +337,8 @@ def normalize_manifest(manifest: Any) -> SiteManifest:
         raise ValueError("; ".join(errors))
 
     assert isinstance(manifest, dict)
+    site_title = manifest.get("title", "")
+    description = manifest.get("description", "")
     shell = manifest.get("shell", "../layouts/chapter-shell.html")
     output_dir = manifest.get("outputDir", "../chapters")
     document_lang = manifest.get("lang", "en")
@@ -334,6 +349,8 @@ def normalize_manifest(manifest: Any) -> SiteManifest:
     numbering = normalize_numbering(manifest.get("numbering", {}))
     raw_chapters = manifest["chapters"]
 
+    assert isinstance(site_title, str)
+    assert isinstance(description, str)
     assert isinstance(shell, str)
     assert isinstance(output_dir, str)
     assert isinstance(document_lang, str)
@@ -350,6 +367,7 @@ def normalize_manifest(manifest: Any) -> SiteManifest:
         chapter_number = chapter.get("number", len(chapters) + 1)
         sidebar_title = chapter.get("sidebarTitle", title)
         subtitle = chapter.get("subtitle", "")
+        chapter_description = chapter.get("description", description)
         chapter_external_links = chapter.get("externalLinks", [])
         assert isinstance(title, str)
         assert isinstance(href, str)
@@ -357,6 +375,7 @@ def normalize_manifest(manifest: Any) -> SiteManifest:
         assert isinstance(chapter_number, (int, str))
         assert isinstance(sidebar_title, str)
         assert isinstance(subtitle, str)
+        assert isinstance(chapter_description, str)
         assert isinstance(chapter_external_links, list)
         chapters.append(
             {
@@ -366,11 +385,14 @@ def normalize_manifest(manifest: Any) -> SiteManifest:
                 "number": str(chapter_number),
                 "sidebarTitle": sidebar_title,
                 "subtitle": subtitle,
+                "description": chapter_description,
                 "externalLinks": chapter_external_links,
             }
         )
 
     return SiteManifest(
+        site_title=site_title,
+        description=description,
         shell=shell,
         output_dir=output_dir,
         document_lang=document_lang,
