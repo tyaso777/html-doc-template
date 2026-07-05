@@ -68,6 +68,32 @@ def asset_prefix(output_path: Path, root: Path) -> str:
     return "" if relative == "." else relative.rstrip("/") + "/"
 
 
+def chapter_script_path(root: Path, script: str) -> Path:
+    script_path = (root / script).resolve()
+    assets_dir = (root / "assets").resolve()
+
+    try:
+        script_path.relative_to(assets_dir)
+    except ValueError as error:
+        raise ValueError(f'chapter script "{script}" must be under assets/') from error
+
+    if not script_path.exists():
+        raise ValueError(f'chapter script "{script}" does not exist')
+    if not script_path.is_file():
+        raise ValueError(f'chapter script "{script}" must reference a file')
+
+    return script_path
+
+
+def render_chapter_scripts(chapter: dict[str, Any], root: Path, output_path: Path) -> str:
+    lines: list[str] = []
+    for script in chapter.get("scripts", []):
+        script_path = chapter_script_path(root, str(script))
+        src = html.escape(relative_path(output_path, script_path), quote=True)
+        lines.append(f'  <script defer src="{src}"></script>')
+    return "\n".join(lines)
+
+
 def sidebar_title_html(title: str) -> str:
     return "<br>".join(html.escape(part.strip()) for part in title.splitlines() if part.strip())
 
@@ -454,6 +480,7 @@ def render_shell(
         "{{DEFAULT_LAYOUT_MODE}}": html.escape(default_layout_mode, quote=True),
         "{{FIXED_HEAD_ASSETS}}": render_fixed_head_assets(),
         "{{OPTIONAL_HEAD_ASSETS}}": optional_head_assets,
+        "{{CHAPTER_SCRIPTS}}": render_chapter_scripts(chapter, root, output_path),
         "{{CONTENTS_TREE}}": render_contents_tree(
             chapters,
             current_index,

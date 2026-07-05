@@ -148,6 +148,32 @@
   </div>
 </section>
 
+<section id="chapter-specific-javascript" data-toc data-toc-title="Chapter-specific JavaScript">
+  <h2>Chapter-specific JavaScript</h2>
+  <p>
+    Keep arbitrary <code>&lt;script&gt;</code> tags out of chapter body fragments.
+    When one chapter needs a local interaction, such as an SVD demo or a custom visualization, add a <code>scripts</code> array to that chapter in <code>site-manifest.json</code>.
+    Script paths must point to local files under <code>assets/</code>, and the build fails if a listed file does not exist.
+  </p>
+
+  <div class="code-caption">site-manifest.json</div>
+  <pre class="code-block language-json"><code class="language-json">{
+  "title": "Chapter 1: Introduction",
+  "source": "01-introduction.html",
+  "href": "01-introduction.html",
+  "scripts": [
+    "assets/js/chapter-script-example.js"
+  ]
+}</code></pre>
+
+  <div class="card card-compact">
+    <h3>Loaded script output</h3>
+    <p data-chapter-script-output>
+      This text is replaced only when the chapter-specific script is loaded.
+    </p>
+  </div>
+</section>
+
 <section id="python-code-examples" data-toc data-toc-title="Python Code Display and Execution">
   <h2>Python Code Display and Execution</h2>
   <p>

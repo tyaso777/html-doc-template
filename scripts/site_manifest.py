@@ -19,6 +19,7 @@ REQUIRED_SHELL_TOKENS = {
     "{{DEFAULT_LAYOUT_MODE}}",
     "{{FIXED_HEAD_ASSETS}}",
     "{{OPTIONAL_HEAD_ASSETS}}",
+    "{{CHAPTER_SCRIPTS}}",
     "{{CONTENT}}",
     "{{CONTENTS_TREE}}",
     "{{MATERIALS_SECTION}}",
@@ -209,6 +210,31 @@ def normalize_layout(config: Any) -> dict[str, str]:
     return {"defaultMode": default_mode}
 
 
+def chapter_scripts_validation_errors(config: Any, path: str) -> list[str]:
+    errors: list[str] = []
+
+    if config is None:
+        return errors
+    if not isinstance(config, list):
+        return [f"{path} scripts must be an array when provided"]
+
+    for index, script in enumerate(config, start=1):
+        script_path = f"{path} scripts item {index}"
+        if not isinstance(script, str) or not script.strip():
+            errors.append(f"{script_path} must be a non-empty string")
+            continue
+
+        normalized = script.replace("\\", "/")
+        if normalized.startswith(("/", "./")) or "://" in normalized or "/../" in f"/{normalized}/" or normalized == "..":
+            errors.append(f'{script_path} must be a local assets path such as "assets/js/example.js"')
+        if not normalized.startswith("assets/"):
+            errors.append(f'{script_path} must be under "assets/"')
+        if not normalized.endswith(".js"):
+            errors.append(f"{script_path} must reference a .js file")
+
+    return errors
+
+
 def numbering_validation_errors(config: Any) -> list[str]:
     errors: list[str] = []
 
@@ -311,6 +337,7 @@ def manifest_validation_errors(manifest: Any) -> list[str]:
         subtitle = chapter.get("subtitle", "")
         description = chapter.get("description", "")
         chapter_external_links = chapter.get("externalLinks", [])
+        chapter_scripts = chapter.get("scripts", [])
 
         if not isinstance(title, str) or not title.strip():
             errors.append(f"chapter {index} must have a non-empty title")
@@ -327,6 +354,7 @@ def manifest_validation_errors(manifest: Any) -> list[str]:
         if not isinstance(description, str):
             errors.append(f"chapter {index} description must be a string")
         errors.extend(link_tree_validation_errors(chapter_external_links, f"chapter {index} externalLinks"))
+        errors.extend(chapter_scripts_validation_errors(chapter_scripts, f"chapter {index}"))
 
     return errors
 
@@ -369,6 +397,7 @@ def normalize_manifest(manifest: Any) -> SiteManifest:
         subtitle = chapter.get("subtitle", "")
         chapter_description = chapter.get("description", description)
         chapter_external_links = chapter.get("externalLinks", [])
+        chapter_scripts = chapter.get("scripts", [])
         assert isinstance(title, str)
         assert isinstance(href, str)
         assert isinstance(source, str)
@@ -377,6 +406,7 @@ def normalize_manifest(manifest: Any) -> SiteManifest:
         assert isinstance(subtitle, str)
         assert isinstance(chapter_description, str)
         assert isinstance(chapter_external_links, list)
+        assert isinstance(chapter_scripts, list)
         chapters.append(
             {
                 "title": title,
@@ -387,6 +417,7 @@ def normalize_manifest(manifest: Any) -> SiteManifest:
                 "subtitle": subtitle,
                 "description": chapter_description,
                 "externalLinks": chapter_external_links,
+                "scripts": [script.replace("\\", "/") for script in chapter_scripts],
             }
         )
 

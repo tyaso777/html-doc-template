@@ -47,6 +47,7 @@ If you primarily want Markdown-first authoring, automatic page generation, site-
 - MathJax support for inline and display math.
 - Mermaid diagram rendering from text definitions.
 - Optional Pyodide-based Python runner in a Web Worker.
+- Chapter-specific local JavaScript declared in `site-manifest.json`.
 - Changelog table for versioned document maintenance.
 - Project entry page for local browsing or GitHub Pages.
 
@@ -147,6 +148,19 @@ Each source chapter should include a chapter navigation placeholder near the end
 
 `scripts/build_site.py` reads `chapters-src/site-manifest.json`, combines each source fragment with `layouts/chapter-shell.html`, writes the left-side nested Contents tree from all chapter TOC entries, renders manifest-managed Materials and External Links sections, and writes the generated Previous and Next links into each output file. It uses Python's standard-library HTML parser for chapter TOC extraction, heading references, Python runner expansion, and chapter navigation replacement. This keeps chapter order, document language, shell metadata, contents navigation, heading references, and shared link lists in one place while keeping the generated HTML usable through GitHub Pages or direct `file://` previews without depending on client-side JavaScript for navigation. For custom builds, pass `--manifest` and optionally `--output-dir`, for example `python3 scripts/build_site.py --manifest tests/fixtures/basic-site/chapters-src/site-manifest.json --output-dir /tmp/basic-site/chapters`.
 
+Chapter body fragments must not contain `<script>` tags. For chapter-specific JavaScript, place local files under `assets/` and list them in the chapter entry with `scripts`. The build inserts those files after the shared document JavaScript with `defer`, and fails if a listed file is missing or outside `assets/`:
+
+```json
+{
+  "title": "Chapter 1: SVD Demo",
+  "source": "01-svd-demo.html",
+  "href": "01-svd-demo.html",
+  "scripts": [
+    "assets/js/svd-demo.js"
+  ]
+}
+```
+
 CI runs the build and checks that the generated `chapters/` files have no uncommitted diff, so updates to `chapters-src/` should be committed together with the rebuilt public chapter files.
 Template unit and browser smoke tests use `tests/fixtures/basic-site/` as stable input, not the user-facing `chapters-src/`.
 
@@ -195,7 +209,10 @@ AI agents should follow [QUICKSTART.md](QUICKSTART.md), edit `chapters-src/` ins
       "subtitle": "Multi-page example",
       "number": 1,
       "source": "01-introduction.html",
-      "href": "01-introduction.html"
+      "href": "01-introduction.html",
+      "scripts": [
+        "assets/js/chapter-script-example.js"
+      ]
     },
     {
       "title": "Chapter 2: Minimal Page",

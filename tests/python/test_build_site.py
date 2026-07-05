@@ -12,6 +12,7 @@ from scripts.build_site import (
     collect_section_refs,
     extract_toc_entries,
     indent_content_preserving_raw_text,
+    render_chapter_scripts,
     render_shell,
 )
 from scripts.site_builder.optional_assets import optional_asset_keys, render_fixed_head_assets, render_optional_head_assets
@@ -61,8 +62,18 @@ class BuildSiteTests(unittest.TestCase):
                 ["01-introduction.html", "02-examples.html", "03-reference.html"],
             )
             introduction = (output_dir / "01-introduction.html").read_text(encoding="utf-8")
+            examples = (output_dir / "02-examples.html").read_text(encoding="utf-8")
             self.assertIn('href="01-introduction.html#python-runner-example">Section 4.2</a>', introduction)
             self.assertIn('href="02-examples.html"', introduction)
+            self.assertIn('<script defer src="', examples)
+            self.assertIn('assets/js/chapter-script-example.js"></script>', examples)
+
+    def test_chapter_scripts_must_exist_under_assets(self) -> None:
+        root = Path(__file__).resolve().parents[2]
+        output_path = root / "chapters/01-introduction.html"
+
+        with self.assertRaisesRegex(ValueError, 'chapter script "assets/js/missing-demo.js" does not exist'):
+            render_chapter_scripts({"scripts": ["assets/js/missing-demo.js"]}, root, output_path)
 
     def test_indent_content_preserves_pre_code_text(self) -> None:
         content = """<section>

@@ -64,6 +64,7 @@ class SiteManifestTests(unittest.TestCase):
                     "subtitle": "",
                     "description": "",
                     "externalLinks": [],
+                    "scripts": [],
                 }
             ],
         )
@@ -95,6 +96,22 @@ class SiteManifestTests(unittest.TestCase):
 
         self.assertEqual(manifest.external_links[0]["title"], "Common")
         self.assertEqual(manifest.chapters[0]["externalLinks"][0]["title"], "Chapter links")
+
+    def test_normalize_manifest_keeps_chapter_scripts(self) -> None:
+        manifest = normalize_manifest(
+            {
+                "chapters": [
+                    {
+                        "title": "Intro",
+                        "source": "01-introduction.html",
+                        "href": "01-introduction.html",
+                        "scripts": ["assets/js/chapter-script-example.js"],
+                    }
+                ],
+            }
+        )
+
+        self.assertEqual(manifest.chapters[0]["scripts"], ["assets/js/chapter-script-example.js"])
 
     def test_normalize_manifest_keeps_layout(self) -> None:
         manifest = normalize_manifest(
@@ -208,6 +225,13 @@ class SiteManifestTests(unittest.TestCase):
                         "subtitle": 456,
                         "description": 789,
                         "externalLinks": {},
+                        "scripts": "assets/js/example.js",
+                    },
+                    {
+                        "title": "Invalid scripts",
+                        "source": "01-invalid.html",
+                        "href": "01-invalid.html",
+                        "scripts": ["https://example.com/x.js", "../x.js", "assets/css/x.css", ""],
                     },
                 ],
             }
@@ -246,6 +270,13 @@ class SiteManifestTests(unittest.TestCase):
         self.assertIn("chapter 2 subtitle must be a string", errors)
         self.assertIn("chapter 2 description must be a string", errors)
         self.assertIn("chapter 2 externalLinks must be an array when provided", errors)
+        self.assertIn("chapter 2 scripts must be an array when provided", errors)
+        self.assertIn('chapter 3 scripts item 1 must be a local assets path such as "assets/js/example.js"', errors)
+        self.assertIn('chapter 3 scripts item 1 must be under "assets/"', errors)
+        self.assertIn('chapter 3 scripts item 2 must be a local assets path such as "assets/js/example.js"', errors)
+        self.assertIn('chapter 3 scripts item 2 must be under "assets/"', errors)
+        self.assertIn("chapter 3 scripts item 3 must reference a .js file", errors)
+        self.assertIn("chapter 3 scripts item 4 must be a non-empty string", errors)
 
     def test_manifest_validation_reports_invalid_link_tree_items(self) -> None:
         errors = manifest_validation_errors(
@@ -278,6 +309,7 @@ class SiteManifestTests(unittest.TestCase):
     def test_shell_and_source_policy_helpers(self) -> None:
         shell = "{{DOCUMENT_LANG}} {{DOCUMENT_TITLE}}"
         self.assertIn("{{CONTENT}}", missing_shell_tokens(shell))
+        self.assertIn("{{CHAPTER_SCRIPTS}}", missing_shell_tokens(shell))
 
         patterns = forbidden_source_patterns("<article><script src=\"x.js\"></script></article>")
         self.assertEqual([pattern.pattern for pattern in patterns], [r"<script(?:\s|>)"])

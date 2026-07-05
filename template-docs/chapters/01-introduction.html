@@ -95,34 +95,36 @@
                       <li><a href="01-introduction.html#display-formula-example">3.2. Display Math</a></li>
                     </ol>
                   </li>
-                  <li><a href="01-introduction.html#python-code-examples">4. Python Code Display and Execution</a>
+                  <li><a href="01-introduction.html#chapter-specific-javascript">4. Chapter-specific JavaScript</a>
+                  </li>
+                  <li><a href="01-introduction.html#python-code-examples">5. Python Code Display and Execution</a>
                     <ol>
-                      <li><a href="01-introduction.html#python-code-display-example">4.1. Python Code Block</a></li>
-                      <li><a href="01-introduction.html#python-runner-example">4.2. Executable Code Example</a></li>
+                      <li><a href="01-introduction.html#python-code-display-example">5.1. Python Code Block</a></li>
+                      <li><a href="01-introduction.html#python-runner-example">5.2. Executable Code Example</a></li>
                     </ol>
                   </li>
-                  <li><a href="01-introduction.html#other-language-examples">5. Other Languages</a>
+                  <li><a href="01-introduction.html#other-language-examples">6. Other Languages</a>
                     <ol>
-                      <li><a href="01-introduction.html#powershell-code-example">5.1. PowerShell Code Block</a></li>
-                      <li><a href="01-introduction.html#sql-code-example">5.2. SQL Code Block</a></li>
+                      <li><a href="01-introduction.html#powershell-code-example">6.1. PowerShell Code Block</a></li>
+                      <li><a href="01-introduction.html#sql-code-example">6.2. SQL Code Block</a></li>
                     </ol>
                   </li>
-                  <li><a href="01-introduction.html#mermaid">6. Mermaid Diagrams</a>
+                  <li><a href="01-introduction.html#mermaid">7. Mermaid Diagrams</a>
                   </li>
-                  <li><a href="01-introduction.html#vega-lite">7. Vega-Lite Charts</a>
+                  <li><a href="01-introduction.html#vega-lite">8. Vega-Lite Charts</a>
                   </li>
-                  <li><a href="01-introduction.html#table-examples">8. Table Examples</a>
+                  <li><a href="01-introduction.html#table-examples">9. Table Examples</a>
                     <ol>
-                      <li><a href="01-introduction.html#standard-table-example">8.1. Standard Table</a></li>
-                      <li><a href="01-introduction.html#wide-table-example">8.2. Wide Table</a></li>
-                      <li><a href="01-introduction.html#scrollable-table-example">8.3. Fixed-Height Table</a></li>
-                      <li><a href="01-introduction.html#indexed-table-example">8.4. Indexed Table</a></li>
-                      <li><a href="01-introduction.html#compact-table-example">8.5. Compact Table</a></li>
+                      <li><a href="01-introduction.html#standard-table-example">9.1. Standard Table</a></li>
+                      <li><a href="01-introduction.html#wide-table-example">9.2. Wide Table</a></li>
+                      <li><a href="01-introduction.html#scrollable-table-example">9.3. Fixed-Height Table</a></li>
+                      <li><a href="01-introduction.html#indexed-table-example">9.4. Indexed Table</a></li>
+                      <li><a href="01-introduction.html#compact-table-example">9.5. Compact Table</a></li>
                     </ol>
                   </li>
-                  <li><a href="01-introduction.html#notes">9. Operational Notes</a>
+                  <li><a href="01-introduction.html#notes">10. Operational Notes</a>
                   </li>
-                  <li><a href="01-introduction.html#changelog">10. Changelog</a>
+                  <li><a href="01-introduction.html#changelog">11. Changelog</a>
                   </li>
                 </ol>
               </details>
@@ -283,7 +285,7 @@
           <p>
             This section is a minimal editing guide for creating a new HTML document from the template.
             It shows the main writing patterns so both human editors and generation models can extend the document consistently.
-            For an interactive code example, see <a class="xref section-ref" href="01-introduction.html#python-runner-example">Section 4.2</a>.
+            For an interactive code example, see <a class="xref section-ref" href="01-introduction.html#python-runner-example">Section 5.2</a>.
           </p>
 
           <aside class="callout callout-note">
@@ -363,14 +365,40 @@
         </div>
         </section>
 
+        <section id="chapter-specific-javascript" data-toc data-toc-title="Chapter-specific JavaScript">
+          <h2>4. Chapter-specific JavaScript</h2>
+          <p>
+            Keep arbitrary <code>&lt;script&gt;</code> tags out of chapter body fragments.
+            When one chapter needs a local interaction, such as an SVD demo or a custom visualization, add a <code>scripts</code> array to that chapter in <code>site-manifest.json</code>.
+            Script paths must point to local files under <code>assets/</code>, and the build fails if a listed file does not exist.
+          </p>
+
+          <div class="code-caption">site-manifest.json</div>
+          <pre class="code-block language-json"><code class="language-json">{
+  "title": "Chapter 1: Introduction",
+  "source": "01-introduction.html",
+  "href": "01-introduction.html",
+  "scripts": [
+    "assets/js/chapter-script-example.js"
+  ]
+}</code></pre>
+
+          <div class="card card-compact">
+            <h3>Loaded script output</h3>
+            <p data-chapter-script-output>
+              This text is replaced only when the chapter-specific script is loaded.
+            </p>
+          </div>
+        </section>
+
         <section id="python-code-examples" data-toc data-toc-title="Python Code Display and Execution">
-          <h2>4. Python Code Display and Execution</h2>
+          <h2>5. Python Code Display and Execution</h2>
           <p>
             Use static code blocks for code that readers only need to inspect, and use the browser runner for code readers should edit and execute.
             This keeps explanatory snippets separate from interactive examples.
           </p>
 
-          <h3 id="python-code-display-example" data-toc data-toc-level="3" data-toc-title="Python Code Block">4.1. Python Code Block</h3>
+          <h3 id="python-code-display-example" data-toc data-toc-level="3" data-toc-title="Python Code Block">5.1. Python Code Block</h3>
           <p>
             For code that does not need to run in the browser, combine <code>pre.code-block</code> with <code>code.language-python</code>.
             Place <code>div.code-caption</code> above the block to show the language name or file name.
@@ -394,7 +422,7 @@ summary = summarize_scores(scores)
 print(summary)
 </code></pre>
 
-          <h3 id="python-runner-example" data-toc data-toc-level="3" data-toc-title="Executable Code Example">4.2. Executable Code Example</h3>
+          <h3 id="python-runner-example" data-toc data-toc-level="3" data-toc-title="Executable Code Example">5.2. Executable Code Example</h3>
           <p>
             Use the runner source block for code that readers should edit and execute.
             The build script expands <code>div[data-python-runner]</code> into the full browser runner UI.
@@ -459,20 +487,20 @@ print(summary)
         </section>
 
         <section id="other-language-examples" data-toc data-toc-title="Other Languages">
-          <h2>5. Other Languages</h2>
+          <h2>6. Other Languages</h2>
           <p>
             Code in other languages can use the same visual style by switching the Prism language class.
             This template loads the PowerShell and SQL Prism components by default.
           </p>
 
-          <h3 id="powershell-code-example" data-toc data-toc-level="3" data-toc-title="PowerShell Code Block">5.1. PowerShell Code Block</h3>
+          <h3 id="powershell-code-example" data-toc data-toc-level="3" data-toc-title="PowerShell Code Block">6.1. PowerShell Code Block</h3>
           <div class="code-caption">powershell</div>
           <pre class="code-block language-powershell"><code class="language-powershell">Get-ChildItem -Path . -Filter "*.html" |
     Select-Object Name, Length, LastWriteTime |
     Sort-Object LastWriteTime -Descending
 </code></pre>
 
-          <h3 id="sql-code-example" data-toc data-toc-level="3" data-toc-title="SQL Code Block">5.2. SQL Code Block</h3>
+          <h3 id="sql-code-example" data-toc data-toc-level="3" data-toc-title="SQL Code Block">6.2. SQL Code Block</h3>
           <div class="code-caption">sql</div>
           <pre class="code-block language-sql"><code class="language-sql">SELECT
     document_id,
@@ -494,7 +522,7 @@ ORDER BY updated_at DESC;
         </section>
 
         <section id="mermaid" data-toc data-toc-title="Mermaid Diagrams">
-          <h2>6. Mermaid Diagrams</h2>
+          <h2>7. Mermaid Diagrams</h2>
           <p>
             Mermaid renders flowcharts and structural diagrams from text definitions.
             You can update a diagram by editing text in the HTML instead of recreating an image.
@@ -532,7 +560,7 @@ ORDER BY updated_at DESC;
         </section>
 
         <section id="vega-lite" data-toc data-toc-title="Vega-Lite Charts">
-          <h2>7. Vega-Lite Charts</h2>
+          <h2>8. Vega-Lite Charts</h2>
           <p>
             Vega-Lite renders charts from a JSON specification.
             When a chapter contains a Vega-Lite chart, the build injects pinned Vega, Vega-Lite, and vega-embed CDN assets so authors can add a chart by editing the JSON spec in the source HTML.
@@ -732,7 +760,7 @@ ORDER BY updated_at DESC;
         </section>
 
         <section id="table-examples" data-toc data-toc-title="Table Examples">
-          <h2>8. Table Examples</h2>
+          <h2>9. Table Examples</h2>
           <p>
             Tables are managed as a single block by applying classes and attributes to <code>div.table-wrap</code>.
             Choose the horizontal behavior first: use the standard table when columns should fit the content width and wrap, or add <code>table-wide</code> when the table should keep its natural width and scroll horizontally.
@@ -747,7 +775,7 @@ ORDER BY updated_at DESC;
             <li><strong>Row density:</strong> regular spacing by default, or <code>table-compact</code> when narrower row spacing is preferred.</li>
           </ul>
 
-          <h3 id="standard-table-example" data-toc data-toc-level="3" data-toc-title="Standard Table">8.1. Standard Table</h3>
+          <h3 id="standard-table-example" data-toc data-toc-level="3" data-toc-title="Standard Table">9.1. Standard Table</h3>
           <p>
             A standard table fills the content width and wraps cell text so it usually fits without horizontal scrolling.
             This example keeps many columns so the default width, wrapping behavior, and numeric alignment can be inspected without switching to the wide-table mode.
@@ -828,7 +856,7 @@ ORDER BY updated_at DESC;
             </table>
           </div>
 
-          <h3 id="wide-table-example" data-toc data-toc-level="3" data-toc-title="Wide Table">8.2. Wide Table</h3>
+          <h3 id="wide-table-example" data-toc data-toc-level="3" data-toc-title="Wide Table">9.2. Wide Table</h3>
           <p>
             Add <code>table-wide</code> when preserving the table's natural width is more important than forcing every column to wrap.
             The wrapper keeps horizontal scrolling available on narrow screens.
@@ -907,7 +935,7 @@ ORDER BY updated_at DESC;
             </table>
           </div>
 
-          <h3 id="scrollable-table-example" data-toc data-toc-level="3" data-toc-title="Fixed-Height Table">8.3. Fixed-Height Table</h3>
+          <h3 id="scrollable-table-example" data-toc data-toc-level="3" data-toc-title="Fixed-Height Table">9.3. Fixed-Height Table</h3>
           <p>
             Add <code>table-fixed-height</code> when a table has many records and should keep a viewport-aware maximum height.
             The default height is based on the window size; set <code>--table-max-height</code> on an individual table wrapper when a specific height is needed.
@@ -1041,7 +1069,7 @@ ORDER BY updated_at DESC;
             </table>
           </div>
 
-          <h3 id="indexed-table-example" data-toc data-toc-level="3" data-toc-title="Indexed Table">8.4. Indexed Table</h3>
+          <h3 id="indexed-table-example" data-toc data-toc-level="3" data-toc-title="Indexed Table">9.4. Indexed Table</h3>
           <p>
             Use <code>data-index-columns="2"</code> when the first two columns identify each record, similar to a DataFrame with a multi-column index.
             Header rows can also be grouped with <code>rowspan</code> and <code>colspan</code> when the data columns have multiple levels.
@@ -1109,7 +1137,7 @@ ORDER BY updated_at DESC;
             </table>
           </div>
 
-          <h3 id="compact-table-example" data-toc data-toc-level="3" data-toc-title="Compact Table">8.5. Compact Table</h3>
+          <h3 id="compact-table-example" data-toc data-toc-level="3" data-toc-title="Compact Table">9.5. Compact Table</h3>
           <p>
             Add <code>table-compact</code> when a table has many short rows and needs a denser layout.
           </p>
@@ -1149,7 +1177,7 @@ ORDER BY updated_at DESC;
         </section>
 
         <section id="notes" data-toc data-toc-title="Operational Notes">
-          <h2>9. Operational Notes</h2>
+          <h2>10. Operational Notes</h2>
           <div class="card card-muted">
             <h3>Interpreting Runtime Results</h3>
             <p>
@@ -1169,7 +1197,7 @@ ORDER BY updated_at DESC;
         </section>
 
         <section id="changelog" data-toc data-toc-title="Changelog">
-          <h2>10. Changelog</h2>
+          <h2>11. Changelog</h2>
           <p>
             The release history is shown in <a class="xref table-ref" href="01-introduction.html#release-history">Table 1-6</a>.
           </p>
@@ -1215,5 +1243,6 @@ ORDER BY updated_at DESC;
   </div>
 
   <script defer src="../../assets/js/technical-doc.js"></script>
+  <script defer src="../../assets/js/chapter-script-example.js"></script>
 </body>
 </html>

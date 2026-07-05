@@ -43,7 +43,10 @@
       "subtitle": "Multi-page example",
       "number": 1,
       "source": "01-introduction.html",
-      "href": "01-introduction.html"
+      "href": "01-introduction.html",
+      "scripts": [
+        "assets/js/chapter-script-example.js"
+      ]
     },
     {
       "title": "Chapter 2: Minimal Page",

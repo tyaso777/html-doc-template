@@ -49,6 +49,9 @@
       "number": 2,
       "source": "02-examples.html",
       "href": "02-examples.html",
+      "scripts": [
+        "assets/js/chapter-script-example.js"
+      ],
       "externalLinks": [
         {
           "title": "Chapter-specific links",

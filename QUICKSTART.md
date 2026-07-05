@@ -53,6 +53,21 @@ Do not include these in chapter fragments:
 
 Keep the shared shell, CDN assets, sidebar, CSS, and JavaScript in `layouts/chapter-shell.html`.
 
+For chapter-specific JavaScript, do not add `<script>` tags to the chapter body. Put local files under `assets/` and list them in the chapter entry in `chapters-src/site-manifest.json`:
+
+```json
+{
+  "title": "Chapter 1: Demo",
+  "source": "01-demo.html",
+  "href": "01-demo.html",
+  "scripts": [
+    "assets/js/svd-demo.js"
+  ]
+}
+```
+
+The build inserts those files after the shared document JavaScript with `defer`. Missing files fail the build.
+
 ## 2. Add Sections
 
 Use stable IDs and `data-toc` for sections that should appear in the table of contents:
@@ -150,6 +165,7 @@ If you are an AI agent using this template:
 - Create only article fragments for chapter content.
 - Do not add full HTML document wrappers to chapter fragments.
 - Do not add CDN tags, `<script>`, `<link>`, or custom runtime wiring to chapter fragments.
+- Use chapter-level `scripts` in `site-manifest.json` for local per-chapter JavaScript under `assets/`.
 - For executable Python examples, use `div.python-runner-source` with `data-python-runner`.
 - Run `python3 scripts/build_site.py` after content changes.
 - Run `python3 scripts/check_html.py` after building.
