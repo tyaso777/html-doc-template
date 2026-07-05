@@ -33,7 +33,7 @@ try:
     )
     from site_builder.link_sections import chapter_external_links, render_link_section
     from site_builder.navigation import relative_path, render_chapter_nav, render_contents_tree
-    from site_builder.html_constants import RAW_TEXT_INDENT_TAGS
+    from site_builder.html_constants import RAW_TEXT_INDENT_TAGS, protected_text_ranges
     from site_builder.numbered_items import apply_numbered_items, collect_numbered_items
     from site_builder.python_runner import expand_python_runners
 except ModuleNotFoundError:
@@ -53,7 +53,7 @@ except ModuleNotFoundError:
     )
     from scripts.site_builder.link_sections import chapter_external_links, render_link_section
     from scripts.site_builder.navigation import relative_path, render_chapter_nav, render_contents_tree
-    from scripts.site_builder.html_constants import RAW_TEXT_INDENT_TAGS
+    from scripts.site_builder.html_constants import RAW_TEXT_INDENT_TAGS, protected_text_ranges
     from scripts.site_builder.numbered_items import apply_numbered_items, collect_numbered_items
     from scripts.site_builder.python_runner import expand_python_runners
 
@@ -96,22 +96,6 @@ def indent_content_preserving_raw_text(content: str, indent: str) -> str:
         line_start += len(line)
 
     return "".join(rendered_lines)
-
-
-def protected_text_ranges(source: str) -> list[tuple[int, int]]:
-    ranges = [(match.start(), match.end()) for match in re.finditer(r"<[^>]+>", source)]
-    for node in iter_nodes(parse_fragment(source)):
-        if node.tag in RAW_TEXT_INDENT_TAGS and node.end_tag_start is not None:
-            ranges.append((node.start_tag_end, node.end_tag_start))
-
-    merged: list[tuple[int, int]] = []
-    for start, end in sorted(ranges):
-        if not merged or start > merged[-1][1]:
-            merged.append((start, end))
-        else:
-            previous_start, previous_end = merged[-1]
-            merged[-1] = (previous_start, max(previous_end, end))
-    return merged
 
 
 def heading_level(node: FragmentNode) -> int:
@@ -473,15 +457,18 @@ def render_shell(
     toc_entries_by_chapter: list[list[dict[str, str | int]]],
     materials: list[Any],
     external_links: list[Any],
+    layout: dict[str, str] | None = None,
     heading_numbering: dict[str, Any] | None = None,
 ) -> str:
     numbered_toc = bool((heading_numbering or {}).get("enabled", False) and (heading_numbering or {}).get("toc", True))
+    default_layout_mode = str((layout or {}).get("defaultMode", "standard"))
     replacements = {
         "{{DOCUMENT_LANG}}": html.escape(document_lang, quote=True),
         "{{DOCUMENT_TITLE}}": html.escape(chapter["title"]),
         "{{SIDEBAR_TITLE}}": sidebar_title_html(chapter.get("sidebarTitle", chapter["title"])),
         "{{SIDEBAR_SUBTITLE}}": html.escape(chapter.get("subtitle", "")),
         "{{ASSET_PREFIX}}": asset_prefix(output_path, root),
+        "{{DEFAULT_LAYOUT_MODE}}": html.escape(default_layout_mode, quote=True),
         "{{CONTENTS_TREE}}": render_contents_tree(
             chapters,
             current_index,
@@ -519,6 +506,7 @@ def build_chapter(
     document_lang: str,
     materials: list[Any],
     external_links: list[Any],
+    layout: dict[str, str],
     heading_numbering: dict[str, Any],
     numbered_items: dict[str, dict[str, str]],
     section_refs: dict[str, list[dict[str, str]]],
@@ -548,6 +536,7 @@ def build_chapter(
         toc_entries_by_chapter,
         materials,
         external_links,
+        layout,
         heading_numbering,
     )
 
@@ -606,6 +595,7 @@ def build_site(root: Path, manifest_path: Path, output_dir_override: Path | None
                 manifest.document_lang,
                 manifest.materials,
                 manifest.external_links,
+                manifest.layout,
                 manifest.heading_numbering,
                 numbered_items,
                 section_refs,

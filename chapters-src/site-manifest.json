@@ -3,6 +3,9 @@
   "lang": "en",
   "shell": "../layouts/chapter-shell.html",
   "outputDir": "../chapters",
+  "layout": {
+    "defaultMode": "standard"
+  },
   "headingNumbering": {
     "enabled": true,
     "body": true,

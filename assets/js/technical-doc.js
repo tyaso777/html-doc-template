@@ -134,6 +134,52 @@ main()
       indexUrl: "https://cdn.jsdelivr.net/pyodide/v0.29.3/full/"
     };
 
+    const LAYOUT_MODE_STORAGE_KEY = "technicalDocLayoutMode";
+
+    function defaultLayoutMode() {
+      return window.technicalDocDefaultLayoutMode === "wide" ? "wide" : "standard";
+    }
+
+    function storedLayoutMode() {
+      try {
+        const savedMode = window.localStorage.getItem(LAYOUT_MODE_STORAGE_KEY);
+        return savedMode === "wide" || savedMode === "standard" ? savedMode : defaultLayoutMode();
+      } catch (error) {
+        return defaultLayoutMode();
+      }
+    }
+
+    function setLayoutMode(mode) {
+      const isWide = mode === "wide";
+      document.documentElement.classList.toggle("layout-wide", isWide);
+      document.body.classList.toggle("layout-wide", isWide);
+
+      try {
+        window.localStorage.setItem(LAYOUT_MODE_STORAGE_KEY, mode);
+      } catch (error) {
+        // Ignore storage errors so the control still works for the current page.
+      }
+    }
+
+    function initializeLayoutModeControl() {
+      const controls = Array.from(document.querySelectorAll('input[name="layout-mode"]'));
+      if (controls.length === 0) {
+        return;
+      }
+
+      const mode = storedLayoutMode();
+      setLayoutMode(mode);
+
+      for (const control of controls) {
+        control.checked = control.value === mode;
+        control.addEventListener("change", () => {
+          if (control.checked) {
+            setLayoutMode(control.value);
+          }
+        });
+      }
+    }
+
     function initializeMermaid() {
       if (window.mermaid) {
         window.mermaid.initialize({
@@ -747,6 +793,7 @@ except BaseException:
         window.Prism.highlightAll();
       }
       initializeCodeCopyButtons();
+      initializeLayoutModeControl();
       initializeMermaid();
       initializeVegaLite();
     });

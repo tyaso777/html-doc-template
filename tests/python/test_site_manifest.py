@@ -27,6 +27,7 @@ class SiteManifestTests(unittest.TestCase):
         self.assertEqual(manifest.document_lang, "en")
         self.assertEqual(manifest.materials, [])
         self.assertEqual(manifest.external_links, [])
+        self.assertEqual(manifest.layout, {"defaultMode": "standard"})
         self.assertEqual(
             manifest.heading_numbering,
             {
@@ -91,6 +92,22 @@ class SiteManifestTests(unittest.TestCase):
 
         self.assertEqual(manifest.external_links[0]["title"], "Common")
         self.assertEqual(manifest.chapters[0]["externalLinks"][0]["title"], "Chapter links")
+
+    def test_normalize_manifest_keeps_layout(self) -> None:
+        manifest = normalize_manifest(
+            {
+                "layout": {"defaultMode": "wide"},
+                "chapters": [
+                    {
+                        "title": "Intro",
+                        "source": "01-introduction.html",
+                        "href": "01-introduction.html",
+                    }
+                ],
+            }
+        )
+
+        self.assertEqual(manifest.layout, {"defaultMode": "wide"})
 
     def test_normalize_manifest_keeps_heading_numbering(self) -> None:
         manifest = normalize_manifest(
@@ -158,6 +175,7 @@ class SiteManifestTests(unittest.TestCase):
                 "lang": "",
                 "materials": {},
                 "externalLinks": {},
+                "layout": {"defaultMode": "full"},
                 "headingNumbering": {
                     "enabled": "yes",
                     "levels": [1, "3"],
@@ -194,6 +212,7 @@ class SiteManifestTests(unittest.TestCase):
         self.assertIn("site manifest lang must be a non-empty string", errors)
         self.assertIn("site manifest materials must be an array when provided", errors)
         self.assertIn("site manifest externalLinks must be an array when provided", errors)
+        self.assertIn('site manifest layout defaultMode must be "standard" or "wide"', errors)
         self.assertIn("site manifest headingNumbering enabled must be a boolean", errors)
         self.assertIn("site manifest headingNumbering body must be a boolean", errors)
         self.assertIn("site manifest headingNumbering toc must be a boolean", errors)

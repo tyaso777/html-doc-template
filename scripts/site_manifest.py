@@ -14,6 +14,7 @@ REQUIRED_SHELL_TOKENS = {
     "{{SIDEBAR_TITLE}}",
     "{{SIDEBAR_SUBTITLE}}",
     "{{ASSET_PREFIX}}",
+    "{{DEFAULT_LAYOUT_MODE}}",
     "{{CONTENT}}",
     "{{CONTENTS_TREE}}",
     "{{MATERIALS_SECTION}}",
@@ -37,11 +38,13 @@ class SiteManifest:
     chapters: list[dict[str, Any]]
     materials: list[Any]
     external_links: list[Any]
+    layout: dict[str, str]
     heading_numbering: dict[str, Any]
     numbering: dict[str, Any]
 
 
 HEADING_NUMBERING_TITLE_MODES = {"numbered", "plain"}
+LAYOUT_MODES = {"standard", "wide"}
 NUMBERING_SECTIONS = ("figures", "tables", "equations")
 NUMBERING_RESETS = {"chapter", "document"}
 
@@ -174,6 +177,32 @@ def normalize_heading_numbering(config: Any) -> dict[str, Any]:
     }
 
 
+def layout_validation_errors(config: Any) -> list[str]:
+    errors: list[str] = []
+
+    if config is None:
+        return errors
+    if not isinstance(config, dict):
+        return ["site manifest layout must be an object when provided"]
+
+    default_mode = config.get("defaultMode", "standard")
+    if default_mode not in LAYOUT_MODES:
+        errors.append('site manifest layout defaultMode must be "standard" or "wide"')
+
+    return errors
+
+
+def normalize_layout(config: Any) -> dict[str, str]:
+    if config is None:
+        config = {}
+
+    assert isinstance(config, dict)
+    default_mode = config.get("defaultMode", "standard")
+    assert isinstance(default_mode, str)
+
+    return {"defaultMode": default_mode}
+
+
 def numbering_validation_errors(config: Any) -> list[str]:
     errors: list[str] = []
 
@@ -237,6 +266,7 @@ def manifest_validation_errors(manifest: Any) -> list[str]:
     document_lang = manifest.get("lang", "en")
     materials = manifest.get("materials", [])
     external_links = manifest.get("externalLinks", [])
+    layout = manifest.get("layout", {})
     heading_numbering = manifest.get("headingNumbering", {})
     numbering = manifest.get("numbering", {})
     chapters = manifest.get("chapters")
@@ -249,6 +279,7 @@ def manifest_validation_errors(manifest: Any) -> list[str]:
         errors.append("site manifest lang must be a non-empty string")
     errors.extend(link_tree_validation_errors(materials, "site manifest materials"))
     errors.extend(link_tree_validation_errors(external_links, "site manifest externalLinks"))
+    errors.extend(layout_validation_errors(layout))
     errors.extend(heading_numbering_validation_errors(heading_numbering))
     errors.extend(numbering_validation_errors(numbering))
     if not isinstance(chapters, list):
@@ -296,6 +327,7 @@ def normalize_manifest(manifest: Any) -> SiteManifest:
     document_lang = manifest.get("lang", "en")
     materials = manifest.get("materials", [])
     external_links = manifest.get("externalLinks", [])
+    layout = normalize_layout(manifest.get("layout", {}))
     heading_numbering = normalize_heading_numbering(manifest.get("headingNumbering", {}))
     numbering = normalize_numbering(manifest.get("numbering", {}))
     raw_chapters = manifest["chapters"]
@@ -343,6 +375,7 @@ def normalize_manifest(manifest: Any) -> SiteManifest:
         chapters=chapters,
         materials=materials,
         external_links=external_links,
+        layout=layout,
         heading_numbering=heading_numbering,
         numbering=numbering,
     )

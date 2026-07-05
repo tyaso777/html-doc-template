@@ -18,6 +18,18 @@
 
   <!-- Library config -->
   <script>
+    window.technicalDocDefaultLayoutMode = "standard";
+
+    try {
+      const savedLayoutMode = window.localStorage ? window.localStorage.getItem("technicalDocLayoutMode") : null;
+      const initialLayoutMode = savedLayoutMode || window.technicalDocDefaultLayoutMode;
+      if (initialLayoutMode === "wide") {
+        document.documentElement.classList.add("layout-wide");
+      }
+    } catch (error) {
+      document.documentElement.classList.remove("layout-wide");
+    }
+
     window.Prism = window.Prism || {};
     window.Prism.manual = true;
 
@@ -132,6 +144,22 @@
               </details>
             </li>
           </ol>
+        </div>
+      </details>
+
+      <details class="nav-section layout-mode-section" open>
+        <summary>Layout</summary>
+        <div class="nav-body">
+          <fieldset class="layout-mode-control" aria-label="Layout width">
+            <label>
+              <input type="radio" name="layout-mode" value="standard" checked>
+              <span>Standard</span>
+            </label>
+            <label>
+              <input type="radio" name="layout-mode" value="wide">
+              <span>Wide</span>
+            </label>
+          </fieldset>
         </div>
       </details>
 

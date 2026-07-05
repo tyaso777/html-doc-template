@@ -229,7 +229,7 @@ for log in logs:
     def test_render_shell_includes_common_and_chapter_external_links(self) -> None:
         shell = (
             "{{DOCUMENT_LANG}} {{DOCUMENT_TITLE}} {{SIDEBAR_TITLE}} {{SIDEBAR_SUBTITLE}} "
-            "{{ASSET_PREFIX}} {{CONTENTS_TREE}} {{MATERIALS_SECTION}} "
+            "{{ASSET_PREFIX}} {{DEFAULT_LAYOUT_MODE}} {{CONTENTS_TREE}} {{MATERIALS_SECTION}} "
             "{{EXTERNAL_LINKS_SECTION}} {{CONTENT}}"
         )
         chapter = {
@@ -257,15 +257,17 @@ for log in logs:
             [[]],
             [],
             [{"title": "Common", "items": [{"label": "Common link", "href": "https://example.com/common"}]}],
+            {"defaultMode": "wide"},
         )
 
         self.assertIn("Common link", rendered)
         self.assertIn("Chapter link", rendered)
+        self.assertIn("wide", rendered)
         self.assertIn('href="https://example.com/common" target="_blank" rel="noopener"', rendered)
         self.assertIn('href="https://example.com/chapter" target="_blank" rel="noopener"', rendered)
 
     def test_render_shell_marks_numbered_toc_lists(self) -> None:
-        shell = "{{DOCUMENT_LANG}} {{DOCUMENT_TITLE}} {{SIDEBAR_TITLE}} {{SIDEBAR_SUBTITLE}} {{ASSET_PREFIX}} {{CONTENTS_TREE}} {{MATERIALS_SECTION}} {{EXTERNAL_LINKS_SECTION}} {{CONTENT}}"
+        shell = "{{DOCUMENT_LANG}} {{DOCUMENT_TITLE}} {{SIDEBAR_TITLE}} {{SIDEBAR_SUBTITLE}} {{ASSET_PREFIX}} {{DEFAULT_LAYOUT_MODE}} {{CONTENTS_TREE}} {{MATERIALS_SECTION}} {{EXTERNAL_LINKS_SECTION}} {{CONTENT}}"
         chapter = {
             "title": "Chapter",
             "href": "chapter.html",
@@ -289,6 +291,7 @@ for log in logs:
             [[{"id": "intro", "title": "1. Intro", "level": 2}]],
             [],
             [],
+            {"defaultMode": "standard"},
             {"enabled": True, "toc": True},
         )
 
