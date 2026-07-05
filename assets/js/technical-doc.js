@@ -804,6 +804,8 @@ except BaseException:
       const updateCaptionOffset = (wrapper) => {
         const tableCaption = wrapper.querySelector(".table-caption");
         wrapper.style.setProperty("--table-caption-sticky-offset", tableCaption ? `${tableCaption.offsetHeight}px` : "0px");
+        const tableHeader = wrapper.querySelector("thead");
+        wrapper.style.setProperty("--table-header-sticky-offset", tableHeader ? `${tableHeader.offsetHeight}px` : "0px");
       };
 
       for (const wrapper of wrappers) {
@@ -870,7 +872,15 @@ except BaseException:
           ? wrapper.parentElement
           : wrapper;
         const captionOffset = window.getComputedStyle(wrapper).getPropertyValue("--table-caption-sticky-offset") || "0px";
+        const headerOffset = window.getComputedStyle(wrapper).getPropertyValue("--table-header-sticky-offset") || "0px";
+        const table = wrapper.querySelector("table");
+        const maxScrollTop = wrapper.scrollHeight - wrapper.clientHeight;
+        const hasVerticalOverflow = maxScrollTop > 1;
+        const verticalScrollbarWidth = hasVerticalOverflow ? Math.max(18, wrapper.offsetWidth - wrapper.clientWidth) : 0;
         frame.style.setProperty("--table-caption-sticky-offset", captionOffset.trim());
+        frame.style.setProperty("--table-header-sticky-offset", headerOffset.trim());
+        frame.style.setProperty("--table-body-scroll-height", table ? `${table.offsetHeight}px` : `${wrapper.clientHeight}px`);
+        frame.style.setProperty("--table-vertical-scrollbar-width", `${verticalScrollbarWidth}px`);
 
         if (wrapper.classList.contains("table-wide")) {
           const maxScrollLeft = wrapper.scrollWidth - wrapper.clientWidth;
@@ -881,7 +891,6 @@ except BaseException:
         }
 
         if (wrapper.classList.contains("table-fixed-height")) {
-          const maxScrollTop = wrapper.scrollHeight - wrapper.clientHeight;
           const hasLess = maxScrollTop > 1 && wrapper.scrollTop > 1;
           const hasMore = maxScrollTop > 1 && wrapper.scrollTop < maxScrollTop - 1;
           frame.classList.toggle("has-scroll-y-less", hasLess);
