@@ -115,8 +115,9 @@
                     <ol>
                       <li><a href="01-introduction.html#standard-table-example">8.1. Standard Table</a></li>
                       <li><a href="01-introduction.html#wide-table-example">8.2. Wide Table</a></li>
-                      <li><a href="01-introduction.html#indexed-table-example">8.3. Indexed Table</a></li>
-                      <li><a href="01-introduction.html#compact-table-example">8.4. Compact Table</a></li>
+                      <li><a href="01-introduction.html#scrollable-table-example">8.3. Scrollable Table</a></li>
+                      <li><a href="01-introduction.html#indexed-table-example">8.4. Indexed Table</a></li>
+                      <li><a href="01-introduction.html#compact-table-example">8.5. Compact Table</a></li>
                     </ol>
                   </li>
                   <li><a href="01-introduction.html#notes">9. Operational Notes</a>
@@ -700,7 +701,7 @@ ORDER BY updated_at DESC;
           <h2>8. Table Examples</h2>
           <p>
             Tables are managed as a single block by applying classes and attributes to <code>div.table-wrap</code>.
-            Use the default table for compact comparisons, <code>table-wide</code> for tables that should keep their natural width and scroll horizontally when needed, <code>table-grid</code> when full cell borders help matrix-style reading, and <code>data-index-columns</code> to mark leading record-index columns.
+            Use the default table for compact comparisons, <code>table-wide</code> for horizontal scrolling, <code>table-fixed-height</code> for height-limited tables with a sticky header, <code>table-grid</code> when full cell borders help matrix-style reading, and <code>data-index-columns</code> to mark leading record-index columns.
             Numbered table captions are generated for tables such as <a class="xref table-ref" href="01-introduction.html#standard-table-many-columns">Table 1-1</a> and <a class="xref table-ref" href="01-introduction.html#wide-table-many-columns">Table 1-2</a>.
           </p>
 
@@ -864,14 +865,148 @@ ORDER BY updated_at DESC;
             </table>
           </div>
 
-          <h3 id="indexed-table-example" data-toc data-toc-level="3" data-toc-title="Indexed Table">8.3. Indexed Table</h3>
+          <h3 id="scrollable-table-example" data-toc data-toc-level="3" data-toc-title="Scrollable Table">8.3. Scrollable Table</h3>
+          <p>
+            Add <code>table-fixed-height</code> when a table has many records and should keep a user-defined fixed height.
+            The header row stays visible while the body scrolls vertically.
+            This is separate from <code>table-wide</code>; combine both classes only when a table needs horizontal and vertical scrolling.
+          </p>
+          <div class="table-wrap table-fixed-height table-compact" style="--table-max-height: 18rem;">
+            <table id="scrollable-job-results" data-numbered="table">
+              <caption><span class="numbered-label table-number">Table 1-3</span> Scrollable table example with many records</caption>
+              <thead>
+                <tr>
+                  <th>Run</th>
+                  <th>Dataset</th>
+                  <th>Status</th>
+                  <th class="numeric">Rows</th>
+                  <th class="numeric">Duration</th>
+                  <th class="numeric">Memory</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>R-001</td>
+                  <td>events-alpha</td>
+                  <td>Pass</td>
+                  <td class="numeric">12,480</td>
+                  <td class="numeric">4.2s</td>
+                  <td class="numeric">220 MB</td>
+                  <td>Baseline import.</td>
+                </tr>
+                <tr>
+                  <td>R-002</td>
+                  <td>events-beta</td>
+                  <td>Pass</td>
+                  <td class="numeric">18,920</td>
+                  <td class="numeric">5.1s</td>
+                  <td class="numeric">248 MB</td>
+                  <td>Schema matched.</td>
+                </tr>
+                <tr>
+                  <td>R-003</td>
+                  <td>events-gamma</td>
+                  <td>Warn</td>
+                  <td class="numeric">21,440</td>
+                  <td class="numeric">6.8s</td>
+                  <td class="numeric">310 MB</td>
+                  <td>Optional field missing.</td>
+                </tr>
+                <tr>
+                  <td>R-004</td>
+                  <td>metrics-alpha</td>
+                  <td>Pass</td>
+                  <td class="numeric">7,260</td>
+                  <td class="numeric">2.9s</td>
+                  <td class="numeric">180 MB</td>
+                  <td>Aggregates verified.</td>
+                </tr>
+                <tr>
+                  <td>R-005</td>
+                  <td>metrics-beta</td>
+                  <td>Pass</td>
+                  <td class="numeric">8,104</td>
+                  <td class="numeric">3.3s</td>
+                  <td class="numeric">192 MB</td>
+                  <td>Indexes reused.</td>
+                </tr>
+                <tr>
+                  <td>R-006</td>
+                  <td>metrics-gamma</td>
+                  <td>Pass</td>
+                  <td class="numeric">8,912</td>
+                  <td class="numeric">3.7s</td>
+                  <td class="numeric">205 MB</td>
+                  <td>Cache warmed.</td>
+                </tr>
+                <tr>
+                  <td>R-007</td>
+                  <td>logs-alpha</td>
+                  <td>Warn</td>
+                  <td class="numeric">31,506</td>
+                  <td class="numeric">8.9s</td>
+                  <td class="numeric">402 MB</td>
+                  <td>Late records detected.</td>
+                </tr>
+                <tr>
+                  <td>R-008</td>
+                  <td>logs-beta</td>
+                  <td>Pass</td>
+                  <td class="numeric">29,880</td>
+                  <td class="numeric">8.1s</td>
+                  <td class="numeric">388 MB</td>
+                  <td>Partition counts match.</td>
+                </tr>
+                <tr>
+                  <td>R-009</td>
+                  <td>logs-gamma</td>
+                  <td>Pass</td>
+                  <td class="numeric">34,220</td>
+                  <td class="numeric">9.4s</td>
+                  <td class="numeric">430 MB</td>
+                  <td>Compressed source.</td>
+                </tr>
+                <tr>
+                  <td>R-010</td>
+                  <td>audit-alpha</td>
+                  <td>Pass</td>
+                  <td class="numeric">4,820</td>
+                  <td class="numeric">1.8s</td>
+                  <td class="numeric">144 MB</td>
+                  <td>Small reference set.</td>
+                </tr>
+                <tr>
+                  <td>R-011</td>
+                  <td>audit-beta</td>
+                  <td>Pass</td>
+                  <td class="numeric">5,016</td>
+                  <td class="numeric">2.0s</td>
+                  <td class="numeric">150 MB</td>
+                  <td>Checksum verified.</td>
+                </tr>
+                <tr>
+                  <td>R-012</td>
+                  <td>audit-gamma</td>
+                  <td>Warn</td>
+                  <td class="numeric">5,208</td>
+                  <td class="numeric">2.4s</td>
+                  <td class="numeric">162 MB</td>
+                  <td>Manual review queued.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 id="indexed-table-example" data-toc data-toc-level="3" data-toc-title="Indexed Table">8.4. Indexed Table</h3>
           <p>
             Use <code>data-index-columns="2"</code> when the first two columns identify each record, similar to a DataFrame with a multi-column index.
             Header rows can also be grouped with <code>rowspan</code> and <code>colspan</code> when the data columns have multiple levels.
+            This example also uses <code>table-grid</code> to show the full grid style with vertical rules, which can help when the table is read as a matrix.
           </p>
           <div class="table-wrap table-wide table-grid" data-index-columns="2">
             <table id="indexed-table-two-columns" data-numbered="table">
-              <caption><span class="numbered-label table-number">Table 1-3</span> Wide indexed table example with grouped columns</caption>
+              <caption><span class="numbered-label table-number">Table 1-4</span> Wide indexed table example with grouped columns</caption>
               <thead>
                 <tr>
                   <th rowspan="2">Region</th>
@@ -931,13 +1066,13 @@ ORDER BY updated_at DESC;
             </table>
           </div>
 
-          <h3 id="compact-table-example" data-toc data-toc-level="3" data-toc-title="Compact Table">8.4. Compact Table</h3>
+          <h3 id="compact-table-example" data-toc data-toc-level="3" data-toc-title="Compact Table">8.5. Compact Table</h3>
           <p>
             Add <code>table-compact</code> when a table has many short rows and needs a denser layout.
           </p>
           <div class="table-wrap table-compact">
             <table id="compact-quality-checks" data-numbered="table">
-              <caption><span class="numbered-label table-number">Table 1-4</span> Compact table example</caption>
+              <caption><span class="numbered-label table-number">Table 1-5</span> Compact table example</caption>
               <thead>
                 <tr>
                   <th>Check</th>
@@ -993,7 +1128,7 @@ ORDER BY updated_at DESC;
         <section id="changelog" data-toc data-toc-title="Changelog">
           <h2>10. Changelog</h2>
           <p>
-            The release history is shown in <a class="xref table-ref" href="01-introduction.html#release-history">Table 1-5</a>.
+            The release history is shown in <a class="xref table-ref" href="01-introduction.html#release-history">Table 1-6</a>.
           </p>
           <p>
             For table layout patterns, see <a href="#table-examples">Table Examples</a>.
@@ -1001,7 +1136,7 @@ ORDER BY updated_at DESC;
           </p>
           <div class="table-wrap">
             <table id="release-history" data-numbered="table">
-              <caption><span class="numbered-label table-number">Table 1-5</span> Template release history</caption>
+              <caption><span class="numbered-label table-number">Table 1-6</span> Template release history</caption>
               <thead>
                 <tr>
                   <th>Version</th>

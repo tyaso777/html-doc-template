@@ -404,12 +404,30 @@ h3 {
   -webkit-overflow-scrolling: touch;
 }
 
-.table-wrap.table-wide {
+.table-wrap.table-wide.has-scroll-x-more {
   box-shadow: inset -18px 0 18px -18px rgba(26, 115, 232, 0.45);
+}
+
+.table-wrap.table-wide.has-scroll-x-less {
+  box-shadow: inset 18px 0 18px -18px rgba(26, 115, 232, 0.45);
+}
+
+.table-wrap.table-wide.has-scroll-x-less.has-scroll-x-more {
+  box-shadow:
+    inset 18px 0 18px -18px rgba(26, 115, 232, 0.45),
+    inset -18px 0 18px -18px rgba(26, 115, 232, 0.45);
+}
+
+.table-wrap.table-fixed-height {
+  --table-caption-sticky-offset: 0px;
+  max-height: var(--table-max-height, 22rem);
+  overflow-y: auto;
 }
 
 .table-wrap table {
   width: 100%;
+  border-top: 2px solid #c4ccd5;
+  border-bottom: 2px solid #c4ccd5;
   border-collapse: collapse;
   table-layout: fixed;
 }
@@ -427,8 +445,16 @@ h3 {
 
 .table-wrap th {
   background: #f1f4f8;
-  border-bottom: 2px solid var(--border);
+  border-bottom: 2px solid #c4ccd5;
   font-weight: 700;
+}
+
+.table-wrap.table-fixed-height thead th {
+  border-bottom: 0;
+  box-shadow: inset 0 -2px 0 #c4ccd5;
+  position: sticky;
+  top: var(--table-caption-sticky-offset);
+  z-index: 1;
 }
 
 .table-wrap.table-grid th,
@@ -676,6 +702,11 @@ code[class*="language-"] {
 
 table[data-numbered] caption {
   caption-side: top;
+}
+
+table[data-numbered] caption,
+.table-caption {
+  background: var(--panel-bg);
   color: var(--muted);
   font-size: 0.9rem;
   font-weight: 700;
@@ -683,9 +714,26 @@ table[data-numbered] caption {
   text-align: left;
 }
 
+.table-caption {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+}
+
+.table-wrap.table-fixed-height .table-caption {
+  border-bottom: 2px solid #c4ccd5;
+  top: 0;
+  z-index: 3;
+}
+
+.table-wrap.table-fixed-height table {
+  border-top: 0;
+}
+
 .mermaid-figure figcaption .numbered-label,
 .vega-lite-figure figcaption .numbered-label,
-table[data-numbered] caption .numbered-label {
+table[data-numbered] caption .numbered-label,
+.table-caption .numbered-label {
   color: var(--accent);
 }
 

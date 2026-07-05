@@ -795,6 +795,73 @@ except BaseException:
       }
     }
 
+    function initializeTableCaptions() {
+      const wrappers = Array.from(document.querySelectorAll(".table-wrap"));
+      if (wrappers.length === 0) {
+        return;
+      }
+
+      const updateCaptionOffset = (wrapper) => {
+        const tableCaption = wrapper.querySelector(".table-caption");
+        wrapper.style.setProperty("--table-caption-sticky-offset", tableCaption ? `${tableCaption.offsetHeight}px` : "0px");
+      };
+
+      for (const wrapper of wrappers) {
+        const table = wrapper.querySelector("table");
+        const caption = table ? table.querySelector("caption") : null;
+        if (!table || !caption) {
+          updateCaptionOffset(wrapper);
+          continue;
+        }
+
+        const tableCaption = document.createElement("div");
+        tableCaption.className = "table-caption";
+        tableCaption.innerHTML = caption.innerHTML;
+        if (table.id) {
+          tableCaption.id = `${table.id}-caption`;
+          if (!table.hasAttribute("aria-labelledby")) {
+            table.setAttribute("aria-labelledby", tableCaption.id);
+          }
+        }
+
+        caption.remove();
+        wrapper.insertBefore(tableCaption, table);
+        updateCaptionOffset(wrapper);
+      }
+
+      window.addEventListener("resize", () => {
+        for (const wrapper of wrappers) {
+          updateCaptionOffset(wrapper);
+        }
+      });
+    }
+
+    function initializeTableScrollHints() {
+      const wrappers = Array.from(document.querySelectorAll(".table-wrap.table-wide"));
+      if (wrappers.length === 0) {
+        return;
+      }
+
+      const updateWrapper = (wrapper) => {
+        const maxScrollLeft = wrapper.scrollWidth - wrapper.clientWidth;
+        const hasLess = maxScrollLeft > 1 && wrapper.scrollLeft > 1;
+        const hasMore = maxScrollLeft > 1 && wrapper.scrollLeft < maxScrollLeft - 1;
+        wrapper.classList.toggle("has-scroll-x-less", hasLess);
+        wrapper.classList.toggle("has-scroll-x-more", hasMore);
+      };
+
+      for (const wrapper of wrappers) {
+        updateWrapper(wrapper);
+        wrapper.addEventListener("scroll", () => updateWrapper(wrapper), { passive: true });
+      }
+
+      window.addEventListener("resize", () => {
+        for (const wrapper of wrappers) {
+          updateWrapper(wrapper);
+        }
+      });
+    }
+
 
     document.addEventListener("DOMContentLoaded", () => {
       const runners = Array.from(document.querySelectorAll("[data-python-runner-panel]"));
@@ -809,6 +876,8 @@ except BaseException:
         window.Prism.highlightAll();
       }
       initializeCodeCopyButtons();
+      initializeTableCaptions();
+      initializeTableScrollHints();
       initializeLayoutModeControl();
       initializeMermaid();
       initializeVegaLite();
