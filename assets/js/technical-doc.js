@@ -917,25 +917,33 @@ except BaseException:
         return shadow;
       };
 
+      const pixelValue = (value) => {
+        const numericValue = Number.parseFloat(value);
+        return Number.isFinite(numericValue) ? numericValue : 0;
+      };
+
       const updateWrapper = (wrapper) => {
         const frame = wrapper.parentElement && wrapper.parentElement.classList.contains("table-scroll-frame")
           ? wrapper.parentElement
           : wrapper;
         const captionOffset = window.getComputedStyle(wrapper).getPropertyValue("--table-caption-sticky-offset") || "0px";
         const headerOffset = window.getComputedStyle(wrapper).getPropertyValue("--table-header-sticky-offset") || "0px";
-        const table = wrapper.querySelector("table");
         const maxScrollTop = wrapper.scrollHeight - wrapper.clientHeight;
         const hasVerticalOverflow = maxScrollTop > 1;
+        const maxScrollLeft = wrapper.scrollWidth - wrapper.clientWidth;
+        const hasHorizontalOverflow = maxScrollLeft > 1;
         const verticalScrollbarWidth = hasVerticalOverflow ? Math.max(18, wrapper.offsetWidth - wrapper.clientWidth) : 0;
+        const horizontalScrollbarHeight = hasHorizontalOverflow ? Math.max(18, wrapper.offsetHeight - wrapper.clientHeight) : 0;
+        const scrollAreaHeight = Math.max(0, wrapper.clientHeight - pixelValue(captionOffset));
         frame.style.setProperty("--table-caption-sticky-offset", captionOffset.trim());
         frame.style.setProperty("--table-header-sticky-offset", headerOffset.trim());
-        frame.style.setProperty("--table-body-scroll-height", table ? `${table.offsetHeight}px` : `${wrapper.clientHeight}px`);
+        frame.style.setProperty("--table-body-scroll-height", `${scrollAreaHeight}px`);
         frame.style.setProperty("--table-vertical-scrollbar-width", `${verticalScrollbarWidth}px`);
+        frame.style.setProperty("--table-horizontal-scrollbar-height", `${horizontalScrollbarHeight}px`);
 
         if (wrapper.classList.contains("table-wide")) {
-          const maxScrollLeft = wrapper.scrollWidth - wrapper.clientWidth;
-          const hasLess = maxScrollLeft > 1 && wrapper.scrollLeft > 1;
-          const hasMore = maxScrollLeft > 1 && wrapper.scrollLeft < maxScrollLeft - 1;
+          const hasLess = hasHorizontalOverflow && wrapper.scrollLeft > 1;
+          const hasMore = hasHorizontalOverflow && wrapper.scrollLeft < maxScrollLeft - 1;
           frame.classList.toggle("has-scroll-x-less", hasLess);
           frame.classList.toggle("has-scroll-x-more", hasMore);
         }

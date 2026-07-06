@@ -615,6 +615,7 @@ flowchart LR
   <ul>
     <li><strong>Horizontal width:</strong> standard table by default, or <code>table-wide</code> for horizontal scrolling.</li>
     <li><strong>Vertical height:</strong> unrestricted by default, or <code>table-fixed-height</code> for a height-limited table with a sticky header.</li>
+    <li><strong>Scroll shadows:</strong> <code>table-wide</code> shows left and right hints; <code>table-fixed-height</code> shows vertical hints below the sticky header and at the bottom.</li>
     <li><strong>Row density:</strong> regular spacing by default, or <code>table-compact</code> when narrower row spacing is preferred.</li>
   </ul>
 
@@ -907,6 +908,141 @@ flowchart LR
           <td class="numeric">2.4s</td>
           <td class="numeric">162 MB</td>
           <td>Manual review queued.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 id="wide-fixed-height-table-example" data-toc data-toc-level="3" data-toc-title="Wide Fixed-Height Table">Wide Fixed-Height Table</h3>
+  <p>
+    Combine <code>table-wide</code> and <code>table-fixed-height</code> when both axes need scroll hints.
+    Horizontal shadows appear at the left and right edges when hidden columns remain, while vertical shadows appear under the sticky header and near the bottom when hidden rows remain.
+  </p>
+  <div class="table-wrap table-wide table-fixed-height table-compact" style="--table-min-width: 74rem; --table-max-height: 18rem;">
+    <table id="wide-fixed-height-results" data-numbered="table">
+      <caption>Wide fixed-height table example with two-axis scroll hints</caption>
+      <thead>
+        <tr>
+          <th>Run</th>
+          <th>Dataset</th>
+          <th>Status</th>
+          <th class="numeric">Rows</th>
+          <th class="numeric">Duration</th>
+          <th class="numeric">Memory</th>
+          <th class="numeric">Warnings</th>
+          <th class="numeric">Retries</th>
+          <th>Owner</th>
+          <th>Review note</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>R-101</td>
+          <td>events-alpha</td>
+          <td>Pass</td>
+          <td class="numeric">12,480</td>
+          <td class="numeric">4.2s</td>
+          <td class="numeric">220 MB</td>
+          <td class="numeric">0</td>
+          <td class="numeric">0</td>
+          <td>Core</td>
+          <td>Baseline import.</td>
+        </tr>
+        <tr>
+          <td>R-102</td>
+          <td>events-beta</td>
+          <td>Pass</td>
+          <td class="numeric">18,920</td>
+          <td class="numeric">5.1s</td>
+          <td class="numeric">248 MB</td>
+          <td class="numeric">1</td>
+          <td class="numeric">0</td>
+          <td>Core</td>
+          <td>Schema matched.</td>
+        </tr>
+        <tr>
+          <td>R-103</td>
+          <td>events-gamma</td>
+          <td>Warn</td>
+          <td class="numeric">21,440</td>
+          <td class="numeric">6.8s</td>
+          <td class="numeric">310 MB</td>
+          <td class="numeric">3</td>
+          <td class="numeric">1</td>
+          <td>Ingest</td>
+          <td>Optional field missing.</td>
+        </tr>
+        <tr>
+          <td>R-104</td>
+          <td>metrics-alpha</td>
+          <td>Pass</td>
+          <td class="numeric">7,260</td>
+          <td class="numeric">2.9s</td>
+          <td class="numeric">180 MB</td>
+          <td class="numeric">0</td>
+          <td class="numeric">0</td>
+          <td>Metrics</td>
+          <td>Aggregates verified.</td>
+        </tr>
+        <tr>
+          <td>R-105</td>
+          <td>metrics-beta</td>
+          <td>Pass</td>
+          <td class="numeric">8,104</td>
+          <td class="numeric">3.3s</td>
+          <td class="numeric">192 MB</td>
+          <td class="numeric">0</td>
+          <td class="numeric">0</td>
+          <td>Metrics</td>
+          <td>Indexes reused.</td>
+        </tr>
+        <tr>
+          <td>R-106</td>
+          <td>metrics-gamma</td>
+          <td>Pass</td>
+          <td class="numeric">8,912</td>
+          <td class="numeric">3.7s</td>
+          <td class="numeric">205 MB</td>
+          <td class="numeric">0</td>
+          <td class="numeric">0</td>
+          <td>Metrics</td>
+          <td>Cache warmed.</td>
+        </tr>
+        <tr>
+          <td>R-107</td>
+          <td>logs-alpha</td>
+          <td>Warn</td>
+          <td class="numeric">31,506</td>
+          <td class="numeric">8.9s</td>
+          <td class="numeric">402 MB</td>
+          <td class="numeric">4</td>
+          <td class="numeric">2</td>
+          <td>Logs</td>
+          <td>Late records detected.</td>
+        </tr>
+        <tr>
+          <td>R-108</td>
+          <td>logs-beta</td>
+          <td>Pass</td>
+          <td class="numeric">29,880</td>
+          <td class="numeric">8.1s</td>
+          <td class="numeric">388 MB</td>
+          <td class="numeric">0</td>
+          <td class="numeric">1</td>
+          <td>Logs</td>
+          <td>Partition counts match.</td>
+        </tr>
+        <tr>
+          <td>R-109</td>
+          <td>logs-gamma</td>
+          <td>Pass</td>
+          <td class="numeric">34,220</td>
+          <td class="numeric">9.4s</td>
+          <td class="numeric">430 MB</td>
+          <td class="numeric">0</td>
+          <td class="numeric">0</td>
+          <td>Logs</td>
+          <td>Compressed source.</td>
         </tr>
       </tbody>
     </table>
