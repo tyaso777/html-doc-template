@@ -15,7 +15,7 @@
     "test:e2e:pyodide": "cross-env PYODIDE_SMOKE=1 playwright test --grep @pyodide"
   },
   "devDependencies": {
-    "@playwright/test": "^1.57.0",
+    "@playwright/test": "^1.61.1",
     "cross-env": "^7.0.3"
   }
 }
