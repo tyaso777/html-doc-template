@@ -88,6 +88,9 @@
                   <li><a href="01-introduction.html#overview">1. Overview</a>
                   </li>
                   <li><a href="01-introduction.html#template-guide">2. Template Usage</a>
+                    <ol>
+                      <li><a href="01-introduction.html#inline-emphasis-example">2.1. Inline Emphasis</a></li>
+                    </ol>
                   </li>
                   <li><a href="01-introduction.html#formula-examples">3. Math Examples</a>
                     <ol>
@@ -308,11 +311,38 @@
               <li>Standard body card: <code>&lt;div class="card"&gt;</code></li>
               <li>Muted card: <code>&lt;div class="card card-muted"&gt;</code></li>
               <li>Compact card: <code>&lt;div class="card card-compact"&gt;</code></li>
+              <li>Important term: <code>&lt;strong&gt;...&lt;/strong&gt;</code></li>
+              <li>Sentence-level stress: <code>&lt;em&gt;...&lt;/em&gt;</code></li>
+              <li>Inline marker: <code>&lt;mark class="text-marker"&gt;...&lt;/mark&gt;</code>, optionally with <code>text-marker-teal</code> or <code>text-marker-pink</code></li>
               <li>Code display: <code>&lt;pre class="code-block language-python"&gt;&lt;code class="language-python"&gt;</code></li>
               <li>Math: use <code>\(...\)</code> for inline math and <code>\[...\]</code> for display math</li>
               <li>Mermaid diagrams: write the diagram definition inside <code>&lt;div class="mermaid"&gt;</code>.</li>
             </ul>
           </div>
+
+          <h3 id="inline-emphasis-example" data-toc data-toc-level="3" data-toc-title="Inline Emphasis">2.1. Inline Emphasis</h3>
+          <p>
+            Inline emphasis uses standard HTML elements with template-managed presentation:
+            <strong>classification</strong> marks a content-important term, and <em>focus</em> places stress on a word in the sentence.
+            Use <mark class="text-marker">prebuilt structure for searching</mark> when the current explanation should draw attention to one short phrase without turning it into a separate note.
+            Marker colors can vary, for example <mark class="text-marker text-marker-teal">teal marker</mark> or <mark class="text-marker text-marker-pink">pink marker</mark>, but color should not be the only way meaning or priority is conveyed.
+          </p>
+          <p>
+            Keep the roles separate:
+            <code>&lt;strong&gt;</code> is for important terms or phrases,
+            <code>&lt;em&gt;</code> is for spoken or rhetorical stress,
+            <code>&lt;mark class="text-marker"&gt;</code> is for a short passage the reader should notice in this context,
+            and callouts are for paragraph-level points, supplements, and warnings.
+            Use marker color sparingly; the surrounding wording should explain the purpose even when the color is unavailable or hard to distinguish.
+          </p>
+          <div class="code-caption">inline emphasis</div>
+          <pre class="code-block language-html"><code class="language-html">&lt;p&gt;
+  &lt;strong&gt;Classification&lt;/strong&gt; means
+  &lt;mark class="text-marker"&gt;building a searchable structure in advance&lt;/mark&gt;.
+&lt;/p&gt;</code></pre>
+          <pre class="code-block language-html"><code class="language-html">&lt;mark class="text-marker"&gt;standard marker&lt;/mark&gt;
+&lt;mark class="text-marker text-marker-teal"&gt;teal marker&lt;/mark&gt;
+&lt;mark class="text-marker text-marker-pink"&gt;pink marker&lt;/mark&gt;</code></pre>
 
           <aside class="callout callout-warning">
             <div class="callout-label">Warning</div>

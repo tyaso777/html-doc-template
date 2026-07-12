@@ -288,7 +288,13 @@ Use these patterns inside the document body:
 <div class="card">Standard card content.</div>
 <div class="card card-muted">Subtle card content.</div>
 <div class="card card-compact">Compact card content.</div>
+<p><strong>Classification</strong> means <em>grouping</em> items by a rule.</p>
+<p><mark class="text-marker">Build a searchable structure in advance</mark> when lookup speed matters.</p>
+<p><mark class="text-marker text-marker-teal">Use a teal marker sparingly</mark> when a second marker color helps scanning.</p>
+<p><mark class="text-marker text-marker-pink">Use a pink marker sparingly</mark> when a third marker color is needed.</p>
 ```
+
+Use `<strong>` for important terms, `<em>` for sentence-level stress, `<mark class="text-marker">` for a short passage that should be noticed in the current explanation, and callouts for paragraph-level notes or warnings. Add `text-marker-teal` or `text-marker-pink` only when a small number of marker colors helps scanning; do not use color alone to communicate meaning or priority. The template manages the presentation of these inline emphasis elements in CSS.
 
 Python code block:
 

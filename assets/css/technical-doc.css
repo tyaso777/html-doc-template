@@ -3,6 +3,8 @@
   --panel-bg: #ffffff;
   --text: #202124;
   --muted: #5f6368;
+  --strong-text: var(--text);
+  --emphasis-text: #3c4043;
   --border: #dadce0;
   --accent: #1a73e8;
   --accent-bg: #e8f0fe;
@@ -17,6 +19,12 @@
   --ok-line: #a8dab5;
   --ok-text: #1e4620;
   --code-bg: #f5f5f5;
+  --marker-default-highlight: rgba(255, 214, 10, 0.42);
+  --marker-default-highlight-strong: rgba(255, 193, 7, 0.56);
+  --marker-teal-highlight: rgba(0, 150, 136, 0.26);
+  --marker-teal-highlight-strong: rgba(0, 121, 107, 0.38);
+  --marker-pink-highlight: rgba(233, 30, 99, 0.22);
+  --marker-pink-highlight-strong: rgba(194, 24, 91, 0.34);
   --section-rule: #aeb8c4;
   --sidebar-width: 320px;
   --radius: 12px;
@@ -46,6 +54,45 @@ a {
 
 a:hover {
   text-decoration: underline;
+}
+
+strong {
+  color: var(--strong-text);
+  font-weight: 700;
+}
+
+em {
+  color: var(--emphasis-text);
+  font-style: italic;
+}
+
+mark.text-marker {
+  --marker-highlight: var(--marker-default-highlight);
+  --marker-highlight-strong: var(--marker-default-highlight-strong);
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  padding: 0 0.08em;
+  color: inherit;
+  background:
+    linear-gradient(
+      to bottom,
+      transparent 0%,
+      transparent 48%,
+      var(--marker-highlight) 48%,
+      var(--marker-highlight-strong) 88%,
+      transparent 88%,
+      transparent 100%
+    );
+}
+
+mark.text-marker.text-marker-teal {
+  --marker-highlight: var(--marker-teal-highlight);
+  --marker-highlight-strong: var(--marker-teal-highlight-strong);
+}
+
+mark.text-marker.text-marker-pink {
+  --marker-highlight: var(--marker-pink-highlight);
+  --marker-highlight-strong: var(--marker-pink-highlight-strong);
 }
 
 a:focus-visible,
@@ -1185,6 +1232,19 @@ textarea {
   }
 }
 
+@media (prefers-color-scheme: dark) {
+  :root {
+    --strong-text: var(--text);
+    --emphasis-text: #d2d6dc;
+    --marker-default-highlight: rgba(255, 214, 10, 0.34);
+    --marker-default-highlight-strong: rgba(255, 193, 7, 0.48);
+    --marker-teal-highlight: rgba(38, 166, 154, 0.34);
+    --marker-teal-highlight-strong: rgba(77, 182, 172, 0.46);
+    --marker-pink-highlight: rgba(240, 98, 146, 0.34);
+    --marker-pink-highlight-strong: rgba(244, 143, 177, 0.46);
+  }
+}
+
 @media print {
   html,
   body {
@@ -1226,6 +1286,22 @@ textarea {
 
   .print-only {
     display: block !important;
+  }
+
+  mark.text-marker {
+    color: inherit;
+    background:
+      linear-gradient(
+        to bottom,
+        transparent 0%,
+        transparent 52%,
+        var(--marker-highlight) 52%,
+        var(--marker-highlight-strong) 88%,
+        transparent 88%,
+        transparent 100%
+      );
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
   }
 
   .runner-toolbar,
