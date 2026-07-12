@@ -16,10 +16,21 @@ from scripts.build_site import (
     render_shell,
 )
 from scripts.site_builder.optional_assets import optional_asset_keys, render_fixed_head_assets, render_optional_head_assets
+from scripts.site_builder.navigation import group_toc_entries, render_chapter_toc_entries
 from scripts.site_builder.python_runner import expand_python_runners
 
 
 class BuildSiteTests(unittest.TestCase):
+    def toc_tree_titles(self, groups: list[dict[str, object]]) -> list[tuple[str, list[object]]]:
+        tree: list[tuple[str, list[object]]] = []
+        for group in groups:
+            entry = group["entry"]
+            children = group["children"]
+            assert isinstance(entry, dict)
+            assert isinstance(children, list)
+            tree.append((str(entry["title"]), self.toc_tree_titles(children)))
+        return tree
+
     def test_optional_head_assets_detect_mermaid_and_vega_lite(self) -> None:
         source = (
             '<pre class="code-block language-mermaid"><code>flowchart LR</code></pre>'
@@ -43,6 +54,73 @@ class BuildSiteTests(unittest.TestCase):
         self.assertIn("mathjax@3.2.2", rendered)
         self.assertIn('crossorigin="anonymous"', rendered)
         self.assertIn('referrerpolicy="no-referrer"', rendered)
+
+    def test_group_toc_entries_keeps_skipped_level_nested_under_nearest_parent(self) -> None:
+        entries = [
+            {"id": "overview", "title": "5. Overview", "level": 2},
+            {"id": "cost", "title": "5.1.1 Cost", "level": 4},
+        ]
+
+        tree = self.toc_tree_titles(group_toc_entries(entries))
+
+        self.assertEqual(tree, [("5. Overview", [("5.1.1 Cost", [])])])
+
+    def test_group_toc_entries_keeps_same_level_as_siblings(self) -> None:
+        entries = [
+            {"id": "failure", "title": "5. Failure", "level": 2},
+            {"id": "complexity", "title": "5.1 Complexity", "level": 3},
+            {"id": "time", "title": "5.2 Time", "level": 3},
+        ]
+
+        tree = self.toc_tree_titles(group_toc_entries(entries))
+
+        self.assertEqual(tree, [("5. Failure", [("5.1 Complexity", []), ("5.2 Time", [])])])
+
+    def test_group_toc_entries_handles_multiple_level_returns(self) -> None:
+        entries = [
+            {"id": "failure", "title": "5. Failure", "level": 2},
+            {"id": "complexity", "title": "5.1 Complexity", "level": 3},
+            {"id": "time", "title": "5.1.1 Time", "level": 4},
+            {"id": "worst", "title": "5.1.1.1 Worst Case", "level": 5},
+            {"id": "memory", "title": "5.2 Memory", "level": 3},
+            {"id": "next", "title": "6. Next", "level": 2},
+        ]
+
+        tree = self.toc_tree_titles(group_toc_entries(entries))
+
+        self.assertEqual(
+            tree,
+            [
+                (
+                    "5. Failure",
+                    [
+                        ("5.1 Complexity", [("5.1.1 Time", [("5.1.1.1 Worst Case", [])])]),
+                        ("5.2 Memory", []),
+                    ],
+                ),
+                ("6. Next", []),
+            ],
+        )
+
+    def test_render_chapter_toc_entries_outputs_recursive_nested_lists(self) -> None:
+        entries = [
+            {"id": "failure", "title": "5. Failure", "level": 2},
+            {"id": "complexity", "title": "5.1 Complexity", "level": 3},
+            {"id": "time", "title": "5.1.1 Time", "level": 4},
+        ]
+
+        rendered = render_chapter_toc_entries(
+            entries,
+            Path("/tmp/project/chapters/chapter.html"),
+            Path("/tmp/project/chapters/chapter.html"),
+            "",
+        )
+
+        self.assertIn('<a href="chapter.html#failure">5. Failure</a>', rendered)
+        self.assertIn('<a href="chapter.html#complexity">5.1 Complexity</a>', rendered)
+        self.assertIn('<a href="chapter.html#time">5.1.1 Time</a>', rendered)
+        self.assertGreaterEqual(rendered.count("<ol>"), 2)
+
 
     def test_optional_head_assets_ignore_mermaid_code_blocks(self) -> None:
         source = '<pre class="code-block language-mermaid"><code>flowchart LR</code></pre>'

@@ -46,23 +46,49 @@ def render_chapter_nav(chapters: list[dict[str, Any]], index: int, output_path: 
     return '<nav class="chapter-nav" data-chapter-nav aria-label="Chapter navigation">\n' + "\n".join(links) + f"\n{indent}</nav>"
 
 
-def render_toc_entry_link(entry: dict[str, str | int], chapter_path: Path, output_path: Path, indent: str) -> str:
-    href = f"{relative_path(output_path, chapter_path)}#{entry['id']}"
-    return f'{indent}<li><a href="{html.escape(href, quote=True)}">{html.escape(str(entry["title"]))}</a></li>'
-
-
 def group_toc_entries(entries: list[dict[str, str | int]]) -> list[dict[str, object]]:
     groups: list[dict[str, object]] = []
+    stack: list[dict[str, object]] = []
 
     for entry in entries:
-        if int(entry["level"]) <= 2 or not groups:
-            groups.append({"entry": entry, "children": []})
-        else:
-            children = groups[-1]["children"]
+        node: dict[str, object] = {"entry": entry, "children": []}
+        level = int(entry["level"])
+
+        while stack:
+            parent_entry = stack[-1]["entry"]
+            assert isinstance(parent_entry, dict)
+            if int(parent_entry["level"]) < level:
+                break
+            stack.pop()
+
+        if stack:
+            children = stack[-1]["children"]
             assert isinstance(children, list)
-            children.append(entry)
+            children.append(node)
+        else:
+            groups.append(node)
+
+        stack.append(node)
 
     return groups
+
+
+def render_toc_group(group: dict[str, object], chapter_path: Path, output_path: Path, indent: str) -> list[str]:
+    entry = group["entry"]
+    children = group["children"]
+    assert isinstance(entry, dict)
+    assert isinstance(children, list)
+
+    href = f"{relative_path(output_path, chapter_path)}#{entry['id']}"
+    lines = [f'{indent}<li><a href="{html.escape(href, quote=True)}">{html.escape(str(entry["title"]))}</a>']
+    if children:
+        lines.append(f"{indent}  <ol>")
+        for child in children:
+            assert isinstance(child, dict)
+            lines.extend(render_toc_group(child, chapter_path, output_path, indent + "    "))
+        lines.append(f"{indent}  </ol>")
+    lines.append(f"{indent}</li>")
+    return lines
 
 
 def render_chapter_toc_entries(entries: list[dict[str, str | int]], chapter_path: Path, output_path: Path, indent: str) -> str:
@@ -73,19 +99,7 @@ def render_chapter_toc_entries(entries: list[dict[str, str | int]], chapter_path
 
     lines: list[str] = []
     for group in groups:
-        entry = group["entry"]
-        children = group["children"]
-        assert isinstance(entry, dict)
-        assert isinstance(children, list)
-        href = f"{relative_path(output_path, chapter_path)}#{entry['id']}"
-        lines.append(f'{indent}<li><a href="{html.escape(href, quote=True)}">{html.escape(str(entry["title"]))}</a>')
-        if children:
-            lines.append(f"{indent}  <ol>")
-            for child in children:
-                assert isinstance(child, dict)
-                lines.append(render_toc_entry_link(child, chapter_path, output_path, indent + "    "))
-            lines.append(f"{indent}  </ol>")
-        lines.append(f"{indent}</li>")
+        lines.extend(render_toc_group(group, chapter_path, output_path, indent))
 
     return "\n".join(lines)
 
